@@ -1,0 +1,9 @@
+﻿namespace LikeBusLogistic.DAL.Models
+{
+    public class Bus
+    {
+        public int? VehicleId { get; set; }
+        public string Number { get; set; }
+        public int CrewCapacity { get; set; }
+    }
+}

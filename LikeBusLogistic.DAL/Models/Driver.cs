@@ -1,0 +1,9 @@
+﻿namespace LikeBusLogistic.DAL.Models
+{
+    public class Driver
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string MiddleName { get; set; }
+    }
+}
