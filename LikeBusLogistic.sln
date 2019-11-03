@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LikeBusLogistic.Web", "LikeBusLogistic.Web\LikeBusLogistic.Web.csproj", "{A57A4F5E-7689-4EE1-AE77-ED5DED3CCA63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LikeBusLogistic.DAL", "LikeBusLogistic.DAL\LikeBusLogistic.DAL.csproj", "{5274E3E2-084A-400D-9150-C589FC146DE9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LikeBusLogistic.Scripts", "LikeBusLogistic.Scripts", "{33E9DFB1-CC9E-4375-A976-609104F959F2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A57A4F5E-7689-4EE1-AE77-ED5DED3CCA63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A57A4F5E-7689-4EE1-AE77-ED5DED3CCA63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A57A4F5E-7689-4EE1-AE77-ED5DED3CCA63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A57A4F5E-7689-4EE1-AE77-ED5DED3CCA63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5274E3E2-084A-400D-9150-C589FC146DE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5274E3E2-084A-400D-9150-C589FC146DE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5274E3E2-084A-400D-9150-C589FC146DE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5274E3E2-084A-400D-9150-C589FC146DE9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9A67B8D6-8A66-4A97-AA40-0268D0F9CF38}
+	EndGlobalSection
+EndGlobal
