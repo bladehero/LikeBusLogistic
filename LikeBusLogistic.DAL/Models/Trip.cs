@@ -1,7 +1,7 @@
 ﻿using System;
 namespace LikeBusLogistic.DAL.Models
 {
-    public class Trip
+    public class Trip : UserTrackedEntity
     {
         public int BusId { get; set; }
         public int RouteId { get; set; }

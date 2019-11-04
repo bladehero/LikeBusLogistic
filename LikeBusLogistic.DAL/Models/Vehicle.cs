@@ -1,6 +1,6 @@
 ﻿namespace LikeBusLogistic.DAL.Models
 {
-    public class Vehicle
+    public class Vehicle : UserTrackedEntity
     {
         public string Producer { get; set; }
         public string Model { get; set; }

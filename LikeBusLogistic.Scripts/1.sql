@@ -43,13 +43,17 @@ if not exists (select 1
   (
     Id int not null primary key identity,
     RoleId int not null, 
-    UserId int not null, 
+    UserId int not null,
+	  Login varchar(100) not null,
+	  Password char(32) not null,
     DateCreated datetime not null default(getdate()),
     DateModified datetime not null default(getdate()),
     IsDeleted bit not null default(0)
 
     constraint FK_dbo_Account_RoleId_dbo_Role_Id foreign key (RoleId) references Role(Id),
-    constraint FK_dbo_Account_UserId_dbo_User_Id foreign key (UserId) references [User](Id)
+    constraint FK_dbo_Account_UserId_dbo_User_Id foreign key (UserId) references [User](Id),
+    constraint UQ_dbo_Account_RoleId_UserId unique (RoleId, UserId),
+    constraint UQ_dbo_Account_Login unique (Login)
   );
 go
 

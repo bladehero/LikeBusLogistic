@@ -1,13 +1,24 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.352
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LikeBusLogistic.Web", "LikeBusLogistic.Web\LikeBusLogistic.Web.csproj", "{A57A4F5E-7689-4EE1-AE77-ED5DED3CCA63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LikeBusLogistic.DAL", "LikeBusLogistic.DAL\LikeBusLogistic.DAL.csproj", "{5274E3E2-084A-400D-9150-C589FC146DE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LikeBusLogistic.DAL", "LikeBusLogistic.DAL\LikeBusLogistic.DAL.csproj", "{5274E3E2-084A-400D-9150-C589FC146DE9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LikeBusLogistic.Scripts", "LikeBusLogistic.Scripts", "{33E9DFB1-CC9E-4375-A976-609104F959F2}"
+	ProjectSection(SolutionItems) = preProject
+		LikeBusLogistic.Scripts\0.sql = LikeBusLogistic.Scripts\0.sql
+		LikeBusLogistic.Scripts\1.sql = LikeBusLogistic.Scripts\1.sql
+		LikeBusLogistic.Scripts\2.sql = LikeBusLogistic.Scripts\2.sql
+		LikeBusLogistic.Scripts\3.sql = LikeBusLogistic.Scripts\3.sql
+		LikeBusLogistic.Scripts\4.sql = LikeBusLogistic.Scripts\4.sql
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LikeBusLogistic.VM", "LikeBusLogistic.VM\LikeBusLogistic.VM.csproj", "{EEC1196A-2A7F-4296-BD10-8C158AF18181}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BLL", "BLL\BLL.csproj", "{B84B310E-3064-4A4D-B817-61A3BB9A3F4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +34,14 @@ Global
 		{5274E3E2-084A-400D-9150-C589FC146DE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5274E3E2-084A-400D-9150-C589FC146DE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5274E3E2-084A-400D-9150-C589FC146DE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEC1196A-2A7F-4296-BD10-8C158AF18181}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEC1196A-2A7F-4296-BD10-8C158AF18181}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEC1196A-2A7F-4296-BD10-8C158AF18181}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEC1196A-2A7F-4296-BD10-8C158AF18181}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B84B310E-3064-4A4D-B817-61A3BB9A3F4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B84B310E-3064-4A4D-B817-61A3BB9A3F4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B84B310E-3064-4A4D-B817-61A3BB9A3F4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B84B310E-3064-4A4D-B817-61A3BB9A3F4C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

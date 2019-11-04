@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using LikeBusLogistic.DAL.Attributes;
 using LikeBusLogistic.DAL.Models;
 using System;
 using System.Collections;
@@ -8,7 +9,7 @@ using System.Linq;
 
 namespace LikeBusLogistic.DAL.Dao
 {
-    public class BaseDao<T> : DataAccessObject, IEnumerable<T>, IEnumerable where T : BaseEntity
+    public abstract class BaseDao<T> : DataAccessObject, IEnumerable<T>, IEnumerable where T : BaseEntity
     {
         protected string TableName { get; set; }
 
@@ -48,13 +49,13 @@ namespace LikeBusLogistic.DAL.Dao
 
         public virtual int Insert(T item)
         {
-            var properties = item.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.DeclaredOnly);
+            var properties = _getProperties(item, DatabaseActions.Insert);
             var sql = $"insert into {TableName} ({string.Join(",", properties.Select(x => x.Name))}) values ({string.Join(",", properties.Select(x => "@" + x.Name))}) SELECT CAST(SCOPE_IDENTITY() as int)";
             return item.Id = Connection.Query<int>(sql, item).Single();
         }
         public virtual bool Update(T item)
         {
-            var properties = item.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.DeclaredOnly);
+            var properties = _getProperties(item, DatabaseActions.Update);
             var sql = $"update {TableName} set {string.Join(",", properties.Select(x => x.Name + " = @" + x.Name))} where Id = @Id";
             return Connection.Execute(sql, item) > 0;
         }
@@ -75,5 +76,47 @@ namespace LikeBusLogistic.DAL.Dao
 
         protected IEnumerable<T> Query(string sql) => Connection.Query<T>(sql);
         protected T QueryFirstOrDefault(string sql) => Connection.QueryFirstOrDefault<T>(sql);
+
+        private IEnumerable<System.Reflection.PropertyInfo> _getProperties(T item, DatabaseActions action)
+        {
+            var _props = item.GetType()
+                                 .GetProperties(System.Reflection.BindingFlags.Public
+                                              | System.Reflection.BindingFlags.Instance
+                                              | System.Reflection.BindingFlags.DeclaredOnly);
+
+            var properties = new Stack<System.Reflection.PropertyInfo>(_props.Length);
+            foreach (var property in _props)
+            {
+                var attributes = property.GetCustomAttributes(true);
+
+                switch (action)
+                {
+                    case DatabaseActions.Insert:
+
+                        if (!attributes.Any(x => x is IgnoreAttribute attribute && attribute.WhenInsert))
+                        {
+                            properties.Push(property);
+                        }
+
+                        break;
+                    case DatabaseActions.Update:
+
+                        if (!attributes.Any(x => x is IgnoreAttribute attribute && attribute.WhenUpdate))
+                        {
+                            properties.Push(property);
+                        }
+
+                        break;
+                    case DatabaseActions.Delete:
+                        properties.Push(property);
+                        break;
+                    case DatabaseActions.Select:
+                    default:
+                        properties.Push(property);
+                        break;
+                }
+            }
+            return properties;
+        }
     }
 }

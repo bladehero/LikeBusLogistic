@@ -1,6 +1,6 @@
 ﻿namespace LikeBusLogistic.DAL.Models
 {
-    public class Route
+    public class Route : UserTrackedEntity
     {
         public int? DepartureId { get; set; }
         public int? ArrivalId { get; set; }

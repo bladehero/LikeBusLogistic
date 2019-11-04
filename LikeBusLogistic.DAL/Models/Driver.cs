@@ -1,6 +1,6 @@
 ﻿namespace LikeBusLogistic.DAL.Models
 {
-    public class Driver
+    public class Driver : UserTrackedEntity
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
