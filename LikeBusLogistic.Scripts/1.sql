@@ -220,6 +220,7 @@ if not exists (select 1
     Id int not null primary key identity,
     CountryId int null,
     DistrictId int null,
+    CityId int null,
     Name nvarchar(200) not null,
     Latitude float not null,
     Longtitude float not null,
@@ -232,7 +233,8 @@ if not exists (select 1
     IsDeleted bit not null default(0)
 
     constraint FK_dbo_Location_CountryId_dbo_Country_Id foreign key (CountryId) references Country(Id),
-    constraint FK_dbo_Location_DistrictId_dbo_District_Id foreign key (DistrictId) references District(Id)
+    constraint FK_dbo_Location_DistrictId_dbo_District_Id foreign key (DistrictId) references District(Id),
+    constraint FK_dbo_Location_CityId_dbo_City_Id foreign key (CityId) references City(Id)
   );
 go
 
@@ -261,7 +263,7 @@ go
 
 if not exists (select 1 
                from sys.tables t 
-               where t.name='Location' 
+               where t.name='RouteLocation' 
                and t.schema_id = schema_id('dbo'))
   create table dbo.RouteLocation
   (
@@ -312,18 +314,22 @@ if not exists (select 1
                from sys.tables t 
                where t.name='TripDriver' 
                and t.schema_id = schema_id('dbo'))
-  create table dbo.TripDriver
+  create table dbo.TripBusDriver
   (
     Id int not null primary key identity,
-    DriverId int not null,
+    BusId int null,
+    DriverId int null,
     TripId int not null,
+    LocationId int not null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
     DateCreated datetime not null default(getdate()),
     DateModified datetime not null default(getdate()),
     IsDeleted bit not null default(0)
-
+    
+    constraint FK_dbo_TripDriver_BusId_dbo_Bus_Id foreign key (BusId) references Bus(Id),
     constraint FK_dbo_TripDriver_DriverId_dbo_Driver_Id foreign key (DriverId) references Driver(Id),
-    constraint FK_dbo_TripDriver_TripId_dbo_Trip_Id foreign key (TripId) references Trip(Id)
+    constraint FK_dbo_TripDriver_TripId_dbo_Trip_Id foreign key (TripId) references Trip(Id),
+    constraint FK_dbo_TripDriver_LocationId_dbo_Location_Id foreign key (LocationId) references [Location](Id)
   );
 go
