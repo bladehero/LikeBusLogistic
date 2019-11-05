@@ -312,7 +312,7 @@ go
 
 if not exists (select 1 
                from sys.tables t 
-               where t.name='TripDriver' 
+               where t.name='TripBusDriver' 
                and t.schema_id = schema_id('dbo'))
   create table dbo.TripBusDriver
   (
