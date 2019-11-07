@@ -66,18 +66,54 @@ begin
 end
 go
 
-if object_id(N'dbo.GetUserAccount') is null
-  exec('create procedure dbo.GetUserAccount as set nocount on;');
+if object_id(N'dbo.GetUserAccountById') is null
+  exec('create procedure dbo.GetUserAccountById as set nocount on;');
 go
 
 -- ============================================================================
--- Example    : exec dbo.GetUserAccount 'a', 'a'
+-- Example    : exec dbo.GetUserAccountById 'a', 'a'
 -- Author     : Nikita Dermenzhi
 -- Date       : 25/07/2019
 -- Description: —
 -- ============================================================================
 
-alter procedure dbo.GetUserAccount
+alter procedure dbo.GetUserAccountById
+(  
+    @id as int
+)  
+as  
+begin  
+  
+  select a.Id         as AccountId
+       , r.Id         as RoleId
+       , r.Name       as RoleName
+       , u.Id         as UserId
+       , u.FirstName  as FirstName
+       , u.LastName   as LastName
+       , u.MiddleName as MiddleName
+       , u.Phone      as Phone
+       , u.Email      as Email
+    from Account a
+    join [Role] r on a.RoleId = r.Id
+    join [User] u on a.UserId = u.Id
+    where 1=1
+      and a.Id = @id
+
+end;
+go
+
+if object_id(N'dbo.GetUserAccountByCredentials') is null
+  exec('create procedure dbo.GetUserAccountByCredentials as set nocount on;');
+go
+
+-- ============================================================================
+-- Example    : exec dbo.GetUserAccountByCredentials 'a', 'a'
+-- Author     : Nikita Dermenzhi
+-- Date       : 25/07/2019
+-- Description: —
+-- ============================================================================
+
+alter procedure dbo.GetUserAccountByCredentials
 (  
     @login as varchar(100) = null  
   , @password as varchar(100) = null  

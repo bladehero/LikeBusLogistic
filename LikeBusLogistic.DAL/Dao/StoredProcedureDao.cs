@@ -1,4 +1,6 @@
 ﻿using Dapper;
+using LikeBusLogistic.DAL.StoredProcedureResults;
+using System.Collections.Generic;
 using System.Data;
 
 namespace LikeBusLogistic.DAL.Dao
@@ -16,7 +18,16 @@ namespace LikeBusLogistic.DAL.Dao
 
             return Connection.ExecuteScalar<string>("dbo.MD5HashPassword", parameters, commandType: CommandType.StoredProcedure);
         }
-        public string GetUserAccount(string login, string password)
+        public IEnumerable<GetUserAccountByCredentials_Result> GetUserAccountById(int id)
+        {
+            var parameters = new
+            {
+                @id = id
+            };
+
+            return Connection.Query<GetUserAccountByCredentials_Result>("dbo.GetUserAccountById", parameters, commandType: CommandType.StoredProcedure);
+        }
+        public IEnumerable<GetUserAccountByCredentials_Result> GetUserAccountByCredentials(string login, string password)
         {
             var parameters = new
             {
@@ -24,7 +35,7 @@ namespace LikeBusLogistic.DAL.Dao
                 @password = password
             };
 
-            return Connection.ExecuteScalar<string>("dbo.GetUserAccount", parameters, commandType: CommandType.StoredProcedure);
+            return Connection.Query<GetUserAccountByCredentials_Result>("dbo.GetUserAccountByCredentials", parameters, commandType: CommandType.StoredProcedure);
         }
     }
 }
