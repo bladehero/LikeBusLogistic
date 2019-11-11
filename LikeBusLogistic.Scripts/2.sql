@@ -98,6 +98,9 @@ begin
     join [User] u on a.UserId = u.Id
     where 1=1
       and a.Id = @id
+      and a.isDeleted = 0
+      and r.isDeleted = 0
+      and u.isDeleted = 0
 
 end;
 go
@@ -136,6 +139,9 @@ begin
     where 1=1
       and a.Login = @login
       and a.Password = dbo.MD5HashPassword(@password)
+      and a.isDeleted = 0
+      and r.isDeleted = 0
+      and u.isDeleted = 0
 
 end;
 go

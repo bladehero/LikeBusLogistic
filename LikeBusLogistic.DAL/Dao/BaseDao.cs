@@ -59,6 +59,11 @@ namespace LikeBusLogistic.DAL.Dao
             var sql = $"update {TableName} set {string.Join(",", properties.Select(x => x.Name + " = @" + x.Name))} where Id = @Id";
             return Connection.Execute(sql, item) > 0;
         }
+        public virtual bool UpdateDateModified(int id, DateTime? dateTime = null)
+        {
+            var sql = $"update {TableName} set DateModified = {dateTime.GetValueOrDefault(DateTime.Now)} where Id = {id}";
+            return Connection.Execute(sql) > 0;
+        }
         public virtual bool Delete(int id) => Connection.Execute($"update {TableName} set IsDeleted = 1, DateModified = getdate() where Id = {id}") > 0;
         public virtual bool Delete(T item)
         {
@@ -71,6 +76,7 @@ namespace LikeBusLogistic.DAL.Dao
             item.IsDeleted = false;
             return Restore(item.Id);
         }
+        public virtual bool DeleteOrRestore(int id) => FindById(id) is T item ? item.IsDeleted ? Restore(item) : Delete(item) : false;
         public virtual bool DeleteOrRestore(T item) => item.IsDeleted ? Restore(item) : Delete(item);
         public virtual bool Merge(T item) => item?.Id == 0 ? Insert(item) > 0 : Update(item);
 

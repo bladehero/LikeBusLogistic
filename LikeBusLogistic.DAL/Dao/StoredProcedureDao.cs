@@ -9,15 +9,6 @@ namespace LikeBusLogistic.DAL.Dao
     {
         public StoredProcedureDao(IDbConnection connection) : base(connection) { }
 
-        public string MD5HashPassword(string password)
-        {
-            var parameters = new
-            {
-                @password = password
-            };
-
-            return Connection.ExecuteScalar<string>("dbo.MD5HashPassword", parameters, commandType: CommandType.StoredProcedure);
-        }
         public IEnumerable<GetUserAccountByCredentials_Result> GetUserAccountById(int id)
         {
             var parameters = new

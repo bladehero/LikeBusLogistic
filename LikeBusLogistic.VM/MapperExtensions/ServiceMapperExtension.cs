@@ -11,7 +11,16 @@ namespace LikeBusLogistic.VM.MapperExtensions
         {
             _config = new MapperConfiguration(cfg =>
             {
+                #region Account Management Service
                 cfg.CreateMap<Account, AccountVM>();
+                cfg.CreateMap<AccountVM, Account>();
+
+                cfg.CreateMap<Role, RoleVM>();
+                cfg.CreateMap<RoleVM, Role>();
+
+                cfg.CreateMap<User, UserVM>();
+                cfg.CreateMap<UserVM, User>();
+                #endregion
 
                 cfg.CreateMap<GetUserAccountById_Result, AccountUserRoleVM>();
                 cfg.CreateMap<GetUserAccountByCredentials_Result, AccountUserRoleVM>();

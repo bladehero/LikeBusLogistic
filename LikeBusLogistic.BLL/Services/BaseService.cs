@@ -8,6 +8,9 @@ namespace LikeBusLogistic.BLL.Services
 {
     public abstract class BaseService
     {
+        public const string GeneralSuccessMessage = "Успешно выполнено!";
+        public const string GeneralErrorMessage = "Успешно выполнено!";
+
         protected IMapper Mapper => new ServiceMapperExtension().Mapper;
         protected UnitOfWork UnitOfWork { get; set; }
 
