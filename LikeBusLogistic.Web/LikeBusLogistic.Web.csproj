@@ -11,8 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
+    <Folder Include="Views\Home\" />
     <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LikeBusLogistic.BLL\LikeBusLogistic.BLL.csproj" />
   </ItemGroup>
 
 </Project>

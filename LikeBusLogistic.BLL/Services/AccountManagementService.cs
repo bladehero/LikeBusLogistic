@@ -9,6 +9,12 @@ namespace LikeBusLogistic.BLL.Services
 {
     public class AccountManagementService : BaseService
     {
+        public bool Anonymous => !AccountId.HasValue;
+        public AccountUserRoleVM AccountUserRole =>
+        AccountId.HasValue
+        ? Mapper.Map<AccountUserRoleVM>(UnitOfWork.StoredProcedureDao.GetUserAccountById(AccountId.Value))
+        : null;
+
         public AccountManagementService(IDbConnection connection) : base(connection) { }
 
         public BaseResult<AccountUserRoleVM> SignIn(string login, string password)

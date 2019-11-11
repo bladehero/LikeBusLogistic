@@ -1,24 +1,19 @@
-﻿@{
+﻿@model  LikeBusLogistic.Web.Models.Account.LoginVM
+@{
     Layout = null;
 }
-
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Войти в систему LikeBusLogistic</title>
     <link href="~/lib/uikit/css/uikit.css" rel="stylesheet" />
     <style>
         .content {
-            /*width: 200px;*/
-            /*height: 600px;*/
-            position: absolute; /*it can be fixed too*/
+            position: absolute;
             left: 0;
             right: 0;
             top: 0;
             bottom: 0;
             margin: auto;
-            /*this to solve "the content will not be cut when the window is smaller than the content": */
-            /*max-width: 100%;*/
-            /*max-height: 100%;*/
             overflow: auto;
         }
     </style>
@@ -28,19 +23,19 @@
         <div></div>
         <div>
             <div class="uk-card uk-card-default uk-card-body uk-margin-top uk-margin-left uk-margin-right">
-                <form asp-controller="Home" asp-action="Login">
+                <form asp-controller="Account" asp-action="Login">
                     <fieldset class="uk-fieldset uk-text-center">
                         <legend class="uk-legend">LikeBusLogistic</legend>
                         <div class="uk-margin">
                             <div class="uk-inline">
                                 <span class="uk-form-icon" uk-icon="icon: user"></span>
-                                <input class="uk-input" type="text">
+                                <input class="uk-input" type="text" asp-for="Login">
                             </div>
                         </div>
                         <div class="uk-margin">
                             <div class="uk-inline">
                                 <button type="button" class="uk-form-icon uk-form-icon-flip" uk-icon="icon: lock" onclick="showPassword()"></button>
-                                <input class="uk-input" type="password" id="password">
+                                <input class="uk-input" type="password" asp-for="Password">
                             </div>
                         </div>
                         <div class="uk-margin">

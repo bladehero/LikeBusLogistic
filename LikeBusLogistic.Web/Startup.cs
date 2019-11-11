@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using LikeBusLogistic.BLL;
+using LikeBusLogistic.BLL.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +14,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace LikeBusLogistic.Web
 {
@@ -31,6 +37,28 @@ namespace LikeBusLogistic.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            var authOptions = new AuthOptions();
+            Configuration.GetSection("AuthOptions").Bind(authOptions);
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = authOptions.Issuer,
+                    ValidateAudience = true,
+                    ValidAudience = authOptions.Audience,
+                    ValidateLifetime = true,
+                    IssuerSigningKey = authOptions.GetSymmetricSecurityKey(),
+                    ValidateIssuerSigningKey = true
+                };
+            });
+
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            var connection = new SqlConnection(connectionString);
+            services.AddScoped(x => new AccountManagementService(connection));
+            services.AddScoped(x => authOptions);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
