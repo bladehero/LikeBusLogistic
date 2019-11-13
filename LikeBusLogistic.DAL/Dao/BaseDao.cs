@@ -61,7 +61,7 @@ namespace LikeBusLogistic.DAL.Dao
         }
         public virtual bool UpdateDateModified(int id, DateTime? dateTime = null)
         {
-            var sql = $"update {TableName} set DateModified = {dateTime.GetValueOrDefault(DateTime.Now)} where Id = {id}";
+            var sql = $"update {TableName} set DateModified = '{dateTime.GetValueOrDefault(DateTime.Now).ToString("yyyy-MM-ddTHH:mm:ss")}' where Id = {id}";
             return Connection.Execute(sql) > 0;
         }
         public virtual bool Delete(int id) => Connection.Execute($"update {TableName} set IsDeleted = 1, DateModified = getdate() where Id = {id}") > 0;

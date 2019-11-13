@@ -1,6 +1,9 @@
 ﻿@model  LikeBusLogistic.Web.Models.Account.LoginVM
 @{
     Layout = null;
+    var hasError = ViewBag.HasError ?? false;
+    var errorMessage = ViewBag.ErrorMessage;
+    var redirectToHome = ViewBag.RedirectToHome ?? false;
 }
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -29,13 +32,13 @@
                         <div class="uk-margin">
                             <div class="uk-inline">
                                 <span class="uk-form-icon" uk-icon="icon: user"></span>
-                                <input class="uk-input" type="text" asp-for="Login">
+                                <input class="uk-input" type="text" asp-for="Login" tabindex="1" value="@Model.Login">
                             </div>
                         </div>
                         <div class="uk-margin">
                             <div class="uk-inline">
-                                <button type="button" class="uk-form-icon uk-form-icon-flip" uk-icon="icon: lock" onclick="showPassword()"></button>
-                                <input class="uk-input" type="password" asp-for="Password">
+                                <button type="button" class="uk-form-icon uk-form-icon-flip" uk-icon="icon: lock" onclick="showPassword()" tabindex="3"></button>
+                                <input class="uk-input" type="password" id="password" asp-for="Password" value="@Model.Password" tabindex="2">
                             </div>
                         </div>
                         <div class="uk-margin">
@@ -50,6 +53,8 @@
 
     <script src="~/lib/uikit/js/uikit.js"></script>
     <script src="~/lib/uikit/js/uikit-icons.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="~/js/site.js"></script>
     <script>
         function showPassword() {
             var x = document.getElementById("password");
@@ -58,6 +63,14 @@
             } else {
                 x.type = "password";
             }
+        }
+        @if (hasError)
+        {
+        @:Swal.fire({ icon: 'error', title: 'Ошибка', text: '@Html.Raw(errorMessage)' });
+        }
+        else if (redirectToHome)
+        {
+        @:app.getPage('@Url.Action("Index", "Home")');
         }
     </script>
 </body>

@@ -1,5 +1,6 @@
 ﻿using LikeBusLogistic.BLL;
 using LikeBusLogistic.BLL.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -10,6 +11,7 @@ using System.Security.Claims;
 
 namespace LikeBusLogistic.Web.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         public IActionResult Index()

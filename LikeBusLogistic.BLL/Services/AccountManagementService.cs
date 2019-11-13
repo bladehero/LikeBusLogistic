@@ -15,7 +15,7 @@ namespace LikeBusLogistic.BLL.Services
         ? Mapper.Map<AccountUserRoleVM>(UnitOfWork.StoredProcedureDao.GetUserAccountById(AccountId.Value))
         : null;
 
-        public AccountManagementService(IDbConnection connection) : base(connection) { }
+        public AccountManagementService(string connection) : base(connection) { }
 
         public BaseResult<AccountUserRoleVM> SignIn(string login, string password)
         {
@@ -23,13 +23,20 @@ namespace LikeBusLogistic.BLL.Services
             try
             {
                 var accountUserRole = UnitOfWork.StoredProcedureDao.GetUserAccountByCredentials(login, password).FirstOrDefault();
-                var accountUserRoleVM = Mapper.Map<AccountUserRoleVM>(accountUserRole);
+                if (accountUserRole != null)
+                {
+                    var accountUserRoleVM = Mapper.Map<AccountUserRoleVM>(accountUserRole);
 
-                UnitOfWork.AccountDao.UpdateDateModified(accountUserRole.AccountId);
+                    UnitOfWork.AccountDao.UpdateDateModified(accountUserRole.AccountId);
 
-                result.Data = accountUserRoleVM;
-                result.Success = true;
-                result.Message = GeneralSuccessMessage;
+                    result.Data = accountUserRoleVM;
+                    result.Success = true;
+                    result.Message = GeneralSuccessMessage;
+                }
+                else
+                {
+                    result.Message = "Неверные логин или пароль!";
+                }
             }
             catch (Exception ex)
             {
