@@ -3,7 +3,6 @@
     Layout = null;
     var hasError = ViewBag.HasError ?? false;
     var errorMessage = ViewBag.ErrorMessage;
-    var redirectToHome = ViewBag.RedirectToHome ?? false;
 }
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -67,10 +66,6 @@
         @if (hasError)
         {
         @:Swal.fire({ icon: 'error', title: 'Ошибка', text: '@Html.Raw(errorMessage)' });
-        }
-        else if (redirectToHome)
-        {
-        @:app.getPage('@Url.Action("Index", "Home")');
         }
     </script>
 </body>

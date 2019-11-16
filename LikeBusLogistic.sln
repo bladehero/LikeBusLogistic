@@ -18,7 +18,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LikeBusLogistic.Scripts", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LikeBusLogistic.VM", "LikeBusLogistic.VM\LikeBusLogistic.VM.csproj", "{EEC1196A-2A7F-4296-BD10-8C158AF18181}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LikeBusLogistic.BLL", "LikeBusLogistic.BLL\LikeBusLogistic.BLL.csproj", "{0AB7A57F-0C47-4401-A827-4A2DC37A9476}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LikeBusLogistic.BLL", "LikeBusLogistic.BLL\LikeBusLogistic.BLL.csproj", "{0AB7A57F-0C47-4401-A827-4A2DC37A9476}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JwtAuthenticationHelper", "JwtAuthenticationHelper\JwtAuthenticationHelper.csproj", "{3EFACAC2-4A6B-4A35-AAB8-5DDD88ECCEA0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,6 +44,10 @@ Global
 		{0AB7A57F-0C47-4401-A827-4A2DC37A9476}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AB7A57F-0C47-4401-A827-4A2DC37A9476}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AB7A57F-0C47-4401-A827-4A2DC37A9476}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EFACAC2-4A6B-4A35-AAB8-5DDD88ECCEA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EFACAC2-4A6B-4A35-AAB8-5DDD88ECCEA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EFACAC2-4A6B-4A35-AAB8-5DDD88ECCEA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EFACAC2-4A6B-4A35-AAB8-5DDD88ECCEA0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

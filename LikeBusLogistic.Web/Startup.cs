@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LikeBusLogistic.BLL;
+﻿using JwtAuthenticationHelper.Types;
 using LikeBusLogistic.BLL.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
+using JwtAuthenticationHelper.Extensions;
 
 namespace LikeBusLogistic.Web
 {
@@ -30,28 +21,23 @@ namespace LikeBusLogistic.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var tokenOptions = new TokenOptions();
+            Configuration.GetSection("TokenOptions").Bind(tokenOptions);
 
-            var authOptions = new AuthOptions();
-            Configuration.GetSection("AuthOptions").Bind(authOptions);
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+            var authUrlOptions = new AuthUrlOptions();
+            Configuration.GetSection("AuthUrlOptions").Bind(authUrlOptions);
+
+            services.AddJwtAuthenticationWithProtectedCookie(tokenOptions, authUrlOptions: authUrlOptions);
+            services.AddAuthorization(options =>
             {
-                options.RequireHttpsMetadata = false;
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidIssuer = authOptions.Issuer,
-                    ValidateAudience = true,
-                    ValidAudience = authOptions.Audience,
-                    ValidateLifetime = true,
-                    IssuerSigningKey = authOptions.GetSymmetricSecurityKey(),
-                    ValidateIssuerSigningKey = true
-                };
+                options.AddPolicy("RequiresAdmin",
+                    policy =>
+                    policy.RequireClaim("HasAdminRights"));
             });
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddScoped(x => new AccountManagementService(connectionString));
-            services.AddScoped(x => authOptions);
+            services.AddScoped(x => tokenOptions);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -59,16 +45,6 @@ namespace LikeBusLogistic.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseDeveloperExceptionPage();
-            //}
-            //else
-            //{
-            //    app.UseExceptionHandler("/Home/Error");
-            //    app.UseHsts();
-            //}
-
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseAuthentication();
