@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using JwtAuthenticationHelper.Extensions;
+using LikeBusLogistic.BLL;
 
 namespace LikeBusLogistic.Web
 {
@@ -36,8 +37,8 @@ namespace LikeBusLogistic.Web
             });
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
-            services.AddScoped(x => new AccountManagementService(connectionString));
-            services.AddScoped(x => tokenOptions);
+
+            services.AddScoped(x => new ServiceFactory(connectionString));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

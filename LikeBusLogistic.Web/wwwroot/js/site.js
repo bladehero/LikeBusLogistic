@@ -10,8 +10,8 @@
                     bottom: '0px',
                     height: 50
                 }, app.footer.animateTimer);
-                app.footer.mode = 0;
                 app.footer.slideButton.find('span').attr('uk-icon', 'chevron-up');
+                app.footer.mode = 0;
                 app.footer.content.fadeOut(app.footer.animateTimer / 1.5);
             } else if (app.footer.mode > 0) {
                 app.footer.element.stop().animate({
@@ -23,8 +23,9 @@
                 app.footer.element.stop().animate({
                     height: $(window).height() / 3
                 }, app.footer.animateTimer / 1.5);
-                app.footer.content.fadeIn(app.footer.animateTimer / 1.25);
+                app.footer.slideButton.find('span').attr('uk-icon', 'chevron-up');
                 app.footer.mode = 1;
+                app.footer.content.fadeIn(app.footer.animateTimer / 1.25);
             }
         }),
         changeMode: function (m) {
@@ -34,13 +35,18 @@
         maximize: function () { app.footer.changeMode(1); },
         show: function () { app.footer.changeMode(0); },
         hide: function () { app.footer.changeMode(-1); },
-        getContent: function (url, data) {
+        getContent: function (url, data, finished) {
             app.footer.content.html('<div uk-spinner="ratio: 1.5"></div>');
             app.footer.show();
             $.get(url, data, function (html) {
                 app.footer.content.html(html);
             }).fail(function () {
-                app.footer.content.html('Произошла непредвиденная ошибка!');
+                    app.footer.content.html('Произошла непредвиденная ошибка!');
+            }).then(function () {
+                    debugger;
+                if (finished) {
+                    finished();
+                }
             });
         }
     },
@@ -81,6 +87,8 @@
 
 $(document).ready(function () {
     $('.menu-item').click(function () {
-        app.footer.getContent($(this).data('href'));
+        app.footer.getContent($(this).data('href'), null, function () {
+            UIkit.offcanvas('#offcanvas-slide').hide();
+        });
     });
 });

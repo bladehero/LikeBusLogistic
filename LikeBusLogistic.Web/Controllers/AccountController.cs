@@ -4,7 +4,7 @@ using System.Security.Authentication;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using JwtAuthenticationHelper.Abstractions;
-using JwtAuthenticationHelper.Types;
+using LikeBusLogistic.BLL;
 using LikeBusLogistic.BLL.Services;
 using LikeBusLogistic.Web.Models.Account;
 using Microsoft.AspNetCore.Authentication;
@@ -18,18 +18,20 @@ namespace LikeBusLogistic.Web.Controllers
     public class AccountController : BaseController
     {
         private IJwtTokenGenerator _tokenGenerator;
+        private ServiceFactory _serviceFactory;
 
-        public AccountController(IJwtTokenGenerator tokenGenerator, AccountManagementService accountManagementService)
-            : base(accountManagementService)
+        public AccountController(IJwtTokenGenerator tokenGenerator, 
+            ServiceFactory serviceFactory) : base(serviceFactory)
         {
             _tokenGenerator = tokenGenerator;
+            _serviceFactory = serviceFactory;
         }
 
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Index(LoginVM model)
         {
-            if (!AccountManagementService.Anonymous)
+            if (!_serviceFactory.AccountManagement.Anonymous)
             {
                 return RedirectToAction(nameof(BusController.Index), "Bus");
             }
@@ -44,7 +46,7 @@ namespace LikeBusLogistic.Web.Controllers
         {
             try
             {
-                var result = AccountManagementService.SignIn(model.Login, model.Password);
+                var result = _serviceFactory.AccountManagement.SignIn(model.Login, model.Password);
                 if (!result.Success)
                 {
                     throw new InvalidCredentialException(result.Message);
@@ -76,7 +78,7 @@ namespace LikeBusLogistic.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            AccountManagementService.LogOff();
+            _serviceFactory.AccountManagement.LogOff();
             return RedirectToAction(nameof(AccountController.Index), "Account");
         }
 

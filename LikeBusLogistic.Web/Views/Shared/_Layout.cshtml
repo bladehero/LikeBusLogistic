@@ -16,27 +16,51 @@
             <button class="uk-offcanvas-close" type="button" uk-close></button>
             <ul class="uk-nav uk-nav-default">
                 <li class="uk-parent">
-                    <a class="menu-item" data-href="@Url.Action("_FullInformation", "Bus")">Автобусы</a>
+                    <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Bus")">
+                        <span class="uk-margin-small-right" uk-icon="icon: list; ratio: 0.8;"></span>
+                        Автобусы
+                    </a>
                     <ul class="uk-nav-sub">
                         <li><a class="menu-item" data-href="@Url.Action("_Buses", "Bus")">Машины</a></li>
                         <li><a class="menu-item" data-href="@Url.Action("_Vehicles", "Bus")">Модели</a></li>
                     </ul>
                 </li>
-
-
-                <li class="uk-active"><a href="#">Active</a></li>
+                <li class="uk-nav-divider"></li>
                 <li class="uk-parent">
-                    <a href="#">Parent</a>
+                    <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Driver")">
+                        <span class="uk-margin-small-right" uk-icon="icon: happy; ratio: 0.8;"></span>
+                        Водители
+                    </a>
                     <ul class="uk-nav-sub">
-                        <li><a href="#">Sub item</a></li>
-                        <li><a href="#">Sub item</a></li>
+                        <li><a class="menu-item" data-href="@Url.Action("_Information", "Driver")">Информация</a></li>
+                        <li><a class="menu-item" data-href="@Url.Action("_Contacts", "Driver")">Контакты</a></li>
                     </ul>
                 </li>
-                <li class="uk-nav-header">Header</li>
-                <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: table"></span> Item</a></li>
-                <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span> Item</a></li>
                 <li class="uk-nav-divider"></li>
-                <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: trash"></span> Item</a></li>
+                <li class="uk-parent">
+                    <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Geolocation")">
+                        <span class="uk-margin-small-right" uk-icon="icon: location; ratio: 0.8;"></span>
+                        Логистика
+                    </a>
+                    <ul class="uk-nav-sub">
+                        <li><a class="menu-item" data-href="@Url.Action("_Locations", "Geolocation")">Контрольные точки</a></li>
+                        <li><a class="menu-item" data-href="@Url.Action("_CountriesDistrictsCities", "Geolocation")">Города и страны</a></li>
+                        <li class="uk-nav-divider"></li>
+                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Route")">Маршруты</a></li>
+                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Logistic")">Рейсы</a></li>
+                    </ul>
+                </li>
+                <li class="uk-nav-divider"></li>
+                <li class="uk-parent">
+                    <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Account")">
+                        <span class="uk-margin-small-right" uk-icon="icon: users; ratio: 0.8;"></span>
+                        Учетные записи
+                    </a>
+                    <ul class="uk-nav-sub">
+                        <li><a class="menu-item" data-href="@Url.Action("_AccountManagement", "Account")">Аккаунты</a></li>
+                        <li><a class="menu-item" data-href="@Url.Action("_UserManagement", "Account")">Пользователи</a></li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>
@@ -45,7 +69,7 @@
         @RenderBody()
     </main>
 
-    <footer>
+    <footer class="uk-margin-small-left uk-margin-small-right uk-margin-remove-left\@@s uk-margin-remove-right\@@s">
         <button id="slide-up" class="uk-button uk-button-link uk-text-light uk-background-secondary uk-margin-medium-left uk-padding-small uk-padding-remove-vertical" style="border-radius: 5px 5px 0px 0px;">
             <span uk-icon="icon: chevron-up; ratio: 1.2;"></span>
         </button>
