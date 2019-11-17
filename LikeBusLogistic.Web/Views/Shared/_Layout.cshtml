@@ -4,16 +4,60 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LikeBusLogistic</title>
+    <link href="~/lib/uikit/css/uikit.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2019 - LikeBusLogistic.Web</p>
-        </footer>
+    <button id="menu-button" class="uk-button uk-button-link uk-background-secondary uk-padding-small uk-padding-remove-horizontal" type="button" uk-toggle="target: #offcanvas-slide" style="border-radius: 0px 5px 5px 0px;">
+        <span uk-icon="icon: chevron-right; ratio: 1.2;"></span>
+    </button>
+    <div id="offcanvas-slide" uk-offcanvas="overlay: true;">
+        <div class="uk-offcanvas-bar">
+            <button class="uk-offcanvas-close" type="button" uk-close></button>
+            <ul class="uk-nav uk-nav-default">
+                <li class="uk-parent">
+                    <a class="menu-item" data-href="@Url.Action("_FullInformation", "Bus")">Автобусы</a>
+                    <ul class="uk-nav-sub">
+                        <li><a class="menu-item" data-href="@Url.Action("_Buses", "Bus")">Машины</a></li>
+                        <li><a class="menu-item" data-href="@Url.Action("_Vehicles", "Bus")">Модели</a></li>
+                    </ul>
+                </li>
+
+
+                <li class="uk-active"><a href="#">Active</a></li>
+                <li class="uk-parent">
+                    <a href="#">Parent</a>
+                    <ul class="uk-nav-sub">
+                        <li><a href="#">Sub item</a></li>
+                        <li><a href="#">Sub item</a></li>
+                    </ul>
+                </li>
+                <li class="uk-nav-header">Header</li>
+                <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: table"></span> Item</a></li>
+                <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span> Item</a></li>
+                <li class="uk-nav-divider"></li>
+                <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: trash"></span> Item</a></li>
+            </ul>
+        </div>
     </div>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer>
+        <button id="slide-up" class="uk-button uk-button-link uk-text-light uk-background-secondary uk-margin-medium-left uk-padding-small uk-padding-remove-vertical" style="border-radius: 5px 5px 0px 0px;">
+            <span uk-icon="icon: chevron-up; ratio: 1.2;"></span>
+        </button>
+        <div class="uk-background-secondary uk-border-rounded uk-padding-small uk-box-shadow-medium" id="slide">
+            <div class="uk-text-white" id="footer-content"></div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/uikit/js/uikit.js"></script>
+    <script src="~/lib/uikit/js/uikit-icons.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>

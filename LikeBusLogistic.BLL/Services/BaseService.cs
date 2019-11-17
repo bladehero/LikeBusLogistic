@@ -18,7 +18,7 @@ namespace LikeBusLogistic.BLL.Services
         protected UnitOfWork UnitOfWork { get; set; }
         protected IDbConnection Connection => new SqlConnection(_connectionString);
 
-        protected int? AccountId { get; set; }
+        public int? AccountId { get; set; }
 
         public BaseService(string connection)
         {

@@ -15,23 +15,25 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LikeBusLogistic.Web.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private IJwtTokenGenerator _tokenGenerator;
-        private AccountManagementService _accountManagementService;
-        private TokenOptions _tokenOptions;
 
-        public AccountController(IJwtTokenGenerator tokenGenerator, AccountManagementService accountManagementService, TokenOptions tokenOptions)
+        public AccountController(IJwtTokenGenerator tokenGenerator, AccountManagementService accountManagementService)
+            : base(accountManagementService)
         {
             _tokenGenerator = tokenGenerator;
-            _accountManagementService = accountManagementService;
-            _tokenOptions = tokenOptions;
         }
 
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Index(LoginVM model)
         {
+            if (!AccountManagementService.Anonymous)
+            {
+                return RedirectToAction(nameof(BusController.Index), "Bus");
+            }
+
             return View(model);
         }
 
@@ -42,13 +44,13 @@ namespace LikeBusLogistic.Web.Controllers
         {
             try
             {
-                var result = _accountManagementService.SignIn(model.Login, model.Password);
+                var result = AccountManagementService.SignIn(model.Login, model.Password);
                 if (!result.Success)
                 {
                     throw new InvalidCredentialException(result.Message);
                 }
                 var accessTokenResult = _tokenGenerator.GenerateAccessTokenWithClaimsPrincipal(
-                    model.Login, AddMyClaims(result.Data.FirstName, result.Data.RoleName));
+                    model.Login, AddMyClaims(result.Data.AccountId, result.Data.FirstName, result.Data.RoleName));
 
                 await HttpContext.SignInAsync(accessTokenResult.ClaimsPrincipal,
                     accessTokenResult.AuthProperties);
@@ -74,13 +76,14 @@ namespace LikeBusLogistic.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
+            AccountManagementService.LogOff();
             return RedirectToAction(nameof(AccountController.Index), "Account");
         }
 
-        private static IEnumerable<Claim> AddMyClaims(string name, string role) =>
+        private static IEnumerable<Claim> AddMyClaims(int accountId, string name, string role) =>
         new []
         {
+            new Claim(ClaimTypes.NameIdentifier, accountId.ToString()),
             new Claim(ClaimTypes.GivenName, name),
             new Claim(ClaimTypes.Role, role)
         };

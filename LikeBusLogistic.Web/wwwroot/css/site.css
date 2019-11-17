@@ -1,1 +1,43 @@
-﻿
+﻿#slide {
+    height: 100%;
+}
+
+footer {
+    margin: 0px 15px;
+    position: fixed;
+    bottom: 0px;
+    height: 50px;
+    width: 100%;
+    width: -moz-available; /* WebKit-based browsers will ignore this. */
+    width: -webkit-fill-available; /* Mozilla-based browsers will ignore this. */
+    width: fill-available;
+    left: 0px;
+    display: inline-block;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+#menu-button {
+    position: fixed;
+    top: 12px;
+    left: 0px;
+}
+
+.uk-text-white {
+    color: white;
+}
+
+#footer-content div svg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: black;
+}

@@ -1,4 +1,4 @@
-﻿@model  LikeBusLogistic.Web.Models.Account.LoginVM
+﻿@model LikeBusLogistic.Web.Models.Account.LoginVM
 @{
     Layout = null;
     var hasError = ViewBag.HasError ?? false;
@@ -8,23 +8,11 @@
 <head>
     <title>Войти в систему LikeBusLogistic</title>
     <link href="~/lib/uikit/css/uikit.css" rel="stylesheet" />
-    <style>
-        .content {
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            margin: auto;
-            overflow: auto;
-        }
-    </style>
 </head>
 <body>
-    <div class="uk-child-width-expand@s uk-text-center" uk-grid>
-        <div></div>
-        <div>
-            <div class="uk-card uk-card-default uk-card-body uk-margin-top uk-margin-left uk-margin-right">
+    <div class="uk-container uk-margin-large-top"s>
+        <div class="uk-flex uk-flex-center">
+            <div class="uk-card uk-card-default uk-card-hover uk-card-body">
                 <form asp-controller="Account" asp-action="Login">
                     <fieldset class="uk-fieldset uk-text-center">
                         <legend class="uk-legend">LikeBusLogistic</legend>
@@ -47,12 +35,13 @@
                 </form>
             </div>
         </div>
-        <div></div>
     </div>
+
 
     <script src="~/lib/uikit/js/uikit.js"></script>
     <script src="~/lib/uikit/js/uikit-icons.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/js/site.js"></script>
     <script>
         function showPassword() {
@@ -65,7 +54,7 @@
         }
         @if (hasError)
         {
-        @:Swal.fire({ icon: 'error', title: 'Ошибка', text: '@Html.Raw(errorMessage)' });
+        @: app.message.showErrorWithOk('Ошибка', '@Html.Raw(errorMessage)');
         }
     </script>
 </body>
