@@ -5,13 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LikeBusLogistic</title>
     <link href="~/lib/uikit/css/uikit.css" rel="stylesheet" />
+    <link href="http://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+    @*<link href="~/lib/pagination/css/pagination.css" />*@
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
-    <button id="menu-button" class="uk-button uk-button-link uk-background-secondary uk-padding-small uk-padding-remove-horizontal" type="button" uk-toggle="target: #offcanvas-slide" style="border-radius: 0px 5px 5px 0px;">
-        <span uk-icon="icon: chevron-right; ratio: 1.2;"></span>
+
+    <button id="menu-button" class="uk-button uk-button-link uk-background-secondary uk-padding-small uk-padding-remove-horizontal" type="button" uk-toggle="target: #offcanvas-slide" style="border-radius: 5px 0px 0px 5px;">
+        <span uk-icon="icon: chevron-left; ratio: 1.2;"></span>
     </button>
-    <div id="offcanvas-slide" uk-offcanvas="overlay: true;">
+    <div id="offcanvas-slide" uk-offcanvas="overlay: true; flip: true;">
         <div class="uk-offcanvas-bar">
             <button class="uk-offcanvas-close" type="button" uk-close></button>
             <ul class="uk-nav uk-nav-default">
@@ -65,16 +69,19 @@
         </div>
     </div>
 
-    <main>
+    <main class="uk-background-muted">
+        <div id="map"></div>
         @RenderBody()
     </main>
 
-    <footer class="uk-margin-small-left uk-margin-small-right uk-margin-remove-left\@@s uk-margin-remove-right\@@s">
-        <button id="slide-up" class="uk-button uk-button-link uk-text-light uk-background-secondary uk-margin-medium-left uk-padding-small uk-padding-remove-vertical" style="border-radius: 5px 5px 0px 0px;">
+    <footer>
+        <button id="slide-up" class="uk-button uk-button-link uk-text-light uk-background-muted uk-margin-medium-left uk-padding-small uk-padding-remove-vertical" style="border-radius: 5px 5px 0px 0px;">
             <span uk-icon="icon: chevron-up; ratio: 1.2;"></span>
         </button>
-        <div class="uk-background-secondary uk-border-rounded uk-padding-small uk-box-shadow-medium" id="slide">
-            <div class="uk-text-white" id="footer-content"></div>
+        <div class="uk-background-muted uk-border-rounded uk-padding-small uk-box-shadow-medium" id="slide">
+            <div class="uk-text-secondary" id="footer-content">
+                <div class="uk-text-center"></div>
+            </div>
         </div>
     </footer>
 
@@ -82,6 +89,9 @@
     <script src="~/lib/uikit/js/uikit.js"></script>
     <script src="~/lib/uikit/js/uikit-icons.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+    <script src="http://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    @*<script src="~/lib/pagination/js/pagination.min.js"></script>*@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>

@@ -12,7 +12,7 @@ namespace LikeBusLogistic.BLL.Services
         private string _connectionString;
 
         public const string GeneralSuccessMessage = "Успешно выполнено!";
-        public const string GeneralErrorMessage = "Успешно выполнено!";
+        public const string GeneralErrorMessage = "Произошла ошибка!";
 
         protected IMapper Mapper => new ServiceMapperExtension().Mapper;
         protected UnitOfWork UnitOfWork { get; set; }

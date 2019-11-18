@@ -22,7 +22,7 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<AccountUserRoleVM>();
             try
             {
-                var accountUserRole = UnitOfWork.StoredProcedureDao.GetUserAccountByCredentials(login, password).FirstOrDefault();
+                var accountUserRole = UnitOfWork.StoredProcedureDao.GetUserAccountByCredentials(login, password);
                 if (accountUserRole != null)
                 {
                     var accountUserRoleVM = Mapper.Map<AccountUserRoleVM>(accountUserRole);

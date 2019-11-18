@@ -20,10 +20,21 @@ namespace LikeBusLogistic.VM.MapperExtensions
 
                 cfg.CreateMap<User, UserVM>();
                 cfg.CreateMap<UserVM, User>();
-                #endregion
 
                 cfg.CreateMap<GetUserAccountById_Result, AccountUserRoleVM>();
                 cfg.CreateMap<GetUserAccountByCredentials_Result, AccountUserRoleVM>();
+
+                cfg.CreateMap<AccountUserRoleVM, GetUserAccountById_Result>();
+                cfg.CreateMap<AccountUserRoleVM, GetUserAccountByCredentials_Result>();
+                #endregion
+
+                #region Bus Management Service
+                cfg.CreateMap<Vehicle, VehicleVM>();
+                cfg.CreateMap<VehicleVM, Vehicle>();
+
+                cfg.CreateMap<Bus, BusVM>();
+                cfg.CreateMap<BusVM, Bus>();
+                #endregion
             });
         }
     }

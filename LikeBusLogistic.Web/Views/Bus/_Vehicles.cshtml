@@ -1,1 +1,29 @@
-﻿<p>_Vehicles</p>
+﻿@model LikeBusLogistic.Web.Models.Buses.VehiclesVM
+
+<table class="uk-table uk-table-small uk-table-hover" id="vehicles-table">
+    <caption>Модели</caption>
+    <thead>
+        <tr>
+            <th>Производитель</th>
+            <th>Модель</th>
+            <th>Пасс-емкость</th>
+            <th>Описание</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var vehicle in Model.Vehicles)
+        {
+            <tr data-vehicle-id="@vehicle.Id">
+                <td>@vehicle.Producer</td>
+                <td>@vehicle.Model</td>
+                <td>@vehicle.PassengerCapacity</td>
+                <td>@vehicle.Description</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    $(document).ready(function () {
+        $('#vehicles-table').dataTable();
+    });
+</script>

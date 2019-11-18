@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LikeBusLogistic.BLL;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LikeBusLogistic.Web.Controllers
 {
-    [Authorize]
-    public class LogisticController : BaseController
+    public class HomeController : BaseController
     {
-        public LogisticController(ServiceFactory serviceFactory) : base(serviceFactory)
+        public HomeController(ServiceFactory serviceFactory) : base(serviceFactory)
         {
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View();

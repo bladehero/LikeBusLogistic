@@ -2,39 +2,56 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LikeBusLogistic.BLL;
+using LikeBusLogistic.Web.Models.Buses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LikeBusLogistic.Web.Controllers
 {
     [Authorize]
-    public class BusController : Controller
+    public class BusController : BaseController
     {
-        [HttpGet]
-        public IActionResult Index()
+        public BusController(ServiceFactory serviceFactory) : base(serviceFactory)
         {
-            return View();
         }
 
         [HttpGet]
         public IActionResult _FullInformation()
         {
-            System.Threading.Thread.Sleep(2000);
-            return PartialView();
-        }
+            var buses = ServiceFactory.BusManagement.GetBuses();
+            var vehicles = ServiceFactory.BusManagement.GetVehicles();
 
-        [HttpGet]
-        public IActionResult _Vehicles()
-        {
-            System.Threading.Thread.Sleep(2000);
-            return PartialView();
+            var model = new FullInformationVM
+            {
+                Buses = buses.Data,
+                Vehicles = vehicles.Data
+            };
+            return PartialView(model);
         }
 
         [HttpGet]
         public IActionResult _Buses()
         {
-            System.Threading.Thread.Sleep(2000);
-            return PartialView();
+            var buses = ServiceFactory.BusManagement.GetBuses();
+
+            var model = new BusesVM
+            {
+                Buses = buses.Data
+            };
+            return PartialView(model);
+        }
+
+        [HttpGet]
+        public IActionResult _Vehicles()
+        {
+            var vehicles = ServiceFactory.BusManagement.GetVehicles();
+
+            var model = new VehiclesVM
+            {
+                Vehicles = vehicles.Data
+            };
+            return PartialView(model);
         }
     }
 }

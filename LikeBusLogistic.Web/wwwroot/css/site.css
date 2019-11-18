@@ -1,12 +1,13 @@
 ﻿#slide {
     height: 100%;
+    overflow-y: scroll;
 }
 
 footer {
     /*margin: 0px 15px;*/
     position: fixed;
     bottom: 0px;
-    height: 50px;
+    height: 28px;
     width: 100%;
     width: -moz-available; /* WebKit-based browsers will ignore this. */
     width: -webkit-fill-available; /* Mozilla-based browsers will ignore this. */
@@ -15,16 +16,22 @@ footer {
     display: inline-block;
     overflow: hidden;
     cursor: pointer;
+    z-index: 9999998;
 }
 
 #menu-button {
     position: fixed;
     top: 12px;
-    left: 0px;
+    right: 0px;
+    z-index: 999;
 }
 
 .uk-text-white {
     color: white;
+}
+
+#footer-content{
+    margin-bottom: 50px;
 }
 
 #footer-content div svg {
@@ -40,4 +47,38 @@ footer {
 
 ::-webkit-scrollbar-thumb {
     background-color: black;
+}
+
+#map {
+    position: fixed; 
+    height: 100vh;
+    width: 100%;
+    width: -moz-available; /* WebKit-based browsers will ignore this. */
+    width: -webkit-fill-available; /* Mozilla-based browsers will ignore this. */
+    width: fill-available;
+    z-index: -9999999 !important;
+}
+
+#offcanvas-slide{
+    z-index: 9999999;
+}
+
+@media screen and (max-width: 652px) {
+    footer {
+        margin-left: 0px !important;
+        margin-right: 0px !important;
+    }
+}
+
+footer {
+    margin-left: 15px !important;
+    margin-right: 15px !important;
+}
+
+/* On screens that are 600px or less, set the background color to olive */
+@media screen and (max-width: 1200px) {
+    footer {
+        margin-left: 0px !important;
+        margin-right: 0px !important;
+    }
 }

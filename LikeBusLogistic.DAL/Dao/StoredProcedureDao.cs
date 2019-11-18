@@ -2,6 +2,7 @@
 using LikeBusLogistic.DAL.StoredProcedureResults;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 
 namespace LikeBusLogistic.DAL.Dao
 {
@@ -9,16 +10,16 @@ namespace LikeBusLogistic.DAL.Dao
     {
         public StoredProcedureDao(IDbConnection connection) : base(connection) { }
 
-        public IEnumerable<GetUserAccountByCredentials_Result> GetUserAccountById(int id)
+        public GetUserAccountByCredentials_Result GetUserAccountById(int id)
         {
             var parameters = new
             {
                 @id = id
             };
 
-            return Connection.Query<GetUserAccountByCredentials_Result>("dbo.GetUserAccountById", parameters, commandType: CommandType.StoredProcedure);
+            return Connection.Query<GetUserAccountByCredentials_Result>("dbo.GetUserAccountById", parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
         }
-        public IEnumerable<GetUserAccountByCredentials_Result> GetUserAccountByCredentials(string login, string password)
+        public GetUserAccountByCredentials_Result GetUserAccountByCredentials(string login, string password)
         {
             var parameters = new
             {
@@ -26,7 +27,7 @@ namespace LikeBusLogistic.DAL.Dao
                 @password = password
             };
 
-            return Connection.Query<GetUserAccountByCredentials_Result>("dbo.GetUserAccountByCredentials", parameters, commandType: CommandType.StoredProcedure);
+            return Connection.Query<GetUserAccountByCredentials_Result>("dbo.GetUserAccountByCredentials", parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
         }
     }
 }

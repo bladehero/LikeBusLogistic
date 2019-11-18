@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using LikeBusLogistic.BLL;
+using LikeBusLogistic.Web.Variables;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -21,6 +22,22 @@ namespace LikeBusLogistic.Web.Controllers
                      ? (int?)accountId
                      : null;
             ServiceFactory.AccountId = id;
+
+            RoleNames? role = null;
+            if (ServiceFactory.AccountManagement.AccountUserRole?.RoleName == RoleNames.Administrator.ToString())
+            {
+                role = RoleNames.Administrator;
+            }
+            else if (ServiceFactory.AccountManagement.AccountUserRole?.RoleName == RoleNames.Moderator.ToString())
+            {
+                role = RoleNames.Moderator;
+            }
+            else if (ServiceFactory.AccountManagement.AccountUserRole?.RoleName == RoleNames.Operator.ToString())
+            {
+                role = RoleNames.Operator;
+            }
+            ViewBag.AccountRole = role;
+
             base.OnActionExecuting(context);
         }
 

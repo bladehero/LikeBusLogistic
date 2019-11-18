@@ -8,14 +8,14 @@
             if (app.footer.mode < 0) {
                 app.footer.element.stop().animate({
                     bottom: '0px',
-                    height: 50
+                    height: 28
                 }, app.footer.animateTimer);
                 app.footer.slideButton.find('span').attr('uk-icon', 'chevron-up');
                 app.footer.mode = 0;
                 app.footer.content.fadeOut(app.footer.animateTimer / 1.5);
             } else if (app.footer.mode > 0) {
                 app.footer.element.stop().animate({
-                    height: $(window).height() - 60
+                    height: $(window).height() - 70
                 }, app.footer.animateTimer);
                 app.footer.slideButton.find('span').attr('uk-icon', 'chevron-down');
                 app.footer.mode = -1;
@@ -43,11 +43,29 @@
             }).fail(function () {
                     app.footer.content.html('Произошла непредвиденная ошибка!');
             }).then(function () {
-                    debugger;
                 if (finished) {
                     finished();
                 }
             });
+        }
+    },
+    menu: {
+        element: $('#offcanvas-slide'),
+        show: function (interval) {
+            var show = () => UIkit.offcanvas('#offcanvas-slide').show();
+            if (!interval) {
+                show();
+            } else {
+                setTimeout(show, interval);
+            }
+        },
+        hide: function (interval) {
+            var hide = () => UIkit.offcanvas('#offcanvas-slide').hide();
+            if (!interval) {
+                hide();
+            } else {
+                setTimeout(hide, interval);
+            }
         }
     },
     message: {

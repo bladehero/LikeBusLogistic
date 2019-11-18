@@ -2,14 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LikeBusLogistic.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LikeBusLogistic.Web.Controllers
 {
     [Authorize]
-    public class DriverController : Controller
+    public class DriverController : BaseController
     {
+        public DriverController(ServiceFactory serviceFactory) : base(serviceFactory)
+        {
+        }
+
         public IActionResult Index()
         {
             return View();

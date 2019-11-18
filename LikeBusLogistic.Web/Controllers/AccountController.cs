@@ -5,7 +5,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using JwtAuthenticationHelper.Abstractions;
 using LikeBusLogistic.BLL;
-using LikeBusLogistic.BLL.Services;
 using LikeBusLogistic.Web.Models.Account;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -33,7 +32,7 @@ namespace LikeBusLogistic.Web.Controllers
         {
             if (!_serviceFactory.AccountManagement.Anonymous)
             {
-                return RedirectToAction(nameof(BusController.Index), "Bus");
+                return RedirectToAction(nameof(HomeController.Index), "Home");
             }
 
             return View(model);
@@ -57,7 +56,7 @@ namespace LikeBusLogistic.Web.Controllers
                 await HttpContext.SignInAsync(accessTokenResult.ClaimsPrincipal,
                     accessTokenResult.AuthProperties);
 
-                return RedirectToAction(nameof(BusController.Index), "Bus");
+                return RedirectToAction(nameof(HomeController.Index), "Home");
             }
             catch (InvalidCredentialException ex)
             {

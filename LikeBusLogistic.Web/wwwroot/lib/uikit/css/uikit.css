@@ -958,13 +958,13 @@ a.uk-link-reset,
  */
 .uk-table-hover > tr:hover,
 .uk-table-hover tbody tr:hover {
-  background: #ffd;
+  background: #1e87f0;
 }
 /* Active state
  ========================================================================== */
 .uk-table > tr.uk-active,
 .uk-table tbody tr.uk-active {
-  background: #ffd;
+  background: #1e87f0;
 }
 /* Size modifier
  ========================================================================== */
