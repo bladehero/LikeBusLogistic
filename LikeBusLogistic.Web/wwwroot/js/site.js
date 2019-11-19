@@ -37,15 +37,19 @@
         hide: function () { app.footer.changeMode(-1); },
         getContent: function (url, data, finished) {
             app.footer.content.html('<div uk-spinner="ratio: 1.5"></div>');
-            app.footer.show();
+            if (app.footer.mode !== -1) {
+                app.footer.show();
+            }
             $.get(url, data, function (html) {
                 app.footer.content.html(html);
             }).fail(function () {
-                    app.footer.content.html('Произошла непредвиденная ошибка!');
+                app.footer.content.html('Произошла непредвиденная ошибка!');
             }).then(function () {
                 if (finished) {
                     finished();
                 }
+
+                app.setLastContentState({ footerOptions: { url: url, data: data } });
             });
         }
     },
@@ -100,10 +104,55 @@
     getCookie: function (name) {
         var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
         if (match) return match[2];
+    },
+    getLastContentState: function () {
+        var state = JSON.parse(localStorage.getItem('contentState'));
+        return state;
+    },
+    setLastContentState: function (obj) {
+        var state = app.getLastContentState();
+        if (!state) state = {};
+        if (obj) {
+            if (obj.footerOptions) state.footerOptions = obj.footerOptions;
+            if (obj.isOpenMenu) state.isOpenMenu = obj.isOpenMenu;
+        }
+        localStorage.setItem('contentState', JSON.stringify(state));
+    },
+    initializeContentState: function () {
+        var contentState = app.getLastContentState();
+        if (!contentState)
+            app.setLastContentState({
+                footerOptions: {
+                    url: null,
+                    data: null
+                }, isOpenMenu: true
+            });
+    },
+    useContentState: function () {
+        var _showFunc = () => {
+            app.footer.content.html('<div class="uk-text-center">Добро пожаловать в приложение LikeBusLogistic!<br />Для того чтобы начать выберите один из пунктов меню.</div>');
+            app.menu.show(2000);
+            app.footer.show();
+        };
+        var state = app.getLastContentState();
+        if (state) {
+            if (state.footerOptions && state.footerOptions.url)
+                app.footer.getContent(state.footerOptions.url, state.footerOptions.data);
+            else _showFunc();
+                if (state.isOpenMenu) app.menu.show(); else app.menu.hide();
+        } else _showFunc();
     }
 };
 
-$(document).ready(function () {
+$(document).ready(function () { if (localStorage.getItem('isLoggedOff') === 'true') { app.useContentState(); localStorage.setItem('isLoggedOff', 'false'); }});
+document.addEventListener("DOMContentLoaded", function (event) {
+    app.initializeContentState();
+    $('#offcanvas-slide').on('shown', function () {
+        app.setLastContentState({ isOpenMenu: true });
+    });
+    $('#offcanvas-slide').on('hidden', function () {
+        app.setLastContentState({ isOpenMenu: false });
+    });
     $('.menu-item').click(function () {
         app.footer.getContent($(this).data('href'), null, function () {
             UIkit.offcanvas('#offcanvas-slide').hide();

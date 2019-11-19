@@ -1,13 +1,12 @@
 ﻿@model LikeBusLogistic.Web.Models.Buses.BusesVM
-
+<h4>Автобусы</h4>
 <table class="uk-table uk-table-small uk-table-hover" id="buses-table">
-    <caption>Автобусы</caption>
     <thead>
         <tr>
             <th>Модель</th>
-            <th>Пасс-емкость</th>
+            <th class="uk-table-shrink">Пасс-емкость</th>
             <th>Номер</th>
-            <th>Кол-во экипажа</th>
+            <th class="uk-table-shrink">Кол-во экипажа</th>
         </tr>
     </thead>
     <tbody>
@@ -16,7 +15,7 @@
             <tr data-bus-id="@bus.BusId" data-vehicle-id="@bus.VehicleId">
                 <td>@bus.Fullname</td>
                 <td>@bus.PassengerCapacity</td>
-                <td>@bus.Number</td>
+                <td class="uk-table-shrink">@bus.Number</td>
                 <td>@bus.CrewCapacity</td>
             </tr>
         }

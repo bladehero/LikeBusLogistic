@@ -22,6 +22,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LikeBusLogistic.BLL", "Like
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JwtAuthenticationHelper", "JwtAuthenticationHelper\JwtAuthenticationHelper.csproj", "{3EFACAC2-4A6B-4A35-AAB8-5DDD88ECCEA0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalServices", "ExternalServices", "{9B0FAC55-9FA8-4808-A8B6-BDD90A059B23}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3EFACAC2-4A6B-4A35-AAB8-5DDD88ECCEA0} = {9B0FAC55-9FA8-4808-A8B6-BDD90A059B23}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9A67B8D6-8A66-4A97-AA40-0268D0F9CF38}

@@ -6,12 +6,10 @@
     <title>LikeBusLogistic</title>
     <link href="~/lib/uikit/css/uikit.css" rel="stylesheet" />
     <link href="http://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
-    @*<link href="~/lib/pagination/css/pagination.css" />*@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
-
     <button id="menu-button" class="uk-button uk-button-link uk-background-secondary uk-padding-small uk-padding-remove-horizontal" type="button" uk-toggle="target: #offcanvas-slide" style="border-radius: 5px 0px 0px 5px;">
         <span uk-icon="icon: chevron-left; ratio: 1.2;"></span>
     </button>
@@ -65,7 +63,14 @@
                         <li><a class="menu-item" data-href="@Url.Action("_UserManagement", "Account")">Пользователи</a></li>
                     </ul>
                 </li>
+                <li class="uk-nav-divider"></li>
             </ul>
+            <form asp-action="Logout" asp-controller="Account">
+                <button id="logout" class="uk-button uk-button-danger uk-width-1-1" type="submit">
+                    <span class="uk-margin-small-right" uk-icon="icon: sign-out; ratio: 0.8;"></span>
+                    Выйти
+                </button>
+            </form>
         </div>
     </div>
 
@@ -91,7 +96,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
     <script src="http://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-    @*<script src="~/lib/pagination/js/pagination.min.js"></script>*@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>
