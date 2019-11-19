@@ -1,5 +1,12 @@
 ﻿@model LikeBusLogistic.Web.Models.Buses.BusesVM
-<h4>Автобусы</h4>
+<div class="uk-clearfix">
+    <div class="uk-float-left">
+        <h4>Автобусы</h4>
+    </div>
+    <div class="uk-float-right">
+        <button class="uk-button uk-button-small uk-button-primary" id="add-bus-button">Добавить</button>
+    </div>
+</div>
 <table class="uk-table uk-table-small uk-table-hover" id="buses-table">
     <thead>
         <tr>
@@ -7,6 +14,7 @@
             <th class="uk-table-shrink">Пасс-емкость</th>
             <th>Номер</th>
             <th class="uk-table-shrink">Кол-во экипажа</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -17,13 +25,21 @@
                 <td>@bus.PassengerCapacity</td>
                 <td class="uk-table-shrink">@bus.Number</td>
                 <td>@bus.CrewCapacity</td>
+                <td class="uk-float-right">
+                    <span class="uk-text-warning" id="edit-bus-icon" uk-icon="icon: cog;"></span>
+                    <span class="uk-text-danger" id="delete-bus-icon" uk-icon="icon: trash;"></span>
+                </td>
             </tr>
         }
     </tbody>
 </table>
 
 <script>
+    app.footer.setBreadcrumbs([{ name: 'Автобусы', url: '@Url.Action("_FullInformation","Bus")' }, { name: 'Машины', url: '@Url.Action("_Buses","Bus")' }]);
     $(document).ready(function () {
         $('#buses-table').dataTable();
+        $('#add-bus-button').click(function () {
+
+        });
     });
 </script>

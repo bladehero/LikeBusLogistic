@@ -15,7 +15,17 @@ namespace LikeBusLogistic.Web.Controllers
         {
         }
 
-        public IActionResult Index()
+        public IActionResult _FullInformation()
+        {
+            return View();
+        }
+
+        public IActionResult _Information()
+        {
+            return View();
+        }
+
+        public IActionResult _Contacts()
         {
             return View();
         }

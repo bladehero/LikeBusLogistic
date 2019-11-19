@@ -11,6 +11,53 @@ namespace LikeBusLogistic.BLL.Services
     {
         public BusManagementService(string connection) : base(connection) { }
 
+        public BaseResult<VehicleVM> GetVehicle(int vehicleId)
+        {
+            var result = new BaseResult<VehicleVM>();
+            try
+            {
+                var vehicle = UnitOfWork.VehicleDao.FindById(vehicleId);
+                result.Data = Mapper.Map<VehicleVM>(vehicle);
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+        public BaseResult<BusVM> GetBus(int busId)
+        {
+            var result = new BaseResult<BusVM>();
+            try
+            {
+                var bus = UnitOfWork.BusDao.FindById(busId);
+                var vehicle = UnitOfWork.VehicleDao.FindById(bus.VehicleId);
+                var busVM = new BusVM
+                {
+                    BusId = bus.Id,
+                    CrewCapacity = bus.CrewCapacity,
+                    Fullname = $"{vehicle.Producer} {vehicle.Model}",
+                    Number = bus.Number,
+                    PassengerCapacity = vehicle.PassengerCapacity,
+                    VehicleId = vehicle.Id
+                };
+                result.Data = busVM;
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+
         public BaseResult<IEnumerable<VehicleVM>> GetVehicles()
         {
             var result = new BaseResult<IEnumerable<VehicleVM>>();

@@ -10,10 +10,5 @@ namespace LikeBusLogistic.VM.ViewModels
         public int PassengerCapacity { get; set; }
         public string Number { get; set; }
         public int CrewCapacity { get; set; }
-
-        public object ToList()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

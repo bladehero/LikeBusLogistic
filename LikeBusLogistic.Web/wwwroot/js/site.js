@@ -1,6 +1,7 @@
 ﻿var app = {
     footer: {
         mode: 0,
+        breadcrumb: $('#footer-breacrumb'),
         element: $('footer'),
         content: $('#footer-content').hide(),
         animateTimer: 800,
@@ -36,7 +37,7 @@
         show: function () { app.footer.changeMode(0); },
         hide: function () { app.footer.changeMode(-1); },
         getContent: function (url, data, finished) {
-            app.footer.content.html('<div uk-spinner="ratio: 1.5"></div>');
+            app.footer.content.html('<div uk-spinner="ratio: 1.5" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);"></div>');
             if (app.footer.mode !== -1) {
                 app.footer.show();
             }
@@ -51,6 +52,28 @@
 
                 app.setLastContentState({ footerOptions: { url: url, data: data } });
             });
+        },
+        setBreadcrumbs: function (crumbs) {
+            if (crumbs) {
+                var htmlBreadCrumbs = '';
+                for (var i = 0; i < crumbs.length; i++) {
+                    if (crumbs[i] && crumbs[i].name) {
+                        htmlBreadCrumbs += '<li><a href=""';
+                        if (crumbs[i].isDisabled) {
+                            htmlBreadCrumbs += '  class="uk-disabled" ';
+                        }
+                        if (crumbs[i].url) {
+                            htmlBreadCrumbs += ' data-href="' + crumbs[i].url + '"';
+                        }
+                        htmlBreadCrumbs += '>' + crumbs[i].name + '</a></li>';
+                    }
+                }
+
+                app.footer.breadcrumb.html(htmlBreadCrumbs).find('li a').off('click').click(function () {
+                    debugger;
+                    app.footer.getContent($(this).data('href'));
+                });
+            }
         }
     },
     menu: {

@@ -53,5 +53,29 @@ namespace LikeBusLogistic.Web.Controllers
             };
             return PartialView(model);
         }
+
+        [HttpGet]
+        public IActionResult _MergeBus(int busId)
+        {
+            var bus = ServiceFactory.BusManagement.GetBus(busId);
+
+            var model = new MergeBusVM
+            {
+                Bus = bus.Data
+            };
+            return PartialView(model);
+        }
+
+        [HttpGet]
+        public IActionResult _MergeVehicle(int vehicleId)
+        {
+            var vehicle = ServiceFactory.BusManagement.GetVehicle(vehicleId);
+
+            var model = new MergeVehicleVM
+            {
+                Vehicle = vehicle.Data
+            };
+            return PartialView(model);
+        }
     }
 }
