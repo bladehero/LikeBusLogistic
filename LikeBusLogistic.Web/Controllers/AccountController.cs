@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LikeBusLogistic.Web.Controllers
@@ -53,6 +54,7 @@ namespace LikeBusLogistic.Web.Controllers
                 var accessTokenResult = _tokenGenerator.GenerateAccessTokenWithClaimsPrincipal(
                     model.Login, AddMyClaims(result.Data.AccountId, result.Data.FirstName, result.Data.RoleName));
 
+                var authenticationProperties = new Microsoft.AspNetCore.Authentication.AuthenticationProperties();
                 await HttpContext.SignInAsync(accessTokenResult.ClaimsPrincipal,
                     accessTokenResult.AuthProperties);
 
