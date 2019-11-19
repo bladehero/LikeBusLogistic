@@ -58,20 +58,19 @@
                 var htmlBreadCrumbs = '';
                 for (var i = 0; i < crumbs.length; i++) {
                     if (crumbs[i] && crumbs[i].name) {
-                        htmlBreadCrumbs += '<li><a href=""';
-                        if (crumbs[i].isDisabled) {
-                            htmlBreadCrumbs += '  class="uk-disabled" ';
-                        }
-                        if (crumbs[i].url) {
+                        htmlBreadCrumbs += '<li><span';
+                        if (crumbs[i].url && i != crumbs.length - 1) {
                             htmlBreadCrumbs += ' data-href="' + crumbs[i].url + '"';
                         }
-                        htmlBreadCrumbs += '>' + crumbs[i].name + '</a></li>';
+                        htmlBreadCrumbs += '>' + crumbs[i].name + '</span></li>';
                     }
                 }
 
-                app.footer.breadcrumb.html(htmlBreadCrumbs).find('li a').off('click').click(function () {
-                    debugger;
-                    app.footer.getContent($(this).data('href'));
+                app.footer.breadcrumb.html(htmlBreadCrumbs).find('li span').off('click').click(function () {
+                    var href = $(this).data('href');
+                    if (href) {
+                        app.footer.getContent(href);
+                    }
                 });
             }
         }
@@ -164,6 +163,15 @@
             else _showFunc();
             if (state.isOpenMenu) app.menu.show(); else app.menu.hide();
         } else _showFunc();
+    },
+    serializeInputToObjects: function (selector, excludeAttributes, excludeTypes) {
+        var obj = {};
+        $(selector).each(function (i, el) {
+            for (var i = 0; i < excludeAttributes.length; i++)
+                if ($(el).attr(excludeAttributes[i]) || $(el).is(':' + excludeAttributes[i])) return;
+
+            obj[$(el).name] = $(el).val();
+        });
     }
 };
 

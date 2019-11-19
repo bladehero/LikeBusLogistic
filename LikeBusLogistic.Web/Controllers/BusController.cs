@@ -55,19 +55,21 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult _MergeBus(int busId)
+        public IActionResult _MergeBus(int? busId)
         {
             var bus = ServiceFactory.BusManagement.GetBus(busId);
+            var vehicles = ServiceFactory.BusManagement.GetVehicles();
 
             var model = new MergeBusVM
             {
-                Bus = bus.Data
+                Bus = bus.Data,
+                Vehicles = vehicles.Data
             };
             return PartialView(model);
         }
 
         [HttpGet]
-        public IActionResult _MergeVehicle(int vehicleId)
+        public IActionResult _MergeVehicle(int? vehicleId)
         {
             var vehicle = ServiceFactory.BusManagement.GetVehicle(vehicleId);
 

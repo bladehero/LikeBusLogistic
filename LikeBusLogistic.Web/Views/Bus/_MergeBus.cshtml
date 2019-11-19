@@ -1,1 +1,54 @@
 ﻿@model MergeBusVM
+
+<div class="uk-grid" uk-grid>
+    <div class="uk-margin uk-width-1-1">
+        <label class="uk-form-label" for="form-stacked-text">Модель</label>
+        <div class="uk-form-controls">
+            <select class="uk-select">
+                @foreach (var vehicle in Model.Vehicles)
+                {
+                    <option data-vehicle-id="@vehicle.Id">@($"{vehicle.Producer} {vehicle.Model}")</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-1">
+        <label class="uk-form-label" for="form-stacked-text">Описание</label>
+        <textarea class="uk-textarea" rows="4" placeholder="Описание..." disabled></textarea>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-5">
+        <label class="uk-form-label" for="form-stacked-text">Пасс-емкость</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" id="form-stacked-text" type="text" placeholder="Кол-во..." disabled>
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-2-5">
+        <label class="uk-form-label" for="form-stacked-text">Номер</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" id="form-stacked-text" type="text" placeholder="Номерной знак...">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-2-5">
+        <label class="uk-form-label" for="form-stacked-text">Экипаж</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" type="number" placeholder="Кол-во...">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-1">
+        <button class="uk-button uk-button-primary uk-float-right">Сохранить</button>
+    </div>
+</div>
+
+<script>
+    app.footer.setBreadcrumbs([
+        { name: 'Автобусы', url: '@Url.Action("_FullInformation","Bus")' },
+        { name: 'Машины', url: '@Url.Action("_Buses","Bus")' },
+        { name: '@(Model.Bus == null ? "Добавить" : "Изменить")', url: '@Url.Action("_MergeBus","Bus")' }
+    ]);
+
+</script>

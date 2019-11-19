@@ -38,7 +38,7 @@
     $(document).ready(function () {
         $('#vehicles-table').dataTable();
         $('#add-vehicle-button').click(function () {
-
+            app.footer.getContent('@Url.Action("_MergeVehicle", "Bus")');
         });
     });
 </script>

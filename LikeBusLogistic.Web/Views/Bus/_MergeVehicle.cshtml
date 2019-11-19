@@ -1,1 +1,47 @@
-﻿@model  MergeVehicleVM
+﻿@model MergeVehicleVM
+
+<div class="uk-grid-small" uk-grid id="vehicle-grid">
+    <div class="uk-margin uk-width-1-1">
+        <label class="uk-form-label" for="form-stacked-text">Производитель</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="" type="text" placeholder="Производитель...">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-3-4">
+        <label class="uk-form-label" for="form-stacked-text">Модель</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="" type="text" placeholder="Модель...">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-4">
+        <label class="uk-form-label" for="form-stacked-text">Пасс-емкость</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="" type="number" placeholder="Кол-во...">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-1">
+        <label class="uk-form-label" for="form-stacked-text">Описание</label>
+        <textarea class="uk-textarea" name="" rows="4" placeholder="Описание..."></textarea>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-margin-remove-top uk-width-1-1">
+        <button class="uk-button uk-button-primary uk-float-right" id="save-vehicle-btn">Сохранить</button>
+    </div>
+</div>
+
+<script>
+    app.footer.setBreadcrumbs([
+        { name: 'Автобусы', url: '@Url.Action("_FullInformation", "Bus")' },
+        { name: 'Модели', url: '@Url.Action("_Vehicles", "Bus")' },
+        { name: '@(Model.Vehicle == null ? "Добавить" : "Изменить")', url: '@Url.Action("_MergeVehicle", "Bus")' }
+    ]);
+
+    $(document).ready(function () {
+        $('#save-vehicle-btn').click(function () {
+            
+        });
+    });
+</script>

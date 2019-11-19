@@ -11,7 +11,7 @@ namespace LikeBusLogistic.BLL.Services
     {
         public BusManagementService(string connection) : base(connection) { }
 
-        public BaseResult<VehicleVM> GetVehicle(int vehicleId)
+        public BaseResult<VehicleVM> GetVehicle(int? vehicleId)
         {
             var result = new BaseResult<VehicleVM>();
             try
@@ -29,7 +29,7 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
-        public BaseResult<BusVM> GetBus(int busId)
+        public BaseResult<BusVM> GetBus(int? busId)
         {
             var result = new BaseResult<BusVM>();
             try

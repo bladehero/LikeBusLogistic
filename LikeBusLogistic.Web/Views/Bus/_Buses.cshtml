@@ -39,7 +39,7 @@
     $(document).ready(function () {
         $('#buses-table').dataTable();
         $('#add-bus-button').click(function () {
-
+            app.footer.getContent('@Url.Action("_MergeBus", "Bus")');
         });
     });
 </script>
