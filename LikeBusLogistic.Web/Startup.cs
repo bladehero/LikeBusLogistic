@@ -34,21 +34,7 @@ namespace LikeBusLogistic.Web
             Configuration.GetSection("AuthUrlOptions").Bind(authUrlOptions);
 
             services.AddJwtAuthenticationWithProtectedCookie(tokenOptions, authUrlOptions: authUrlOptions);
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("CanDelete",
-                    policy =>
-                    policy.RequireRole(RoleName.Administrator.ToString()));
-                options.AddPolicy("CanChange",
-                    policy =>
-                    policy.RequireRole(RoleName.Administrator.ToString(), 
-                                       RoleName.Moderator.ToString()));
-                options.AddPolicy("CanRead",
-                    policy =>
-                    policy.RequireRole(RoleName.Administrator.ToString(), 
-                                       RoleName.Moderator.ToString(),
-                                       RoleName.Operator.ToString()));
-            });
+            services.AddAuthorization();
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
 

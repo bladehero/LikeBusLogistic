@@ -1,0 +1,68 @@
+﻿@model InformationVM
+@{
+    RoleName roleName = (RoleName)ViewBag.RoleName;
+}
+<div class="uk-clearfix">
+    <div class="uk-float-left">
+        <h4>Водители</h4>
+    </div>
+    <div class="uk-float-right">
+        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+        {
+            <button class="uk-button uk-button-small uk-button-primary" id="add-driver-button">Добавить</button>
+        }
+    </div>
+</div>
+<table class="uk-table uk-table-small uk-table-hover" id="driver-table">
+    <thead>
+        <tr>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Отчество</th>
+            <th>Машина</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var driver in Model.Drivers)
+        {
+            <tr data-driver-id="@driver.DriverId">
+                <td>@driver.FirstName</td>
+                <td>@driver.LastName</td>
+                <td>@driver.MiddleName</td>
+                <td class="uk-table-expand">@driver.BusInfo</td>
+                <td class="uk-float-right">
+                    @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                    {
+                        <span class="uk-text-warning uk-margin-small-right edit-driver-icon" uk-icon="icon: cog;"></span>
+                    }
+                    @if (roleName == RoleName.Administrator)
+                    {
+                        <span class="uk-text-danger delete-driver-icon" uk-icon="icon: trash;"></span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    app.footer.setBreadcrumbs([{ name: 'Водители', url: '@Url.Action("_FullInformation", "Driver")' }, { name: 'Информация', url: '@Url.Action("_Information","Driver")' }]);
+    $(document).ready(function () {
+        $('#driver-table').dataTable();
+        $('.edit-driver-icon').click(function () {
+            var id = $(this).parents('tr').data('driver-id');
+            app.footer.getContent('@Url.Action("_MergeDriver", "Driver")', { driverId: id });
+        });
+        $('.delete-driver-icon').click(function () {
+            var id = $(this).parents('tr').data('driver-id');
+            app.postDataOnServer('@Url.Action("DeleteOrRestoreDriver", "Driver")', { driverId: id }, function (message) {
+                app.message.showSuccessWithOk('Успешно', message || 'Машина успешно удалена!');
+                app.useContentState();
+            });
+        });
+        $('#add-driver-button').click(function () {
+            app.footer.getContent('@Url.Action("_MergeDriver", "Driver")');
+        });
+    });
+</script>

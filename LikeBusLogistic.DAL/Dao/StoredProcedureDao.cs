@@ -29,5 +29,27 @@ namespace LikeBusLogistic.DAL.Dao
 
             return Connection.Query<GetUserAccountByCredentials_Result>("dbo.GetUserAccountByCredentials", parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
         }
+        public IEnumerable<GetDriverInfo_Result> GetDriverInfo(int? driverId = null)
+        {
+            var parameters = new
+            {
+                @driverId = driverId
+            };
+
+            return Connection.Query<GetDriverInfo_Result>("dbo.GetDriverInfo", parameters, commandType: CommandType.StoredProcedure);
+        }
+        public void MergeDriver(int? driverId, int busId, string firstName, string lastName, string middleName)
+        {
+            var parameters = new
+            {
+                @driverId = driverId,
+                @busId = busId,
+                @firstName = firstName,
+                @lastName = lastName,
+                @middleName = middleName,
+            };
+
+            Connection.Query<GetDriverInfo_Result>("dbo.MergeDriver", parameters, commandType: CommandType.StoredProcedure);
+        }
     }
 }

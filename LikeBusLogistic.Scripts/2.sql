@@ -145,3 +145,110 @@ begin
 
 end;
 go
+
+if object_id(N'dbo.GetDriverInfo') is null
+  exec('create procedure dbo.GetDriverInfo as set nocount on;');
+go
+
+-- ============================================================================
+-- Example    : exec dbo.GetDriverInfo 1
+-- Author     : Nikita Dermenzhi
+-- Date       : 20/11/2019
+-- Description: —
+-- ============================================================================
+
+alter procedure dbo.GetDriverInfo
+(  
+    @driverId as int = null
+)  
+as  
+begin  
+  
+  select d.Id as DriverId
+       , bi.BusId
+       , bi.BusInfo
+       , d.FirstName
+       , d.LastName
+       , d.MiddleName
+    from Driver d
+    cross apply
+    (
+      select top 1 bs.BusId
+                 --, b.Number as BusInfo
+                 , concat(b.Number, ' (', v.Producer, ' ', v.Model, ')') as BusInfo
+        from BusDriver bs
+        join Bus b on bs.BusId = b.Id
+        join Vehicle v on b.VehicleId = v.Id
+        where bs.DriverId = d.Id
+    ) as bi
+    where 1=1
+      and d.Id = isnull(@driverId, d.Id)
+
+end;
+go
+
+if object_id(N'dbo.MergeDriver') is null
+  exec('create procedure dbo.MergeDriver as set nocount on;');
+go
+
+-- ============================================================================
+-- Example    : exec dbo.MergeDriver @driverId=3,@busId=1,@firstName='Николай',@lastName='Степаненко',@middleName='Васильевич'
+-- Author     : Nikita Dermenzhi
+-- Date       : 20/11/2019
+-- Description: —
+-- ============================================================================
+
+alter procedure dbo.MergeDriver
+(  
+    @driverId as int = null,
+    @busId as int,
+    @firstName as nvarchar(100),
+    @lastName as nvarchar(100),
+    @middleName as nvarchar(100)
+)  
+as  
+begin  
+  
+   begin try
+    begin transaction
+
+      merge dbo.Driver as trg
+      using
+      (
+        select @driverId as Id
+             , @firstName as FirstName
+             , @lastName as LastName
+             , @middleName as MiddleName
+      ) as src
+      on trg.Id = src.Id
+        when not matched then
+          insert (FirstName, LastName, MiddleName)
+          values (src.FirstName, src.LastName, src.MiddleName)
+        when matched then
+          update set FirstName = src.FirstName, LastName = src.LastName, MiddleName = src.MiddleName
+        ;
+      
+      set @driverId = isnull(@driverId, ident_current('dbo.Driver'));
+
+      merge dbo.BusDriver as trg
+      using
+      (
+        select @driverId as DriverId
+             , @busId as BusId
+      ) as src
+      on trg.DriverId = src.DriverId
+        when not matched then
+          insert (DriverId, BusId)
+          values (src.DriverId, src.BusId)
+        when matched then
+          update set DriverId = src.DriverId, BusId = src.BusId, IsDeleted = 0
+        ;
+
+    commit
+  end try
+  begin catch
+   rollback
+  end catch
+
+end;
+go

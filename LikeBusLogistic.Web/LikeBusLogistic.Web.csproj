@@ -26,7 +26,10 @@
     <Content Update="Views\Bus\_Vehicles.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Driver\Index.cshtml">
+    <Content Update="Views\Driver\_MergeDriver.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Driver\_MergeContact.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Geolocation\Index.cshtml">

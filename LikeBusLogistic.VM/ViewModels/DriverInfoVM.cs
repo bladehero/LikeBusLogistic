@@ -1,12 +1,12 @@
-﻿namespace LikeBusLogistic.DAL.StoredProcedureResults
+﻿namespace LikeBusLogistic.VM.ViewModels
 {
-    public class GetDriverInfo_Result
+    public class DriverInfoVM
     {
         public int BusId { get; set; }
-        public string BusInfo { get; set; }
-        public int DriverId { get; set; }
+        public int? DriverId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string MiddleName { get; set; }
+        public string BusInfo { get; set; }
     }
 }
