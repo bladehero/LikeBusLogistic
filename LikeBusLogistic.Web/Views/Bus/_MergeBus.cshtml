@@ -1,46 +1,63 @@
 ﻿@model MergeBusVM
 
-<div class="uk-grid" uk-grid>
+<div class="uk-grid" uk-grid id="save-bus-grid">
+    <input type="hidden" name="busId" value="@Model.Bus?.BusId" />
     <div class="uk-margin uk-width-1-1">
-        <label class="uk-form-label" for="form-stacked-text">Модель</label>
+        <label class="uk-form-label">Модель</label>
         <div class="uk-form-controls">
-            <select class="uk-select">
+            <select class="uk-select" name="vehicleId">
                 @foreach (var vehicle in Model.Vehicles)
                 {
-                    <option data-vehicle-id="@vehicle.Id">@($"{vehicle.Producer} {vehicle.Model}")</option>
+                    if (vehicle.Id == Model.Bus.VehicleId)
+                    {
+                        <option data-vehicle-id="@vehicle.Id"
+                                data-vehicle-passenger-capacity="@vehicle.PassengerCapacity"
+                                data-vehicle-description="@vehicle.Description"
+                                selected>
+                            @($"{vehicle.Producer} {vehicle.Model}")
+                        </option>
+                    }
+                    else
+                    {
+                        <option data-vehicle-id="@vehicle.Id"
+                                data-vehicle-passenger-capacity="@vehicle.PassengerCapacity"
+                                data-vehicle-description="@vehicle.Description">
+                            @($"{vehicle.Producer} {vehicle.Model}")
+                        </option>
+                    }
                 }
             </select>
         </div>
     </div>
 
     <div class="uk-margin uk-margin-remove-top uk-width-1-1">
-        <label class="uk-form-label" for="form-stacked-text">Описание</label>
-        <textarea class="uk-textarea" rows="4" placeholder="Описание..." disabled></textarea>
+        <label class="uk-form-label">Описание</label>
+        <textarea class="uk-textarea" name="vehicle-description" rows="6" placeholder="Описание..." disabled></textarea>
     </div>
 
     <div class="uk-margin uk-margin-remove-top uk-width-1-5">
-        <label class="uk-form-label" for="form-stacked-text">Пасс-емкость</label>
+        <label class="uk-form-label">Пасс-емкость</label>
         <div class="uk-form-controls">
-            <input class="uk-input" id="form-stacked-text" type="text" placeholder="Кол-во..." disabled>
+            <input class="uk-input" name="vehicle-passenger-capacity" type="number" placeholder="Кол-во..." disabled>
         </div>
     </div>
 
     <div class="uk-margin uk-margin-remove-top uk-width-2-5">
-        <label class="uk-form-label" for="form-stacked-text">Номер</label>
+        <label class="uk-form-label">Номер</label>
         <div class="uk-form-controls">
-            <input class="uk-input" id="form-stacked-text" type="text" placeholder="Номерной знак...">
+            <input class="uk-input" name="number" type="text" placeholder="Номерной знак..." value="@Model.Bus.Number">
         </div>
     </div>
 
     <div class="uk-margin uk-margin-remove-top uk-width-2-5">
-        <label class="uk-form-label" for="form-stacked-text">Экипаж</label>
+        <label class="uk-form-label">Экипаж</label>
         <div class="uk-form-controls">
-            <input class="uk-input" type="number" placeholder="Кол-во...">
+            <input class="uk-input" name="crewCapacity" type="number" placeholder="Кол-во..." min="1" value="@(Model.Bus?.CrewCapacity > 0 ? Model.Bus.CrewCapacity : 2)">
         </div>
     </div>
 
     <div class="uk-margin uk-margin-remove-top uk-width-1-1">
-        <button class="uk-button uk-button-primary uk-float-right">Сохранить</button>
+        <button class="uk-button uk-button-primary uk-float-right" id="save-bus-button">Сохранить</button>
     </div>
 </div>
 
@@ -51,4 +68,14 @@
         { name: '@(Model.Bus == null ? "Добавить" : "Изменить")', url: '@Url.Action("_MergeBus","Bus")' }
     ]);
 
+    $('select[name="vehicleId"]').on('change', function () {
+        var option = $(this).find('option:selected');
+        $('textarea[name="vehicle-description"]').text(option.data('vehicle-description'));
+        $('input[name="vehicle-passenger-capacity"]').val(option.data('vehicle-passenger-capacity'));
+    }).change();
+
+    $('#save-bus-button').click(function () {
+        var data = app.serializeInputsToObject('#save-bus-grid input,textarea', ['disabled']);
+        app.postDataOnServer('@Url.Action("MergeVehicle", "Bus")', data);
+    });
 </script>

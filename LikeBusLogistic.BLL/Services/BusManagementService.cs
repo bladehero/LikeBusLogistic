@@ -112,6 +112,11 @@ namespace LikeBusLogistic.BLL.Services
             try
             {
                 var vehicle = Mapper.Map<Vehicle>(vehicleVM);
+                if (vehicleVM.Id == 0)
+                {
+                    vehicle.CreatedBy = AccountId;
+                }
+                vehicle.ModifiedBy = AccountId;
                 UnitOfWork.VehicleDao.Merge(vehicle);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
@@ -129,6 +134,11 @@ namespace LikeBusLogistic.BLL.Services
             try
             {
                 var bus = Mapper.Map<Bus>(busVM);
+                if (bus.Id == 0)
+                {
+                    bus.CreatedBy = AccountId;
+                }
+                bus.ModifiedBy = AccountId;
                 UnitOfWork.BusDao.Merge(bus);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;

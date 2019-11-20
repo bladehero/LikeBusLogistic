@@ -9,14 +9,4 @@ namespace LikeBusLogistic.Web.Variables
     public static class GlobalVariables
     {
     }
-
-    public enum RoleNames
-    {
-        [Description("Администратор")]
-        Administrator,
-        [Description("Модератор")]
-        Moderator,
-        [Description("Оператор")]
-        Operator
-    }
 }

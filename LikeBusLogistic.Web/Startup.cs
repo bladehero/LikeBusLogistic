@@ -7,6 +7,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using JwtAuthenticationHelper.Extensions;
 using LikeBusLogistic.BLL;
+using System.Threading.Tasks;
+using System;
+using Microsoft.AspNetCore.Identity;
+using LikeBusLogistic.BLL.Variables;
+using System.Security.Claims;
 
 namespace LikeBusLogistic.Web
 {
@@ -22,7 +27,7 @@ namespace LikeBusLogistic.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var tokenOptions = new TokenOptions();
+            var tokenOptions = new JwtAuthenticationHelper.Types.TokenOptions();
             Configuration.GetSection("TokenOptions").Bind(tokenOptions);
 
             var authUrlOptions = new AuthUrlOptions();
@@ -31,9 +36,18 @@ namespace LikeBusLogistic.Web
             services.AddJwtAuthenticationWithProtectedCookie(tokenOptions, authUrlOptions: authUrlOptions);
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("RequiresAdmin",
+                options.AddPolicy("CanDelete",
                     policy =>
-                    policy.RequireClaim("HasAdminRights"));
+                    policy.RequireRole(RoleName.Administrator.ToString()));
+                options.AddPolicy("CanChange",
+                    policy =>
+                    policy.RequireRole(RoleName.Administrator.ToString(), 
+                                       RoleName.Moderator.ToString()));
+                options.AddPolicy("CanRead",
+                    policy =>
+                    policy.RequireRole(RoleName.Administrator.ToString(), 
+                                       RoleName.Moderator.ToString(),
+                                       RoleName.Operator.ToString()));
             });
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
@@ -44,7 +58,7 @@ namespace LikeBusLogistic.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
             app.UseDefaultFiles();
             app.UseStaticFiles();

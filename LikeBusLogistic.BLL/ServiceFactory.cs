@@ -14,6 +14,7 @@ namespace LikeBusLogistic.BLL
             {
                 _accountId = value;
                 AccountManagement.AccountId = value;
+                BusManagement.AccountId = value;
             }
         }
         public AccountManagementService AccountManagement { get; set; }

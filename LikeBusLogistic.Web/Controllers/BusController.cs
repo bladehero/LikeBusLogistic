@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using LikeBusLogistic.BLL;
+using LikeBusLogistic.VM.ViewModels;
+using LikeBusLogistic.Web.Models;
 using LikeBusLogistic.Web.Models.Buses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -55,6 +54,7 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpGet]
+        //[Authorize(Policy = "CanChange")]
         public IActionResult _MergeBus(int? busId)
         {
             var bus = ServiceFactory.BusManagement.GetBus(busId);
@@ -69,6 +69,7 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpGet]
+        //[Authorize(Policy = "CanChange")]
         public IActionResult _MergeVehicle(int? vehicleId)
         {
             var vehicle = ServiceFactory.BusManagement.GetVehicle(vehicleId);
@@ -78,6 +79,79 @@ namespace LikeBusLogistic.Web.Controllers
                 Vehicle = vehicle.Data
             };
             return PartialView(model);
+        }
+
+
+        [HttpPost]
+        //[Authorize(Policy = "CanChange")]
+        public IActionResult MergeBus(BusVM busVM)
+        {
+            var result = new Result();
+            try
+            {
+                var mergeBusResult = ServiceFactory.BusManagement.MergeBus(busVM);
+                result.Success = mergeBusResult.Success;
+                result.Message = mergeBusResult.Message;
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
+
+        [HttpPost]
+        //[Authorize(Policy = "CanChange")]
+        public IActionResult MergeVehicle(VehicleVM vehicleVM)
+        {
+            var result = new Result();
+            try
+            {
+                var mergeVehicleResult = ServiceFactory.BusManagement.MergeVehicle(vehicleVM);
+                result.Success = mergeVehicleResult.Success;
+                result.Message = mergeVehicleResult.Message;
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
+
+        [HttpPost]
+        //[Authorize(Policy = "CanDelete")]
+        public IActionResult DeleteOrRestoreVehicle(int vehicleId)
+        {
+            var result = new Result();
+            try
+            {
+                var deleteOrRestoreVehicleResult = ServiceFactory.BusManagement.DeleteOrRestoreVehicle(vehicleId);
+                result.Success = deleteOrRestoreVehicleResult.Success;
+                result.Message = deleteOrRestoreVehicleResult.Message;
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
+
+        [HttpPost]
+        //[Authorize(Policy = "CanDelete")]
+        public IActionResult DeleteOrRestoreBus(int busId)
+        {
+            var result = new Result();
+            try
+            {
+                var deleteOrRestoreBusResult = ServiceFactory.BusManagement.DeleteOrRestoreBus(busId);
+                result.Success = deleteOrRestoreBusResult.Success;
+                result.Message = deleteOrRestoreBusResult.Message;
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+            }
+            return Json(result);
         }
     }
 }

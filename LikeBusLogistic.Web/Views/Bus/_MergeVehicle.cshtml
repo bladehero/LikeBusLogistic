@@ -1,30 +1,31 @@
 ﻿@model MergeVehicleVM
 
-<div class="uk-grid-small" uk-grid id="vehicle-grid">
+<div class="uk-grid-small" uk-grid id="save-vehicle-grid">
+    <input type="hidden" name="id" value="@Model.Vehicle?.Id" />
     <div class="uk-margin uk-width-1-1">
         <label class="uk-form-label" for="form-stacked-text">Производитель</label>
         <div class="uk-form-controls">
-            <input class="uk-input" name="" type="text" placeholder="Производитель...">
+            <input class="uk-input" name="producer" type="text" placeholder="Производитель..." value="@Model.Vehicle?.Producer">
         </div>
     </div>
 
     <div class="uk-margin uk-margin-remove-top uk-width-3-4">
         <label class="uk-form-label" for="form-stacked-text">Модель</label>
         <div class="uk-form-controls">
-            <input class="uk-input" name="" type="text" placeholder="Модель...">
+            <input class="uk-input" name="model" type="text" placeholder="Модель..." value="@Model.Vehicle?.Model">
         </div>
     </div>
 
     <div class="uk-margin uk-margin-remove-top uk-width-1-4">
         <label class="uk-form-label" for="form-stacked-text">Пасс-емкость</label>
         <div class="uk-form-controls">
-            <input class="uk-input" name="" type="number" placeholder="Кол-во...">
+            <input class="uk-input" name="passengercapacity" type="number" placeholder="Кол-во..."  value="@Model.Vehicle?.PassengerCapacity">
         </div>
     </div>
 
     <div class="uk-margin uk-margin-remove-top uk-width-1-1">
         <label class="uk-form-label" for="form-stacked-text">Описание</label>
-        <textarea class="uk-textarea" name="" rows="4" placeholder="Описание..."></textarea>
+        <textarea class="uk-textarea" name="description" rows="6" placeholder="Описание...">@Model.Vehicle?.Description</textarea>
     </div>
 
     <div class="uk-margin uk-margin-remove-top uk-margin-remove-top uk-width-1-1">
@@ -39,9 +40,8 @@
         { name: '@(Model.Vehicle == null ? "Добавить" : "Изменить")', url: '@Url.Action("_MergeVehicle", "Bus")' }
     ]);
 
-    $(document).ready(function () {
-        $('#save-vehicle-btn').click(function () {
-            
-        });
+    $('#save-vehicle-btn').click(function () {
+        var data = app.serializeInputsToObject('#save-vehicle-grid input,textarea');
+        app.postDataOnServer('@Url.Action("MergeVehicle", "Bus")', data);
     });
 </script>

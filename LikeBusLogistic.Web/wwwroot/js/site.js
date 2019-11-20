@@ -59,7 +59,7 @@
                 for (var i = 0; i < crumbs.length; i++) {
                     if (crumbs[i] && crumbs[i].name) {
                         htmlBreadCrumbs += '<li><span';
-                        if (crumbs[i].url && i != crumbs.length - 1) {
+                        if (crumbs[i].url && i !== crumbs.length - 1) {
                             htmlBreadCrumbs += ' data-href="' + crumbs[i].url + '"';
                         }
                         htmlBreadCrumbs += '>' + crumbs[i].name + '</span></li>';
@@ -136,7 +136,7 @@
         if (!state) state = {};
         if (obj) {
             if (obj.footerOptions) state.footerOptions = obj.footerOptions;
-            if (obj.isOpenMenu) state.isOpenMenu = obj.isOpenMenu;
+            state.isOpenMenu = !(!obj.isOpenMenu && true);
         }
         localStorage.setItem('contentState', JSON.stringify(state));
     },
@@ -164,13 +164,38 @@
             if (state.isOpenMenu) app.menu.show(); else app.menu.hide();
         } else _showFunc();
     },
-    serializeInputToObjects: function (selector, excludeAttributes, excludeTypes) {
+    serializeInputsToObject: function (selector, excludedAttributes = null, excludedTypes = null) {
         var obj = {};
         $(selector).each(function (i, el) {
-            for (var i = 0; i < excludeAttributes.length; i++)
-                if ($(el).attr(excludeAttributes[i]) || $(el).is(':' + excludeAttributes[i])) return;
+            if (excludedAttributes && excludedAttributes.length) {
+                for (var i = 0; i < excludedAttributes.length; i++)
+                    if ($(el).attr(excludedAttributes[i]) || $(el).is(':' + excludedAttributes[i])) return;
+            }
 
-            obj[$(el).name] = $(el).val();
+            obj[$(el).attr('name')] = $(el).val();
+        });
+        return obj;
+    },
+    postDataOnServer: function (url, data, successHandler = null, errorHandler = null, method = 'POST') {
+        $.ajax({
+            url: url,
+            method: method,
+            data: data,
+            success: function (result) {
+                if (result.success) {
+                    if (successHandler) {
+                        successHandler(result.message);
+                    } else {
+                        app.message.showSuccessWithOk('Успешно', result.message || 'Успешно выполнено!');
+                    }
+                } else {
+                    if (errorHandler) {
+                        errorHandler(result.message);
+                    } else {
+                        app.message.showErrorWithOk('Ошибка', result.message || 'Произошла непредвиденная ошибка!');
+                    }
+                }
+            }
         });
     }
 };

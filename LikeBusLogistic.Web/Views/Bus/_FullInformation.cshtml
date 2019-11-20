@@ -1,12 +1,12 @@
 ﻿@model LikeBusLogistic.Web.Models.Buses.FullInformationVM
 
 <div uk-grid>
-    <div class="uk-width-expand@m">
+    <div class="uk-width-1-1@m uk-width-expand@l">
         @{
             await Html.RenderPartialAsync("_Buses.cshtml", new LikeBusLogistic.Web.Models.Buses.BusesVM { Buses = Model.Buses });
         }
     </div>
-    <div class="uk-width-2-5@m">
+    <div class="uk-width-1-1@m">
         @{
             await Html.RenderPartialAsync("_Vehicles.cshtml", new LikeBusLogistic.Web.Models.Buses.VehiclesVM { Vehicles = Model.Vehicles });
         }

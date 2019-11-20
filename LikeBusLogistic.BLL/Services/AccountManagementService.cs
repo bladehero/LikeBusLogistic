@@ -1,9 +1,8 @@
 ﻿using LikeBusLogistic.BLL.Results;
+using LikeBusLogistic.BLL.Variables;
 using LikeBusLogistic.DAL.Models;
 using LikeBusLogistic.VM.ViewModels;
 using System;
-using System.Data;
-using System.Linq;
 
 namespace LikeBusLogistic.BLL.Services
 {
@@ -14,6 +13,30 @@ namespace LikeBusLogistic.BLL.Services
         AccountId.HasValue
         ? Mapper.Map<AccountUserRoleVM>(UnitOfWork.StoredProcedureDao.GetUserAccountById(AccountId.Value))
         : null;
+        public RoleName RoleName
+        {
+            get
+            {
+                RoleName role;
+                if (AccountUserRole?.RoleName == Variables.RoleName.Administrator.ToString())
+                {
+                    role = Variables.RoleName.Administrator;
+                }
+                else if (AccountUserRole?.RoleName == Variables.RoleName.Moderator.ToString())
+                {
+                    role = Variables.RoleName.Moderator;
+                }
+                else if (AccountUserRole?.RoleName == Variables.RoleName.Operator.ToString())
+                {
+                    role = Variables.RoleName.Operator;
+                }
+                else
+                {
+                    role = Variables.RoleName.Unknown;
+                }
+                return role;
+            }
+        }
 
         public AccountManagementService(string connection) : base(connection) { }
 

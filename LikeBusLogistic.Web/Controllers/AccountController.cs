@@ -54,7 +54,6 @@ namespace LikeBusLogistic.Web.Controllers
                 var accessTokenResult = _tokenGenerator.GenerateAccessTokenWithClaimsPrincipal(
                     model.Login, AddMyClaims(result.Data.AccountId, result.Data.FirstName, result.Data.RoleName));
 
-                var authenticationProperties = new Microsoft.AspNetCore.Authentication.AuthenticationProperties();
                 await HttpContext.SignInAsync(accessTokenResult.ClaimsPrincipal,
                     accessTokenResult.AuthProperties);
 
@@ -88,7 +87,7 @@ namespace LikeBusLogistic.Web.Controllers
         {
             new Claim(ClaimTypes.NameIdentifier, accountId.ToString()),
             new Claim(ClaimTypes.GivenName, name),
-            new Claim(ClaimTypes.Role, role)
+            new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
         };
     }
 }
