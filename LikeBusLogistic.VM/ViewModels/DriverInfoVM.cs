@@ -8,5 +8,6 @@
         public string LastName { get; set; }
         public string MiddleName { get; set; }
         public string BusInfo { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

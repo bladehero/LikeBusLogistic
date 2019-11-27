@@ -63,7 +63,7 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<IEnumerable<VehicleVM>>();
             try
             {
-                var vehicles = UnitOfWork.VehicleDao.FindAll();
+                var vehicles = UnitOfWork.VehicleDao.FindAll(RoleName == Variables.RoleName.Administrator);
                 result.Data = Mapper.Map<IEnumerable<VehicleVM>>(vehicles);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
@@ -81,8 +81,8 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<IEnumerable<BusVM>>();
             try
             {
-                var buses = from bus in UnitOfWork.BusDao
-                            join vehicle in UnitOfWork.VehicleDao
+                var buses = from bus in UnitOfWork.BusDao.FindAll(RoleName == Variables.RoleName.Administrator)
+                            join vehicle in UnitOfWork.VehicleDao.FindAll(RoleName == Variables.RoleName.Administrator)
                             on bus.VehicleId equals vehicle.Id
                             select new BusVM
                             {
@@ -91,7 +91,8 @@ namespace LikeBusLogistic.BLL.Services
                                 Fullname = $"{vehicle.Producer} {vehicle.Model}",
                                 Number = bus.Number,
                                 PassengerCapacity = vehicle.PassengerCapacity,
-                                VehicleId = vehicle.Id
+                                VehicleId = vehicle.Id,
+                                IsDeleted = bus.IsDeleted
                             };
                 result.Data = buses;
                 result.Success = true;

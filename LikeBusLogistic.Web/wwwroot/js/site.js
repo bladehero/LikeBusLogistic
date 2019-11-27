@@ -9,7 +9,7 @@
             if (app.footer.mode < 0) {
                 app.footer.element.stop().animate({
                     bottom: '0px',
-                    height: 28
+                    height: 25
                 }, app.footer.animateTimer);
                 app.footer.slideButton.find('span').attr('uk-icon', 'chevron-up');
                 app.footer.mode = 0;

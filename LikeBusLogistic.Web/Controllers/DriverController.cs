@@ -53,12 +53,6 @@ namespace LikeBusLogistic.Web.Controllers
             return PartialView(model);
         }
 
-
-
-
-
-
-
         [HttpGet]
         public IActionResult _MergeDriver(int? driverId)
         {
@@ -121,5 +115,38 @@ namespace LikeBusLogistic.Web.Controllers
             return Json(result);
         }
 
+        [HttpPost]
+        public IActionResult DeleteOrRestoreDriver(int driverId)
+        {
+            var result = new Result();
+            try
+            {
+                var deleteOrRestoreVehicleResult = ServiceFactory.DriverManagement.DeleteOrRestoreDriver(driverId);
+                result.Success = deleteOrRestoreVehicleResult.Success;
+                result.Message = deleteOrRestoreVehicleResult.Message;
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteOrRestoreContact(int contactId)
+        {
+            var result = new Result();
+            try
+            {
+                var deleteOrRestoreBusResult = ServiceFactory.DriverManagement.DeleteOrRestoreDriverContact(contactId);
+                result.Success = deleteOrRestoreBusResult.Success;
+                result.Message = deleteOrRestoreBusResult.Message;
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
     }
 }

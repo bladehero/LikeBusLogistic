@@ -54,7 +54,6 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Policy = "CanChange")]
         public IActionResult _MergeBus(int? busId)
         {
             var bus = ServiceFactory.BusManagement.GetBus(busId);
@@ -69,7 +68,6 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Policy = "CanChange")]
         public IActionResult _MergeVehicle(int? vehicleId)
         {
             var vehicle = ServiceFactory.BusManagement.GetVehicle(vehicleId);
@@ -83,7 +81,6 @@ namespace LikeBusLogistic.Web.Controllers
 
 
         [HttpPost]
-        //[Authorize(Policy = "CanChange")]
         public IActionResult MergeBus(BusVM busVM)
         {
             var result = new Result();
@@ -101,7 +98,6 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Policy = "CanChange")]
         public IActionResult MergeVehicle(VehicleVM vehicleVM)
         {
             var result = new Result();
@@ -119,7 +115,6 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Policy = "CanDelete")]
         public IActionResult DeleteOrRestoreVehicle(int vehicleId)
         {
             var result = new Result();
@@ -137,7 +132,6 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Policy = "CanDelete")]
         public IActionResult DeleteOrRestoreBus(int busId)
         {
             var result = new Result();

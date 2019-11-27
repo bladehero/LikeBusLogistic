@@ -6,5 +6,6 @@
         public int DriverId { get; set; }
         public string DriverInfo { get; set; }
         public string Contact { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

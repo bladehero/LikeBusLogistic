@@ -7,5 +7,6 @@
         public string Model { get; set; }
         public int PassengerCapacity { get; set; }
         public string Description { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

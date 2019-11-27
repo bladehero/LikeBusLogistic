@@ -38,7 +38,7 @@
                     }
                     @if (roleName == RoleName.Administrator)
                     {
-                        <span class="uk-text-danger uk-margin-small-right delete-vehicle-icon" uk-icon="icon: trash;"></span>
+                        <span class="@(vehicle.IsDeleted ? "uk-text-success" : "uk-text-danger") delete-vehicle-icon" uk-icon="icon: @(vehicle.IsDeleted ? "refresh" : "trash");"></span>
                     }
                 </td>
             </tr>

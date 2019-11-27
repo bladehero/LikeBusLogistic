@@ -84,7 +84,8 @@ namespace LikeBusLogistic.BLL.Services
                                           Id = contact.Id,
                                           Contact = contact.Contact,
                                           DriverId = driver.Id,
-                                          DriverInfo = $"{driver.FirstName} {driver.LastName} {driver.MiddleName}"
+                                          DriverInfo = $"{driver.FirstName} {driver.LastName} {driver.MiddleName}",
+                                          IsDeleted = contact.IsDeleted
                                       };
                 result.Data = driverContactVM;
                 result.Success = true;
@@ -104,9 +105,9 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult();
             try
             {
-                UnitOfWork.StoredProcedureDao.MergeDriver(driverInfoVM.DriverId, 
-                                                          driverInfoVM.BusId, 
-                                                          driverInfoVM.FirstName, 
+                UnitOfWork.StoredProcedureDao.MergeDriver(driverInfoVM.DriverId,
+                                                          driverInfoVM.BusId,
+                                                          driverInfoVM.FirstName,
                                                           driverInfoVM.LastName,
                                                           driverInfoVM.MiddleName);
                 result.Success = true;
@@ -126,6 +127,50 @@ namespace LikeBusLogistic.BLL.Services
             {
                 var contact = Mapper.Map<DriverContact>(contactVM);
                 result.Success = UnitOfWork.DriverContactDao.Merge(contact);
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+
+        public BaseResult DeleteOrRestoreDriver(int driverId)
+        {
+            var result = new BaseResult();
+            try
+            {
+                var driver = UnitOfWork.DriverDao.FindById(driverId);
+                //var busDrivers = UnitOfWork.BusDriverDao.GetBusDriver(driverId);
+                result.Success = UnitOfWork.DriverDao.DeleteOrRestore(driver);
+                //foreach (var busDriver in busDrivers)
+                //{
+                //    if (driver.IsDeleted)
+                //    {
+                //        UnitOfWork.BusDriverDao.Delete(busDriver);
+                //    }
+                //    else
+                //    {
+                //        UnitOfWork.BusDriverDao.Restore(busDriver);
+                //    }
+                //}
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+        public BaseResult DeleteOrRestoreDriverContact(int contactId)
+        {
+            var result = new BaseResult();
+            try
+            {
+                result.Success = UnitOfWork.DriverContactDao.DeleteOrRestore(contactId);
                 result.Message = GeneralSuccessMessage;
             }
             catch (Exception ex)
