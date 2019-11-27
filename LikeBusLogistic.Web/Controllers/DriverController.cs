@@ -1,7 +1,10 @@
 ﻿using LikeBusLogistic.BLL;
+using LikeBusLogistic.VM.ViewModels;
+using LikeBusLogistic.Web.Models;
 using LikeBusLogistic.Web.Models.Drivers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace LikeBusLogistic.Web.Controllers
 {
@@ -84,39 +87,39 @@ namespace LikeBusLogistic.Web.Controllers
             return PartialView(model);
         }
 
-        //[HttpPost]
-        //public IActionResult MergeBus(BusVM busVM)
-        //{
-        //    var result = new Result();
-        //    try
-        //    {
-        //        var mergeBusResult = ServiceFactory.BusManagement.MergeBus(busVM);
-        //        result.Success = mergeBusResult.Success;
-        //        result.Message = mergeBusResult.Message;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        result.Success = false;
-        //    }
-        //    return Json(result);
-        //}
+        [HttpPost]
+        public IActionResult MergeDriver(DriverInfoVM driverInfoVM)
+        {
+            var result = new Result();
+            try
+            {
+                var mergeDriverResult = ServiceFactory.DriverManagement.MergeDriver(driverInfoVM);
+                result.Success = mergeDriverResult.Success;
+                result.Message = mergeDriverResult.Message;
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
 
-        //[HttpPost]
-        //public IActionResult MergeVehicle(VehicleVM vehicleVM)
-        //{
-        //    var result = new Result();
-        //    try
-        //    {
-        //        var mergeVehicleResult = ServiceFactory.BusManagement.MergeVehicle(vehicleVM);
-        //        result.Success = mergeVehicleResult.Success;
-        //        result.Message = mergeVehicleResult.Message;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        result.Success = false;
-        //    }
-        //    return Json(result);
-        //}
+        [HttpPost]
+        public IActionResult MergeContact(DriverContactVM driverContactVM)
+        {
+            var result = new Result();
+            try
+            {
+                var mergeContactResult = ServiceFactory.DriverManagement.MergeDriverContact(driverContactVM);
+                result.Success = mergeContactResult.Success;
+                result.Message = mergeContactResult.Message;
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
 
     }
 }

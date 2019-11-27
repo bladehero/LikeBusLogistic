@@ -1,45 +1,45 @@
 ﻿@model MergeDriverVM
 
 <div class="uk-grid-small" uk-grid id="save-driver-grid">
-    <input type="hidden" name="id" value="@Model.Driver?.DriverId" />
+    <input type="hidden" name="driverId" value="@Model.Driver?.DriverId" />
 
     <div class="uk-margin uk-width-1-1">
         <label class="uk-form-label">Имя</label>
         <div class="uk-form-controls">
-            <input class="uk-input" name="producer" type="text" placeholder="Имя..." value="@Model.Driver?.FirstName">
+            <input class="uk-input" name="firstName" type="text" placeholder="Имя..." value="@Model.Driver?.FirstName">
         </div>
     </div>
 
     <div class="uk-margin uk-width-1-1">
         <label class="uk-form-label">Фамилия</label>
         <div class="uk-form-controls">
-            <input class="uk-input" name="producer" type="text" placeholder="Фамилия..." value="@Model.Driver?.LastName">
+            <input class="uk-input" name="lastName" type="text" placeholder="Фамилия..." value="@Model.Driver?.LastName">
         </div>
     </div>
 
     <div class="uk-margin uk-width-1-1">
         <label class="uk-form-label">Отчество</label>
         <div class="uk-form-controls">
-            <input class="uk-input" name="producer" type="text" placeholder="Отчество..." value="@Model.Driver?.MiddleName">
+            <input class="uk-input" name="middleName" type="text" placeholder="Отчество..." value="@Model.Driver?.MiddleName">
         </div>
     </div>
 
     <div class="uk-margin uk-width-1-1">
         <label class="uk-form-label">Закреплен на машине</label>
         <div class="uk-form-controls">
-            <select class="uk-select" name="vehicleId">
+            <select class="uk-select" name="busId">
                 @foreach (var bus in Model.Buses)
                 {
-                    if (bus.BusId == Model.Driver.BusId)
+                    if (bus.BusId == Model.Driver?.BusId)
                     {
-                        <option data-bus-id="@bus.BusId"
+                        <option value="@bus.BusId"
                                 selected>
                             @($"{bus.Number} ({bus.Fullname})")
                         </option>
                     }
                     else
                     {
-                        <option data-bus-id="@bus.BusId">
+                        <option value="@bus.BusId">
                             @($"{bus.Number} ({bus.Fullname})")
                         </option>
                     }
@@ -55,13 +55,13 @@
 
 <script>
     app.footer.setBreadcrumbs([
-        { name: 'Автобусы', url: '@Url.Action("_FullInformation", "Driver")' },
-        { name: 'Модели', url: '@Url.Action("_Information", "Driver")' },
+        { name: 'Водители', url: '@Url.Action("_FullInformation", "Driver")' },
+        { name: 'Информация', url: '@Url.Action("_Information", "Driver")' },
         { name: '@(Model.Driver == null ? "Добавить" : "Изменить")', url: '@Url.Action("_Information", "Driver")' }
     ]);
 
-    $('#save-vehicle-btn').click(function () {
-        var data = app.serializeInputsToObject('#save-driver-grid input,textarea');
+    $('#save-driver-btn').click(function () {
+        var data = app.serializeInputsToObject('#save-driver-grid input,select');
         app.postDataOnServer('@Url.Action("MergeDriver", "Driver")', data);
     });
 </script>

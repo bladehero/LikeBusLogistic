@@ -1,13 +1,11 @@
 ﻿@section Scripts {
     <script>
-        $(document).ready(function () {
-            app.useContentState();
-            var map = L.map('map').setView([46, 19], 5);
-            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-                maxZoom: 18,
-                id: 'mapbox.streets',
-                accessToken: 'pk.eyJ1IjoibmlraXRhZGVybWVuemhpIiwiYSI6ImNrMzM3NGoyaTA3cjMzZGxrc3JjNnZqbzMifQ.s46KKhteHGX6SCEHpv5nGg'
-            }).addTo(map);
-        });
+        app.useContentState();
+        app.map = L.map('map').setView([46, 19], 5);
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+            maxZoom: 18,
+            id: 'mapbox.streets',
+            accessToken: 'pk.eyJ1IjoibmlraXRhZGVybWVuemhpIiwiYSI6ImNrMzM3NGoyaTA3cjMzZGxrc3JjNnZqbzMifQ.s46KKhteHGX6SCEHpv5nGg'
+        }).addTo(app.map);
     </script>
 }

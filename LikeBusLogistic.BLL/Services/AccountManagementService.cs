@@ -8,36 +8,6 @@ namespace LikeBusLogistic.BLL.Services
 {
     public class AccountManagementService : BaseService
     {
-        public bool Anonymous => !AccountId.HasValue && AccountUserRole == null;
-        public AccountUserRoleVM AccountUserRole =>
-        AccountId.HasValue
-        ? Mapper.Map<AccountUserRoleVM>(UnitOfWork.StoredProcedureDao.GetUserAccountById(AccountId.Value))
-        : null;
-        public RoleName RoleName
-        {
-            get
-            {
-                RoleName role;
-                if (AccountUserRole?.RoleName == Variables.RoleName.Administrator.ToString())
-                {
-                    role = Variables.RoleName.Administrator;
-                }
-                else if (AccountUserRole?.RoleName == Variables.RoleName.Moderator.ToString())
-                {
-                    role = Variables.RoleName.Moderator;
-                }
-                else if (AccountUserRole?.RoleName == Variables.RoleName.Operator.ToString())
-                {
-                    role = Variables.RoleName.Operator;
-                }
-                else
-                {
-                    role = Variables.RoleName.Unknown;
-                }
-                return role;
-            }
-        }
-
         public AccountManagementService(string connection) : base(connection) { }
 
         public BaseResult<AccountUserRoleVM> SignIn(string login, string password)
