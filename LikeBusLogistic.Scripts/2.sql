@@ -170,6 +170,7 @@ begin
        , d.FirstName
        , d.LastName
        , d.MiddleName
+       , d.IsDeleted
     from Driver d
     cross apply
     (

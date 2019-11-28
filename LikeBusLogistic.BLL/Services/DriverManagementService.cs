@@ -76,8 +76,8 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<IEnumerable<DriverContactVM>>();
             try
             {
-                var driverContactVM = from contact in UnitOfWork.DriverContactDao.FindAll()
-                                      join driver in UnitOfWork.DriverDao.FindAll()
+                var driverContactVM = from contact in UnitOfWork.DriverContactDao.FindAll(RoleName == Variables.RoleName.Administrator)
+                                      join driver in UnitOfWork.DriverDao.FindAll(RoleName == Variables.RoleName.Administrator)
                                       on contact.DriverId equals driver.Id
                                       select new DriverContactVM
                                       {
@@ -142,20 +142,7 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult();
             try
             {
-                var driver = UnitOfWork.DriverDao.FindById(driverId);
-                //var busDrivers = UnitOfWork.BusDriverDao.GetBusDriver(driverId);
-                result.Success = UnitOfWork.DriverDao.DeleteOrRestore(driver);
-                //foreach (var busDriver in busDrivers)
-                //{
-                //    if (driver.IsDeleted)
-                //    {
-                //        UnitOfWork.BusDriverDao.Delete(busDriver);
-                //    }
-                //    else
-                //    {
-                //        UnitOfWork.BusDriverDao.Restore(busDriver);
-                //    }
-                //}
+                result.Success = UnitOfWork.DriverDao.DeleteOrRestore(driverId);
                 result.Message = GeneralSuccessMessage;
             }
             catch (Exception ex)
