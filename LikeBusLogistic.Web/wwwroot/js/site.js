@@ -147,7 +147,9 @@
                 footerOptions: {
                     url: null,
                     data: null
-                }, isOpenMenu: true
+                },
+                isOpenMenu: true,
+                isLogistic: false
             });
     },
     useContentState: function () {
@@ -210,7 +212,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
         app.setLastContentState({ isOpenMenu: false });
     });
     $('.menu-item').click(function () {
+        let isLogistic = $(this).parents('#logistic-tab').length > 0;
         app.footer.getContent($(this).data('href'), null, function () {
+            app.setLastContentState({ isLogistic: isLogistic });
             UIkit.offcanvas('#offcanvas-slide').hide();
         });
     });
