@@ -1,18 +1,22 @@
 ﻿@model LikeBusLogistic.Web.Models.Drivers.FullInformationVM
 
-<div uk-grid>
-    <div class="uk-width-1-1@m uk-width-expand@l">
+<ul uk-tab>
+    <li><a href="#">Водители</a></li>
+    <li><a href="#">Контакты</a></li>
+</ul>
+<ul class="uk-switcher uk-margin">
+    <li>
         @{
             await Html.RenderPartialAsync("_Information.cshtml", new LikeBusLogistic.Web.Models.Drivers.InformationVM { Drivers = Model.Drivers });
         }
-    </div>
-    <div class="uk-width-1-1@m">
+    </li>
+    <li>
         @{
             await Html.RenderPartialAsync("_Contacts.cshtml", new LikeBusLogistic.Web.Models.Drivers.ContactsVM { Contacts = Model.Contacts });
         }
-    </div>
-</div>
+    </li>
+</ul>
 
 <script>
-    app.footer.setBreadcrumbs([{ name: 'Водители', url: '@Url.Action("_FullInformation", "Driver")' }]);
+    App.footer.setBreadcrumbs([{ name: 'Водители', url: '@Url.Action("_FullInformation", "Driver")' }]);
 </script>

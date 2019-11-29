@@ -41,14 +41,14 @@
 </div>
 
 <script>
-    app.footer.setBreadcrumbs([
+    App.footer.setBreadcrumbs([
         { name: 'Водители', url: '@Url.Action("_FullInformation", "Driver")' },
         { name: 'Контакты', url: '@Url.Action("_Contacts", "Driver")' },
         { name: '@(Model.Contact == null ? "Добавить" : "Изменить")', url: '@Url.Action("_Information", "Driver")' }
     ]);
 
     $('#save-contact-btn').click(function () {
-        var data = app.serializeInputsToObject('#save-contact-grid input,select');
-        app.postDataOnServer('@Url.Action("MergeContact", "Driver")', data);
+        var data = App.serializeInputsToObject('#save-contact-grid input,select');
+        App.postDataOnServer('@Url.Action("MergeContact", "Driver")', data);
     });
 </script>

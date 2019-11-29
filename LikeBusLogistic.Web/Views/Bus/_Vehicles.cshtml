@@ -46,22 +46,22 @@
     </tbody>
 </table>
 <script>
-    app.footer.setBreadcrumbs([{ name: 'Автобусы', url: '@Url.Action("_FullInformation", "Bus")' }, { name: 'Модели', url: '@Url.Action("_Vehicles","Bus")' }]);
+    App.footer.setBreadcrumbs([{ name: 'Автобусы', url: '@Url.Action("_FullInformation", "Bus")' }, { name: 'Модели', url: '@Url.Action("_Vehicles","Bus")' }]);
     $(document).ready(function () {
         $('#vehicles-table').dataTable();
         $('.edit-vehicle-icon').click(function () {
             var id = $(this).parents('tr').data('vehicle-id');
-            app.footer.getContent('@Url.Action("_MergeVehicle", "Bus")', {vehicleId: id });
+            App.footer.getContent('@Url.Action("_MergeVehicle", "Bus")', {vehicleId: id });
         });
         $('.delete-vehicle-icon').click(function () {
             var id = $(this).parents('tr').data('vehicle-id');
-            app.postDataOnServer('@Url.Action("DeleteOrRestoreVehicle", "Bus")', { vehicleId: id }, function (message) {
-                app.message.showSuccessWithOk('Успешно', message || 'Модель успешно удалена!');
-                app.useContentState();
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreVehicle", "Bus")', { vehicleId: id }, function (message) {
+                App.message.showSuccessWithOk('Успешно', message || 'Модель успешно удалена!');
+                App.useContentState();
             });
         });
         $('#add-vehicle-button').click(function () {
-            app.footer.getContent('@Url.Action("_MergeVehicle", "Bus")');
+            App.footer.getContent('@Url.Action("_MergeVehicle", "Bus")');
         });
     });
 </script>

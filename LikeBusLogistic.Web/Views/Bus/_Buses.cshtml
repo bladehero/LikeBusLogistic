@@ -47,22 +47,22 @@
 </table>
 
 <script>
-    app.footer.setBreadcrumbs([{ name: 'Автобусы', url: '@Url.Action("_FullInformation", "Bus")' }, { name: 'Машины', url: '@Url.Action("_Buses","Bus")' }]);
+    App.footer.setBreadcrumbs([{ name: 'Автобусы', url: '@Url.Action("_FullInformation", "Bus")' }, { name: 'Машины', url: '@Url.Action("_Buses","Bus")' }]);
     $(document).ready(function () {
         $('#buses-table').dataTable();
         $('.edit-bus-icon').click(function () {
             var id = $(this).parents('tr').data('bus-id');
-            app.footer.getContent('@Url.Action("_MergeBus", "Bus")', { busId: id });
+            App.footer.getContent('@Url.Action("_MergeBus", "Bus")', { busId: id });
         });
         $('.delete-bus-icon').click(function () {
             var id = $(this).parents('tr').data('bus-id');
-            app.postDataOnServer('@Url.Action("DeleteOrRestoreBus", "Bus")', { busId: id }, function (message) {
-                app.message.showSuccessWithOk('Успешно', message || 'Машина успешно удалена!');
-                app.useContentState();
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreBus", "Bus")', { busId: id }, function (message) {
+                App.message.showSuccessWithOk('Успешно', message || 'Машина успешно удалена!');
+                App.useContentState();
             });
         });
         $('#add-bus-button').click(function () {
-            app.footer.getContent('@Url.Action("_MergeBus", "Bus")');
+            App.footer.getContent('@Url.Action("_MergeBus", "Bus")');
         });
     });
 </script>

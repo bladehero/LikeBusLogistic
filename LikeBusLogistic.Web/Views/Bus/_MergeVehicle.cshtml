@@ -34,14 +34,14 @@
 </div>
 
 <script>
-    app.footer.setBreadcrumbs([
+    App.footer.setBreadcrumbs([
         { name: 'Автобусы', url: '@Url.Action("_FullInformation", "Bus")' },
         { name: 'Модели', url: '@Url.Action("_Vehicles", "Bus")' },
         { name: '@(Model.Vehicle == null ? "Добавить" : "Изменить")', url: '@Url.Action("_MergeVehicle", "Bus")' }
     ]);
 
     $('#save-vehicle-btn').click(function () {
-        var data = app.serializeInputsToObject('#save-vehicle-grid input,textarea');
-        app.postDataOnServer('@Url.Action("MergeVehicle", "Bus")', data);
+        var data = App.serializeInputsToObject('#save-vehicle-grid input,textarea');
+        App.postDataOnServer('@Url.Action("MergeVehicle", "Bus")', data);
     });
 </script>

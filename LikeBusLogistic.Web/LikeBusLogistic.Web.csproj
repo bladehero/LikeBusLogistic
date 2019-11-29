@@ -32,9 +32,6 @@
     <Content Update="Views\Driver\_MergeContact.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Geolocation\Index.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="Views\Logistic\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

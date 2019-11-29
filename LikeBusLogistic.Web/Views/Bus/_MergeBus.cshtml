@@ -62,7 +62,7 @@
 </div>
 
 <script>
-    app.footer.setBreadcrumbs([
+    App.footer.setBreadcrumbs([
         { name: 'Автобусы', url: '@Url.Action("_FullInformation","Bus")' },
         { name: 'Машины', url: '@Url.Action("_Buses","Bus")' },
         { name: '@(Model.Bus == null ? "Добавить" : "Изменить")', url: '@Url.Action("_MergeBus","Bus")' }
@@ -75,8 +75,7 @@
     }).change();
 
     $('#save-bus-button').click(function () {
-        debugger;
-        var data = app.serializeInputsToObject('#save-bus-grid input,textarea,select', ['disabled']);
-        app.postDataOnServer('@Url.Action("MergeBus", "Bus")', data);
+        var data = App.serializeInputsToObject('#save-bus-grid input,textarea,select', ['disabled']);
+        App.postDataOnServer('@Url.Action("MergeBus", "Bus")', data);
     });
 </script>

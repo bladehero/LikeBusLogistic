@@ -1,4 +1,5 @@
-﻿var app = {
+﻿var App = {
+    map: L.map('map'),
     footer: {
         mode: 0,
         breadcrumb: $('#footer-breacrumb'),
@@ -6,51 +7,52 @@
         content: $('#footer-content').hide(),
         animateTimer: 800,
         slideButton: $('#slide-up').click(function () {
-            if (app.footer.mode < 0) {
-                app.footer.element.stop().animate({
+            if (App.footer.mode < 0) {
+                App.footer.element.stop().animate({
                     bottom: '0px',
                     height: 25
-                }, app.footer.animateTimer);
-                app.footer.slideButton.find('span').attr('uk-icon', 'chevron-up');
-                app.footer.mode = 0;
-                app.footer.content.fadeOut(app.footer.animateTimer / 1.5);
-            } else if (app.footer.mode > 0) {
-                app.footer.element.stop().animate({
+                }, App.footer.animateTimer);
+                App.footer.slideButton.find('span').attr('uk-icon', 'chevron-up');
+                App.footer.mode = 0;
+                App.footer.content.fadeOut(App.footer.animateTimer / 1.5);
+            } else if (App.footer.mode > 0) {
+                App.footer.element.stop().animate({
                     height: $(window).height() - 70
-                }, app.footer.animateTimer);
-                app.footer.slideButton.find('span').attr('uk-icon', 'chevron-down');
-                app.footer.mode = -1;
+                }, App.footer.animateTimer);
+                App.footer.slideButton.find('span').attr('uk-icon', 'chevron-down');
+                App.footer.mode = -1;
             } else {
-                app.footer.element.stop().animate({
+                App.footer.element.stop().animate({
                     height: $(window).height() / 3
-                }, app.footer.animateTimer / 1.5);
-                app.footer.slideButton.find('span').attr('uk-icon', 'chevron-up');
-                app.footer.mode = 1;
-                app.footer.content.fadeIn(app.footer.animateTimer / 1.25);
+                }, App.footer.animateTimer / 1.5);
+                App.footer.slideButton.find('span').attr('uk-icon', 'chevron-up');
+                App.footer.mode = 1;
+                App.footer.content.fadeIn(App.footer.animateTimer / 1.25);
             }
         }),
         changeMode: function (m) {
-            app.footer.mode = m;
-            app.footer.slideButton.click();
+            App.footer.mode = m;
+            App.footer.slideButton.click();
         },
-        maximize: function () { app.footer.changeMode(1); },
-        show: function () { app.footer.changeMode(0); },
-        hide: function () { app.footer.changeMode(-1); },
+        maximize: function () { App.footer.changeMode(1); },
+        show: function () { App.footer.changeMode(0); },
+        hide: function () { App.footer.changeMode(-1); },
         getContent: function (url, data, finished) {
-            app.footer.content.html('<div uk-spinner="ratio: 1.5" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);"></div>');
-            if (app.footer.mode !== -1) {
-                app.footer.show();
+            App.footer.content.html('<div uk-spinner="ratio: 1.5" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);"></div>');
+            if (App.footer.mode !== -1) {
+                App.footer.show();
             }
             $.get(url, data, function (html) {
-                app.footer.content.html(html);
+                App.footer.content.html(html);
             }).fail(function () {
-                app.footer.content.html('Произошла непредвиденная ошибка!');
+                App.footer.content.html('Произошла непредвиденная ошибка!');
             }).then(function () {
                 if (finished) {
                     finished();
                 }
 
-                app.setLastContentState({ footerOptions: { url: url, data: data } });
+                App.setLastContentState({ footerOptions: { url: url, data: data } });
+                App.map.off('click,mousemove');
             });
         },
         setBreadcrumbs: function (crumbs) {
@@ -66,10 +68,10 @@
                     }
                 }
 
-                app.footer.breadcrumb.html(htmlBreadCrumbs).find('li span').off('click').click(function () {
+                App.footer.breadcrumb.html(htmlBreadCrumbs).find('li span').off('click').click(function () {
                     var href = $(this).data('href');
                     if (href) {
-                        app.footer.getContent(href);
+                        App.footer.getContent(href);
                     }
                 });
             }
@@ -132,7 +134,7 @@
         return state;
     },
     setLastContentState: function (obj) {
-        var state = app.getLastContentState();
+        var state = App.getLastContentState();
         if (!state) state = {};
         if (obj) {
             if (obj.footerOptions) state.footerOptions = obj.footerOptions;
@@ -141,29 +143,28 @@
         localStorage.setItem('contentState', JSON.stringify(state));
     },
     initializeContentState: function () {
-        var contentState = app.getLastContentState();
+        var contentState = App.getLastContentState();
         if (!contentState)
-            app.setLastContentState({
+            App.setLastContentState({
                 footerOptions: {
                     url: null,
                     data: null
                 },
-                isOpenMenu: true,
-                isLogistic: false
+                isOpenMenu: true
             });
     },
     useContentState: function () {
         var _showFunc = () => {
-            app.footer.content.html('<div class="uk-text-center">Добро пожаловать в приложение LikeBusLogistic!<br />Для того чтобы начать выберите один из пунктов меню.</div>');
-            app.menu.show(2000);
-            app.footer.show();
+            App.footer.content.html('<div class="uk-text-center">Добро пожаловать в приложение LikeBusLogistic!<br />Для того чтобы начать выберите один из пунктов меню.</div>');
+            App.menu.show(2000);
+            App.footer.show();
         };
-        var state = app.getLastContentState();
+        var state = App.getLastContentState();
         if (state) {
             if (state.footerOptions && state.footerOptions.url)
-                app.footer.getContent(state.footerOptions.url, state.footerOptions.data);
+                App.footer.getContent(state.footerOptions.url, state.footerOptions.data);
             else _showFunc();
-            if (state.isOpenMenu) app.menu.show(); else app.menu.hide();
+            if (state.isOpenMenu) App.menu.show(); else App.menu.hide();
         } else _showFunc();
     },
     serializeInputsToObject: function (selector, excludedAttributes = null, excludedTypes = null) {
@@ -188,13 +189,13 @@
                     if (successHandler) {
                         successHandler(result.message);
                     } else {
-                        app.message.showSuccessWithOk('Успешно', result.message || 'Успешно выполнено!');
+                        App.message.showSuccessWithOk('Успешно', result.message || 'Успешно выполнено!');
                     }
                 } else {
                     if (errorHandler) {
                         errorHandler(result.message);
                     } else {
-                        app.message.showErrorWithOk('Ошибка', result.message || 'Произошла непредвиденная ошибка!');
+                        App.message.showErrorWithOk('Ошибка', result.message || 'Произошла непредвиденная ошибка!');
                     }
                 }
             }
@@ -202,19 +203,17 @@
     }
 };
 
-$(document).ready(function () { if (localStorage.getItem('isLoggedOff') === 'true') { app.useContentState(); localStorage.setItem('isLoggedOff', 'false'); } });
+$(document).ready(function () { if (localStorage.getItem('isLoggedOff') === 'true') { App.useContentState(); localStorage.setItem('isLoggedOff', 'false'); } });
 document.addEventListener("DOMContentLoaded", function (event) {
-    app.initializeContentState();
+    App.initializeContentState();
     $('#offcanvas-slide').on('shown', function () {
-        app.setLastContentState({ isOpenMenu: true });
+        App.setLastContentState({ isOpenMenu: true });
     });
     $('#offcanvas-slide').on('hidden', function () {
-        app.setLastContentState({ isOpenMenu: false });
+        App.setLastContentState({ isOpenMenu: false });
     });
     $('.menu-item').click(function () {
-        let isLogistic = $(this).parents('#logistic-tab').length > 0;
-        app.footer.getContent($(this).data('href'), null, function () {
-            app.setLastContentState({ isLogistic: isLogistic });
+        App.footer.getContent($(this).data('href'), null, function () {
             UIkit.offcanvas('#offcanvas-slide').hide();
         });
     });

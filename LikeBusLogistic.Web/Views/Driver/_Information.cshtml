@@ -47,22 +47,22 @@
 </table>
 
 <script>
-    app.footer.setBreadcrumbs([{ name: 'Водители', url: '@Url.Action("_FullInformation", "Driver")' }, { name: 'Информация', url: '@Url.Action("_Information","Driver")' }]);
+    App.footer.setBreadcrumbs([{ name: 'Водители', url: '@Url.Action("_FullInformation", "Driver")' }, { name: 'Информация', url: '@Url.Action("_Information","Driver")' }]);
     $(document).ready(function () {
         $('#driver-table').dataTable();
         $('.edit-driver-icon').click(function () {
             var id = $(this).parents('tr').data('driver-id');
-            app.footer.getContent('@Url.Action("_MergeDriver", "Driver")', { driverId: id });
+            App.footer.getContent('@Url.Action("_MergeDriver", "Driver")', { driverId: id });
         });
         $('.delete-driver-icon').click(function () {
             var id = $(this).parents('tr').data('driver-id');
-            app.postDataOnServer('@Url.Action("DeleteOrRestoreDriver", "Driver")', { driverId: id }, function (message) {
-                app.message.showSuccessWithOk('Успешно', message || 'Машина успешно удалена!');
-                app.useContentState();
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreDriver", "Driver")', { driverId: id }, function (message) {
+                App.message.showSuccessWithOk('Успешно', message || 'Машина успешно удалена!');
+                App.useContentState();
             });
         });
         $('#add-driver-button').click(function () {
-            app.footer.getContent('@Url.Action("_MergeDriver", "Driver")');
+            App.footer.getContent('@Url.Action("_MergeDriver", "Driver")');
         });
     });
 </script>

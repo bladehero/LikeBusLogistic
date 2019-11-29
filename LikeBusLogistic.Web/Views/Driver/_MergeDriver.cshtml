@@ -54,14 +54,14 @@
 </div>
 
 <script>
-    app.footer.setBreadcrumbs([
+    App.footer.setBreadcrumbs([
         { name: 'Водители', url: '@Url.Action("_FullInformation", "Driver")' },
         { name: 'Информация', url: '@Url.Action("_Information", "Driver")' },
         { name: '@(Model.Driver == null ? "Добавить" : "Изменить")', url: '@Url.Action("_Information", "Driver")' }
     ]);
 
     $('#save-driver-btn').click(function () {
-        var data = app.serializeInputsToObject('#save-driver-grid input,select');
-        app.postDataOnServer('@Url.Action("MergeDriver", "Driver")', data);
+        var data = App.serializeInputsToObject('#save-driver-grid input,select');
+        App.postDataOnServer('@Url.Action("MergeDriver", "Driver")', data);
     });
 </script>

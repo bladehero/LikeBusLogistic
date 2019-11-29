@@ -43,22 +43,22 @@
 </table>
 
 <script>
-    app.footer.setBreadcrumbs([{ name: 'Водители', url: '@Url.Action("_FullInformation", "Driver")' }, { name: 'Контакты', url: '@Url.Action("_Contacts","Driver")' }]);
+    App.footer.setBreadcrumbs([{ name: 'Водители', url: '@Url.Action("_FullInformation", "Driver")' }, { name: 'Контакты', url: '@Url.Action("_Contacts","Driver")' }]);
     $(document).ready(function () {
         $('#contact-table').dataTable();
         $('.edit-contact-icon').click(function () {
             var id = $(this).parents('tr').data('contact-id');
-            app.footer.getContent('@Url.Action("_MergeContact", "Driver")', { contactId: id });
+            App.footer.getContent('@Url.Action("_MergeContact", "Driver")', { contactId: id });
         });
         $('.delete-contact-icon').click(function () {
             var id = $(this).parents('tr').data('contact-id');
-            app.postDataOnServer('@Url.Action("DeleteOrRestoreContact", "Driver")', { contactId: id }, function (message) {
-                app.message.showSuccessWithOk('Успешно', message || 'Машина успешно удалена!');
-                app.useContentState();
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreContact", "Driver")', { contactId: id }, function (message) {
+                App.message.showSuccessWithOk('Успешно', message || 'Машина успешно удалена!');
+                App.useContentState();
             });
         });
         $('#add-contact-button').click(function () {
-            app.footer.getContent('@Url.Action("_MergeContact", "Driver")');
+            App.footer.getContent('@Url.Action("_MergeContact", "Driver")');
         });
     });
 </script>

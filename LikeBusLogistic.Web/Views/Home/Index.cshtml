@@ -1,11 +1,17 @@
 ﻿@section Scripts {
     <script>
-        app.useContentState();
-        app.map = L.map('map').setView([46, 19], 5);
+        App.useContentState();
+        App.map.setView([46, 19], 5);
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
             maxZoom: 18,
             id: 'mapbox.streets',
             accessToken: 'pk.eyJ1IjoibmlraXRhZGVybWVuemhpIiwiYSI6ImNrMzM3NGoyaTA3cjMzZGxrc3JjNnZqbzMifQ.s46KKhteHGX6SCEHpv5nGg'
-        }).addTo(app.map);
+        }).addTo(App.map);
+        //app.map.on('click', function (obj) {
+        //	L.popup()
+        //    .setLatLng(obj.latlng)
+        //    .setContent('<p>Hello world!<br />This is a nice popup.</p>')
+        //    .openOn(app.map);
+        //});
     </script>
 }
