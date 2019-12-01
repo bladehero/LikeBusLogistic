@@ -57,7 +57,7 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<IEnumerable<DriverInfoVM>>();
             try
             {
-                var drivers = UnitOfWork.StoredProcedureDao.GetDriverInfo();
+                var drivers = UnitOfWork.StoredProcedureDao.GetDriverInfo(withDeleted: RoleName == Variables.RoleName.Administrator);
                 var driverInfoVMs = Mapper.Map<IEnumerable<DriverInfoVM>>(drivers);
                 result.Data = driverInfoVMs;
                 result.Success = true;

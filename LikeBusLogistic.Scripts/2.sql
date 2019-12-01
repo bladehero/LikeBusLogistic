@@ -159,7 +159,8 @@ go
 
 alter procedure dbo.GetDriverInfo
 (  
-    @driverId as int = null
+    @driverId as int = null,
+    @withDeleted as bit = 0
 )  
 as  
 begin  
@@ -181,8 +182,12 @@ begin
         join Bus b on bs.BusId = b.Id
         join Vehicle v on b.VehicleId = v.Id
         where bs.DriverId = d.Id
+          and bs.IsDeleted = 0
+          and b.IsDeleted = 0
+          and v.IsDeleted = 0
     ) as bi
     where 1=1
+      and (d.IsDeleted = 0 or @withDeleted = 1)
       and d.Id = isnull(@driverId, d.Id)
 
 end;

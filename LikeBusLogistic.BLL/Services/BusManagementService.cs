@@ -118,8 +118,7 @@ namespace LikeBusLogistic.BLL.Services
                     vehicle.CreatedBy = AccountId;
                 }
                 vehicle.ModifiedBy = AccountId;
-                UnitOfWork.VehicleDao.Merge(vehicle);
-                result.Success = true;
+                result.Success = UnitOfWork.VehicleDao.Merge(vehicle);
                 result.Message = GeneralSuccessMessage;
             }
             catch (Exception ex)
