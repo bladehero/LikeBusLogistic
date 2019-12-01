@@ -45,6 +45,18 @@ namespace LikeBusLogistic.VM.MapperExtensions
                 cfg.CreateMap<DriverContact, DriverContactVM>();
                 cfg.CreateMap<DriverContactVM, DriverContact>();
                 #endregion
+
+                #region Geolocation Service
+                cfg.CreateMap<CityVM, GetCity_Result>();
+                cfg.CreateMap<GetCity_Result, CityVM>();
+                cfg.CreateMap<DistrictVM, GetDistrict_Result>();
+                cfg.CreateMap<GetDistrict_Result, DistrictVM>();
+                cfg.CreateMap<GetLocation_Result, LocationVM>();
+                cfg.CreateMap<LocationVM, GetLocation_Result>();
+
+                cfg.CreateMap<CountryVM, Country>();
+                cfg.CreateMap<Country, CountryVM>();
+                #endregion
             });
         }
     }

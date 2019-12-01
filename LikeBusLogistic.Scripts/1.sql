@@ -221,7 +221,7 @@ if not exists (select 1
     CountryId int null,
     DistrictId int null,
     CityId int null,
-    Name nvarchar(200) not null,
+    Name nvarchar(200) null,
     Latitude float not null,
     Longtitude float not null,
     IsParking bit not null,

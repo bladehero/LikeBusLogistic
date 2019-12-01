@@ -52,5 +52,35 @@ namespace LikeBusLogistic.DAL.Dao
 
             Connection.Query<GetDriverInfo_Result>("dbo.MergeDriver", parameters, commandType: CommandType.StoredProcedure);
         }
+        public IEnumerable<GetCity_Result> GetCity(int? cityId = null, bool withDeleted = false)
+        {
+            var parameters = new
+            {
+                @cityId = cityId,
+                @withDeleted = withDeleted
+            };
+
+            return Connection.Query<GetCity_Result>("dbo.GetCity", parameters, commandType: CommandType.StoredProcedure);
+        }
+        public IEnumerable<GetDistrict_Result> GetDistrict(int? districtId = null, bool withDeleted = false)
+        {
+            var parameters = new
+            {
+                @districtId = districtId,
+                @withDeleted = withDeleted
+            };
+
+            return Connection.Query<GetDistrict_Result>("dbo.GetDistrict", parameters, commandType: CommandType.StoredProcedure);
+        }
+        public IEnumerable<GetLocation_Result> GetLocation(int? locationId = null, bool withDeleted = false)
+        {
+            var parameters = new
+            {
+                @locationId = locationId,
+                @withDeleted = withDeleted
+            };
+
+            return Connection.Query<GetLocation_Result>("dbo.GetLocation", parameters, commandType: CommandType.StoredProcedure);
+        }
     }
 }

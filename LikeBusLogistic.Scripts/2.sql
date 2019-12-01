@@ -258,3 +258,118 @@ begin
 
 end;
 go
+
+ if object_id(N'dbo.GetDistrict') is null
+   exec('create procedure dbo.GetDistrict as set nocount on;');
+ go
+ 
+ -- ============================================================================
+ -- Example    : exec dbo.GetDistrict
+ -- Author     : Nikita Dermenzhi
+ -- Date       : 25/07/2019
+ -- Description: —
+ -- ============================================================================
+ 
+ alter procedure dbo.GetDistrict
+ (  
+     @districtId as int = null,
+     @withDeleted as bit = 0
+ )  
+ as  
+ begin  
+   
+  select d.Id as Id
+       , d.Name as Name
+       , c.Id as CountryId
+       , c.Name as CountryName
+       , d.IsDeleted as IsDeleted
+    from District d
+    join Country c on d.CountryId = c.Id
+    where 1=1
+      and (c.IsDeleted = 0 or @withDeleted = 1)
+      and (d.IsDeleted = 0 or @withDeleted = 1)
+      and d.Id  = isnull(@districtId, d.Id)
+ 
+ end;
+ go
+
+ if object_id(N'dbo.GetCity') is null
+   exec('create procedure dbo.GetCity as set nocount on;');
+ go
+ 
+ -- ============================================================================
+ -- Example    : exec dbo.GetCity
+ -- Author     : Nikita Dermenzhi
+ -- Date       : 25/07/2019
+ -- Description: —
+ -- ============================================================================
+ 
+ alter procedure dbo.GetCity
+ (  
+     @cityId as int = null,
+     @withDeleted as bit = 0
+ )  
+ as  
+ begin  
+   
+  select c.Id as Id
+       , c.Name as Name
+       , d.Id as DistrictId
+       , d.Name as DistrictName
+       , ctr.Id as CountryId
+       , ctr.Name as CountryName
+       , c.IsDeleted as IsDeleted
+    from City c
+    join District d on c.DistrictId = d.Id
+    join Country ctr on d.CountryId = ctr.Id
+    where 1=1
+      and (c.IsDeleted = 0 or @withDeleted = 1)
+      and (d.IsDeleted = 0 or @withDeleted = 1)
+      and (ctr.IsDeleted = 0 or @withDeleted = 1)
+      and c.Id  = isnull(@cityId, c.Id)
+ 
+ end;
+ go
+
+ if object_id(N'dbo.GetLocation') is null
+   exec('create procedure dbo.GetLocation as set nocount on;');
+ go
+ 
+ -- ============================================================================
+ -- Example    : exec dbo.GetLocation
+ -- Author     : Nikita Dermenzhi
+ -- Date       : 25/07/2019
+ -- Description: —
+ -- ============================================================================
+ 
+ alter procedure dbo.GetLocation
+ (  
+     @locationId as int = null,
+     @withDeleted as bit = 0
+ )  
+ as  
+ begin  
+   
+  select l.Id as Id
+       , l.Name as Name
+       , l.Latitude as Latitude
+       , l.Longtitude as Longtitude
+       , l.IsCarRepair as IsCarRepair
+       , l.IsParking as IsParking
+       , c.Id as CityId
+       , c.Name as CityName
+       , d.Id as DistrictId
+       , d.Name as DistrictName
+       , ctr.Id as CountryId
+       , ctr.Name as CountryName
+       , l.IsDeleted as IsDeleted
+    from Location l
+    left join City c on l.CountryId = c.Id and c.IsDeleted = 0
+    left join District d on iif(l.DistrictId is null or l.DistrictId = c.DistrictId, c.DistrictId, null) = d.Id and c.IsDeleted = 0
+    left join Country ctr on iif(l.CountryId is null or l.CountryId = d.CountryId, d.CountryId, null) = c.Id and c.IsDeleted = 0
+    where 1=1
+      and (l.IsDeleted = 0 or @withDeleted = 1)
+      and l.Id  = isnull(@locationId, l.Id)
+ 
+ end;
+ go

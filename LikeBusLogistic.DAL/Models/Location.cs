@@ -1,6 +1,6 @@
 ﻿namespace LikeBusLogistic.DAL.Models
 {
-    public class Location : BaseEntity
+    public class Location : UserTrackedEntity
     {
         public int? CountryId { get; set; }
         public int? DistrictId { get; set; }
