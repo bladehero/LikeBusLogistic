@@ -16,7 +16,7 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<VehicleVM>();
             try
             {
-                var vehicle = UnitOfWork.VehicleDao.FindById(vehicleId);
+                var vehicle = UnitOfWork.VehicleDao.FindById(vehicleId, RoleName == Variables.RoleName.Administrator);
                 result.Data = Mapper.Map<VehicleVM>(vehicle);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
@@ -34,8 +34,8 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<BusVM>();
             try
             {
-                var bus = UnitOfWork.BusDao.FindById(busId);
-                var vehicle = UnitOfWork.VehicleDao.FindById(bus.VehicleId);
+                var bus = UnitOfWork.BusDao.FindById(busId, RoleName == Variables.RoleName.Administrator);
+                var vehicle = UnitOfWork.VehicleDao.FindById(bus.VehicleId, RoleName == Variables.RoleName.Administrator);
                 var busVM = new BusVM
                 {
                     BusId = bus.Id,

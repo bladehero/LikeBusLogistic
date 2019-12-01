@@ -7,6 +7,7 @@ namespace LikeBusLogistic.Web.Models.Drivers
     {
         public IEnumerable<DriverInfoVM> Drivers{ get; set; }
         public IEnumerable<DriverContactVM> Contacts { get; set; }
+        public DriverTab Tab { get; set; }
 
         public FullInformationVM()
         {

@@ -16,7 +16,7 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult _FullInformation()
+        public IActionResult _FullInformation(BusTab tab = BusTab.Bus)
         {
             var buses = ServiceFactory.BusManagement.GetBuses();
             var vehicles = ServiceFactory.BusManagement.GetVehicles();
@@ -24,7 +24,8 @@ namespace LikeBusLogistic.Web.Controllers
             var model = new FullInformationVM
             {
                 Buses = buses.Data,
-                Vehicles = vehicles.Data
+                Vehicles = vehicles.Data,
+                Tab = tab
             };
             return PartialView(model);
         }

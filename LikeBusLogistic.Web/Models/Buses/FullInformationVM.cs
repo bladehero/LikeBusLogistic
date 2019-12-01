@@ -7,6 +7,7 @@ namespace LikeBusLogistic.Web.Models.Buses
     {
         public IEnumerable<BusVM> Buses { get; set; }
         public IEnumerable<VehicleVM> Vehicles { get; set; }
+        public BusTab Tab { get; set; }
 
         public FullInformationVM()
         {

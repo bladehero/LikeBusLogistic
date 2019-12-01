@@ -3,6 +3,7 @@ using LikeBusLogistic.DAL.Models;
 using LikeBusLogistic.VM.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LikeBusLogistic.BLL.Services
 {
@@ -15,7 +16,7 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<CountryVM>();
             try
             {
-                var country = UnitOfWork.CountryDao.FindById(countryId);
+                var country = UnitOfWork.CountryDao.FindById(countryId, RoleName == Variables.RoleName.Administrator);
                 result.Data = Mapper.Map<CountryVM>(country);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
@@ -71,6 +72,127 @@ namespace LikeBusLogistic.BLL.Services
             {
                 var location = UnitOfWork.StoredProcedureDao.GetLocation(locationId.Value);
                 result.Data = Mapper.Map<LocationVM>(location);
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+
+        public BaseResult<CountryVM> GetCountryByCity(int cityId)
+        {
+            var result = new BaseResult<CountryVM>();
+            try
+            {
+                var city = UnitOfWork.CityDao.FindById(cityId, RoleName == Variables.RoleName.Administrator);
+                var district = UnitOfWork.DistrictDao.FindById(city.DistrictId, RoleName == Variables.RoleName.Administrator);
+                var country = UnitOfWork.CountryDao.FindById(district.CountryId, RoleName == Variables.RoleName.Administrator);
+                result.Data = Mapper.Map<CountryVM>(country);
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+        public BaseResult<CountryVM> GetCountryByDistrict(int districtId)
+        {
+            var result = new BaseResult<CountryVM>();
+            try
+            {
+                var district = UnitOfWork.DistrictDao.FindById(districtId, RoleName == Variables.RoleName.Administrator);
+                var country = UnitOfWork.CountryDao.FindById(district.CountryId, RoleName == Variables.RoleName.Administrator);
+                result.Data = Mapper.Map<CountryVM>(country);
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+        public BaseResult<DistrictVM> GetDistrictByCity(int cityId)
+        {
+            var result = new BaseResult<DistrictVM>();
+            try
+            {
+                var city = UnitOfWork.CityDao.FindById(cityId, RoleName == Variables.RoleName.Administrator);
+                var district = UnitOfWork.StoredProcedureDao
+                               .GetDistrict(city.DistrictId, RoleName == Variables.RoleName.Administrator)
+                               .FirstOrDefault();
+                result.Data = Mapper.Map<DistrictVM>(district);
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+        public BaseResult<IEnumerable<DistrictVM>> GetDistrictsByCountry(int countryId)
+        {
+            var result = new BaseResult<IEnumerable<DistrictVM>>();
+            try
+            {
+                var district = UnitOfWork.StoredProcedureDao
+                               .GetDistrict(withDeleted: RoleName == Variables.RoleName.Administrator)
+                               .Where(x => x.CountryId == countryId);
+                result.Data = Mapper.Map<IEnumerable<DistrictVM>>(district);
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+        public BaseResult<IEnumerable<CityVM>> GetCitiesByCountry(int countryId)
+        {
+            var result = new BaseResult<IEnumerable<CityVM>>();
+            try
+            {
+                var cities = UnitOfWork.StoredProcedureDao
+                             .GetCity(withDeleted: RoleName == Variables.RoleName.Administrator)
+                             .Where(x => x.CountryId == countryId);
+                result.Data = Mapper.Map<IEnumerable<CityVM>>(cities);
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+        public BaseResult<IEnumerable<CityVM>> GetCitiesByDistrict(int districtId)
+        {
+            var result = new BaseResult<IEnumerable<CityVM>>();
+            try
+            {
+                var cities = UnitOfWork.StoredProcedureDao
+                             .GetCity(withDeleted: RoleName == Variables.RoleName.Administrator)
+                             .Where(x => x.DistrictId == districtId);
+                result.Data = Mapper.Map<IEnumerable<CityVM>>(cities);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
             }

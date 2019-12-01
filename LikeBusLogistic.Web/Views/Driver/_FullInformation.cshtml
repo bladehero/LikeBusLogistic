@@ -1,8 +1,8 @@
 ﻿@model LikeBusLogistic.Web.Models.Drivers.FullInformationVM
 
 <ul uk-tab>
-    <li><a href="#">Водители</a></li>
-    <li><a href="#">Контакты</a></li>
+    <li class="@(Model.Tab == DriverTab.Info ? "uk-active" : "")" ><a href="#">Водители</a></li>
+    <li class="@(Model.Tab == DriverTab.Contact ? "uk-active" : "")"><a href="#">Контакты</a></li>
 </ul>
 <ul class="uk-switcher uk-margin">
     <li>

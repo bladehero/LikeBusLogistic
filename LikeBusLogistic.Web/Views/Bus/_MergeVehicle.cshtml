@@ -35,8 +35,7 @@
 
 <script>
     App.footer.setBreadcrumbs([
-        { name: 'Автобусы', url: '@Url.Action("_FullInformation", "Bus")' },
-        { name: 'Модели', url: '@Url.Action("_Vehicles", "Bus")' },
+        { name: 'Модели', url: '@Url.Action("_FullInformation", "Bus", new { tab = BusTab.Vehicle })' },
         { name: '@(Model.Vehicle == null ? "Добавить" : "Изменить")', url: '@Url.Action("_MergeVehicle", "Bus")' }
     ]);
 

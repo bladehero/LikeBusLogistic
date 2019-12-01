@@ -23,8 +23,8 @@
                         Автобусы
                     </a>
                     <ul class="uk-nav-sub">
-                        <li><a class="menu-item" data-href="@Url.Action("_Buses", "Bus")">Машины</a></li>
-                        <li><a class="menu-item" data-href="@Url.Action("_Vehicles", "Bus")">Модели</a></li>
+                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Bus", new { tab = BusTab.Bus })">Машины</a></li>
+                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Bus", new { tab = BusTab.Vehicle })">Модели</a></li>
                     </ul>
                 </li>
                 <li class="uk-nav-divider"></li>
@@ -34,8 +34,8 @@
                         Водители
                     </a>
                     <ul class="uk-nav-sub">
-                        <li><a class="menu-item" data-href="@Url.Action("_Information", "Driver")">Информация</a></li>
-                        <li><a class="menu-item" data-href="@Url.Action("_Contacts", "Driver")">Контакты</a></li>
+                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Driver", new { tab = DriverTab.Info })">Информация</a></li>
+                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Driver", new { tab = DriverTab.Contact })">Контакты</a></li>
                     </ul>
                 </li>
                 <li class="uk-nav-divider"></li>

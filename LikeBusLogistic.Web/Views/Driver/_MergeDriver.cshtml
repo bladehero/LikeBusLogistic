@@ -27,24 +27,11 @@
     <div class="uk-margin uk-width-1-1">
         <label class="uk-form-label">Закреплен на машине</label>
         <div class="uk-form-controls">
-            <select class="uk-select" name="busId">
-                @foreach (var bus in Model.Buses)
-                {
-                    if (bus.BusId == Model.Driver?.BusId)
-                    {
-                        <option value="@bus.BusId"
-                                selected>
-                            @($"{bus.Number} ({bus.Fullname})")
-                        </option>
-                    }
-                    else
-                    {
-                        <option value="@bus.BusId">
-                            @($"{bus.Number} ({bus.Fullname})")
-                        </option>
-                    }
-                }
-            </select>
+            @Model.Buses.SelectList(
+             x => x.BusId,
+             x => $"{x.Number} ({x.Fullname})",
+             Model.Driver?.BusId,
+             new { @class = "uk-select", name = "busId" })
         </div>
     </div>
 
@@ -55,8 +42,7 @@
 
 <script>
     App.footer.setBreadcrumbs([
-        { name: 'Водители', url: '@Url.Action("_FullInformation", "Driver")' },
-        { name: 'Информация', url: '@Url.Action("_Information", "Driver")' },
+        { name: 'Информация', url: '@Url.Action("_FullInformation", "Driver")' },
         { name: '@(Model.Driver == null ? "Добавить" : "Изменить")', url: '@Url.Action("_Information", "Driver")' }
     ]);
 

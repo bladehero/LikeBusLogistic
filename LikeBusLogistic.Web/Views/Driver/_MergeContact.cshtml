@@ -7,24 +7,11 @@
     <div class="uk-margin uk-width-1-1">
         <label class="uk-form-label">Закреплен на машине</label>
         <div class="uk-form-controls">
-            <select class="uk-select" name="driverId">
-                @foreach (var driver in Model.Drivers)
-                {
-                    if (driver.DriverId == Model.Contact?.DriverId)
-                    {
-                        <option value="@driver.DriverId"
-                                selected>
-                            @($"{driver.LastName} {driver.FirstName} {driver.MiddleName}")
-                        </option>
-                    }
-                    else
-                    {
-                        <option value="@driver.DriverId">
-                            @($"{driver.LastName} {driver.FirstName} {driver.MiddleName}")
-                        </option>
-                    }
-                }
-            </select>
+            @Model.Drivers.SelectList(
+             x => x.DriverId,
+             x => $"{x.LastName} {x.FirstName} {x.MiddleName}",
+             Model.Contact?.DriverId,
+             new { @class = "uk-select", name = "driverId" })
         </div>
     </div>
 
@@ -42,8 +29,7 @@
 
 <script>
     App.footer.setBreadcrumbs([
-        { name: 'Водители', url: '@Url.Action("_FullInformation", "Driver")' },
-        { name: 'Контакты', url: '@Url.Action("_Contacts", "Driver")' },
+        { name: 'Контакты', url: '@Url.Action("_FullInformation", "Driver", new { tab = DriverTab.Contact })' },
         { name: '@(Model.Contact == null ? "Добавить" : "Изменить")', url: '@Url.Action("_Information", "Driver")' }
     ]);
 

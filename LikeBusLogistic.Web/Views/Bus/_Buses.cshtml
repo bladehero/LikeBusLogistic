@@ -34,11 +34,11 @@
                 <td class="uk-float-right">
                     @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
                     {
-                        <span class="uk-text-warning uk-margin-small-right edit-bus-icon" uk-icon="icon: cog;"></span>
+                        @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-bus-icon")
                     }
                     @if (roleName == RoleName.Administrator)
                     {
-                        <span class="@(bus.IsDeleted ? "uk-text-success" : "uk-text-danger") delete-bus-icon" uk-icon="icon: @(bus.IsDeleted ? "refresh" : "trash");"></span>
+                        @CustomExtensions.HtmlDeleteOrRestoreIcon(bus.IsDeleted, "delete-bus-icon")
                     }
                 </td>
             </tr>

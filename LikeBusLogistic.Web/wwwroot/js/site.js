@@ -21,6 +21,7 @@
                 }, App.footer.animateTimer);
                 App.footer.slideButton.find('span').attr('uk-icon', 'chevron-down');
                 App.footer.mode = -1;
+                App.footer.content.fadeIn(App.footer.animateTimer / 1.25);
             } else {
                 App.footer.element.stop().animate({
                     height: $(window).height() / 3
@@ -38,6 +39,8 @@
         show: function () { App.footer.changeMode(0); },
         hide: function () { App.footer.changeMode(-1); },
         getContent: function (url, data, finished) {
+            App.map.off('mousemove');
+            App.map.off('click');
             App.footer.content.html('<div uk-spinner="ratio: 1.5" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);"></div>');
             if (App.footer.mode !== -1) {
                 App.footer.show();
@@ -52,7 +55,6 @@
                 }
 
                 App.setLastContentState({ footerOptions: { url: url, data: data } });
-                App.map.off('click,mousemove');
             });
         },
         setBreadcrumbs: function (crumbs) {

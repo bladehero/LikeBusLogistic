@@ -16,7 +16,7 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult _FullInformation()
+        public IActionResult _FullInformation(DriverTab tab = DriverTab.Info)
         {
             var drivers = ServiceFactory.DriverManagement.GetDrivers();
             var contacts = ServiceFactory.DriverManagement.GetDriverContacts();
@@ -24,7 +24,8 @@ namespace LikeBusLogistic.Web.Controllers
             var model = new FullInformationVM
             {
                 Drivers = drivers.Data,
-                Contacts = contacts.Data
+                Contacts = contacts.Data,
+                Tab = tab
             };
             return PartialView(model);
         }

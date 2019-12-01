@@ -35,8 +35,8 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<DriverContactVM>();
             try
             {
-                var contact = UnitOfWork.DriverContactDao.FindById(concatId);
-                var driver = UnitOfWork.DriverDao.FindById(contact.Id);
+                var contact = UnitOfWork.DriverContactDao.FindById(concatId, RoleName == Variables.RoleName.Administrator);
+                var driver = UnitOfWork.DriverDao.FindById(contact.Id, RoleName == Variables.RoleName.Administrator);
                 var driverContactVM = Mapper.Map<DriverContactVM>(contact);
                 driverContactVM.DriverInfo = $"{driver.FirstName} {driver.LastName} {driver.MiddleName}";
                 result.Data = driverContactVM;
