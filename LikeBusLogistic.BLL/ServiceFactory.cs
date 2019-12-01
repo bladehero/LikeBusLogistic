@@ -16,17 +16,20 @@ namespace LikeBusLogistic.BLL
                 AccountManagement.AccountId = value;
                 BusManagement.AccountId = value;
                 DriverManagement.AccountId = value;
+                GeolocationManagement.AccountId = value;
             }
         }
         public AccountManagementService AccountManagement { get; set; }
         public BusManagementService BusManagement { get; set; }
         public DriverManagementService DriverManagement { get; set; }
+        public GeolocationService GeolocationManagement { get; set; }
 
         public ServiceFactory(string connection)
         {
             AccountManagement = new AccountManagementService(connection);
             BusManagement = new BusManagementService(connection);
             DriverManagement = new DriverManagementService(connection);
+            GeolocationManagement = new GeolocationService(connection);
         }
 
         public void Dispose()
@@ -34,6 +37,7 @@ namespace LikeBusLogistic.BLL
             AccountManagement.Dispose();
             BusManagement.Dispose();
             DriverManagement.Dispose();
+            GeolocationManagement.Dispose();
         }
     }
 }
