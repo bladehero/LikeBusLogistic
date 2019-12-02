@@ -1,0 +1,72 @@
+﻿@model LikeBusLogistic.Web.Models.Geolocations.FullInformationVM
+
+<div uk-grid>
+    <div class="uk-width-1-4@l uk-width-1-1@m">
+        <button id="toggler" href="#toggle-animation" class="uk-button uk-button-small uk-button-default uk-margin-small-bottom uk-hidden@l uk-visible@m" type="button" uk-toggle="target: #toggle-animation; animation: uk-animation-fade">
+            Свернуть
+        </button>
+        <div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom" id="toggle-animation">
+            @{
+                await Html.RenderPartialAsync("_Location.cshtml", new LikeBusLogistic.Web.Models.Geolocations.LocationVM
+                {
+                    Cities = Model.Cities,
+                    Countries = Model.Countries,
+                    Districts = Model.Districts
+                });
+            }
+        </div>
+    </div>
+    <div class="uk-width-expand@l uk-width-1-1@m uk-margin-remove-top">
+        <ul uk-tab>
+            <li class="@(Model.Tab == GeolocationTab.Locations ? "uk-active" : "")"><a href="#">Локации</a></li>
+            <li class="@(Model.Tab == GeolocationTab.Cities ? "uk-active" : "")"><a href="#">Города</a></li>
+            <li class="@(Model.Tab == GeolocationTab.Districts ? "uk-active" : "")"><a href="#">Регионы</a></li>
+            <li class="@(Model.Tab == GeolocationTab.Countries ? "uk-active" : "")"><a href="#">Страны</a></li>
+        </ul>
+        <ul class="uk-switcher uk-margin">
+            <li>
+                @{
+                    await Html.RenderPartialAsync("_Locations.cshtml", Model.Locations);
+                }
+            </li>
+            <li>
+                @{
+                    await Html.RenderPartialAsync("_Cities.cshtml", Model.Cities);
+                }
+            </li>
+            <li>
+                @{
+                    await Html.RenderPartialAsync("_Districts.cshtml", Model.Districts);
+                }
+            </li>
+            <li>
+                @{
+                    await Html.RenderPartialAsync("_Countries.cshtml", Model.Countries);
+                }
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    App.footer.setBreadcrumbs([{ name: 'Логистика', url: '@Url.Action("_FullInformation", "Geolocation")' }]);
+    App.postDataOnServer('@Url.Action("GetLocations", "Home")', null,
+        function (result) {
+            debugger;
+            if (result.success) {
+                if (result.data.length) {
+                    var locations = [];
+                    for (var i = 0; i < result.data.length; i++) {
+                        var marker = L.marker([result.data[i].latitude, result.data[i].longtitude]);
+                        locations.push({
+                            marker: marker
+                        });
+                    }
+                    App.geo.setLocations(locations);
+                }
+            }
+        },
+        (result) => { console.log(result) },
+        'GET'
+    );
+</script>

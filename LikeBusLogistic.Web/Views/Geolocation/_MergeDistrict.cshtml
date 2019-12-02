@@ -1,0 +1,38 @@
+﻿@model MergeDistrictVM
+
+<div class="uk-grid-small" uk-grid id="save-district-grid">
+    <input type="hidden" name="id" value="@Model.District?.Id" />
+    <div class="uk-margin uk-width-1-1">
+        <label class="uk-form-label" for="form-stacked-text">Регион</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="name" type="text" placeholder="Регион..." value="@Model.District?.Name">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-1">
+        <label class="uk-form-label" for="form-stacked-text">Страна</label>
+        <div class="uk-form-controls">
+            @Model.Countries.SelectList(
+             x => x.Id,
+             x => x.Name,
+             Model.District?.CountryId,
+             new { @class = "uk-select", name = "countryId" })
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-margin-remove-top uk-width-1-1">
+        <button class="uk-button uk-button-primary uk-float-right" id="save-district-btn">Сохранить</button>
+    </div>
+</div>
+
+<script>
+    App.footer.setBreadcrumbs([
+        { name: 'Логистика', url: '@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Districts })' },
+        { name: '@(Model.District == null ? "Добавить" : "Изменить") регион', url: '@Url.Action("_MergeDistrict", "Geolocation")' }
+    ]);
+
+    $('#save-district-btn').click(function () {
+        var data = App.serializeInputsToObject('#save-district-grid input,select');
+        App.postDataOnServer('@Url.Action("MergeDistrict", "Geolocation")', data);
+    });
+</script>

@@ -34,7 +34,7 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<DistrictVM>();
             try
             {
-                var district = UnitOfWork.StoredProcedureDao.GetDistrict(districtId.Value);
+                var district = UnitOfWork.StoredProcedureDao.GetDistrict(districtId.Value).FirstOrDefault();
                 result.Data = Mapper.Map<DistrictVM>(district);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
@@ -52,7 +52,7 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<CityVM>();
             try
             {
-                var city = UnitOfWork.StoredProcedureDao.GetCity(cityId.Value);
+                var city = UnitOfWork.StoredProcedureDao.GetCity(cityId.Value).FirstOrDefault();
                 result.Data = Mapper.Map<CityVM>(city);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
@@ -70,7 +70,7 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<LocationVM>();
             try
             {
-                var location = UnitOfWork.StoredProcedureDao.GetLocation(locationId.Value);
+                var location = UnitOfWork.StoredProcedureDao.GetLocation(locationId.Value).FirstOrDefault();
                 result.Data = Mapper.Map<LocationVM>(location);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
@@ -223,7 +223,7 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
-        public BaseResult<IEnumerable<DistrictVM>> GetDistrict()
+        public BaseResult<IEnumerable<DistrictVM>> GetDistricts()
         {
             var result = new BaseResult<IEnumerable<DistrictVM>>();
             try

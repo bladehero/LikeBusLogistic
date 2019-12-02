@@ -11,9 +11,7 @@ namespace LikeBusLogistic.Web.Controllers
     [Authorize]
     public class BusController : BaseController
     {
-        public BusController(ServiceFactory serviceFactory) : base(serviceFactory)
-        {
-        }
+        public BusController(ServiceFactory serviceFactory) : base(serviceFactory) { }
 
         [HttpGet]
         public IActionResult _FullInformation(BusTab tab = BusTab.Bus)
@@ -29,7 +27,6 @@ namespace LikeBusLogistic.Web.Controllers
             };
             return PartialView(model);
         }
-
         [HttpGet]
         public IActionResult _Buses()
         {
@@ -41,7 +38,6 @@ namespace LikeBusLogistic.Web.Controllers
             };
             return PartialView(model);
         }
-
         [HttpGet]
         public IActionResult _Vehicles()
         {
@@ -53,7 +49,6 @@ namespace LikeBusLogistic.Web.Controllers
             };
             return PartialView(model);
         }
-
         [HttpGet]
         public IActionResult _MergeBus(int? busId)
         {
@@ -67,7 +62,6 @@ namespace LikeBusLogistic.Web.Controllers
             };
             return PartialView(model);
         }
-
         [HttpGet]
         public IActionResult _MergeVehicle(int? vehicleId)
         {
@@ -79,7 +73,6 @@ namespace LikeBusLogistic.Web.Controllers
             };
             return PartialView(model);
         }
-
 
         [HttpPost]
         public IActionResult MergeBus(BusVM busVM)
@@ -97,7 +90,6 @@ namespace LikeBusLogistic.Web.Controllers
             }
             return Json(result);
         }
-
         [HttpPost]
         public IActionResult MergeVehicle(VehicleVM vehicleVM)
         {
@@ -131,7 +123,6 @@ namespace LikeBusLogistic.Web.Controllers
             }
             return Json(result);
         }
-
         [HttpPost]
         public IActionResult DeleteOrRestoreBus(int busId)
         {

@@ -352,8 +352,8 @@ go
    
   select l.Id as Id
        , l.Name as Name
-       , l.Latitude as Latitude
-       , l.Longtitude as Longtitude
+       , round(l.Latitude, 6) as Latitude
+       , round(l.Longtitude, 6) as Longtitude
        , l.IsCarRepair as IsCarRepair
        , l.IsParking as IsParking
        , c.Id as CityId
@@ -364,9 +364,9 @@ go
        , ctr.Name as CountryName
        , l.IsDeleted as IsDeleted
     from Location l
-    left join City c on l.CountryId = c.Id and c.IsDeleted = 0
-    left join District d on iif(l.DistrictId is null or l.DistrictId = c.DistrictId, c.DistrictId, null) = d.Id and c.IsDeleted = 0
-    left join Country ctr on iif(l.CountryId is null or l.CountryId = d.CountryId, d.CountryId, null) = c.Id and c.IsDeleted = 0
+    left join City c on l.CityId = c.Id and c.IsDeleted = 0
+    left join District d on l.DistrictId = d.Id and d.IsDeleted = 0
+    left join Country ctr on l.CountryId = ctr.Id and ctr.IsDeleted = 0
     where 1=1
       and (l.IsDeleted = 0 or @withDeleted = 1)
       and l.Id  = isnull(@locationId, l.Id)

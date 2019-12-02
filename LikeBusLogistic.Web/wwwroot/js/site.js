@@ -1,5 +1,21 @@
 ﻿var App = {
     map: L.map('map'),
+    geo: {
+        locations: [],
+        setLocations: function (obj) {
+            if (obj) {
+                if (obj.length) {
+                    for (var i = 0; i < obj.length; i++) {
+                        App.geo.locations.push(obj[i]);
+                        obj[i].marker.addTo(App.map);
+                    }
+                } else {
+                    App.geo.locations.push(obj);
+                    obj.marker.addTo(App.map);
+                }
+            }
+        }
+    },
     footer: {
         mode: 0,
         breadcrumb: $('#footer-breacrumb'),
@@ -176,8 +192,13 @@
                 for (var i = 0; i < excludedAttributes.length; i++)
                     if ($(el).attr(excludedAttributes[i]) || $(el).is(':' + excludedAttributes[i])) return;
             }
-
-            obj[$(el).attr('name')] = $(el).val();
+            var val;
+            if ($(el).attr('type') === 'checkbox' || $(el).attr('type') === 'radiobutton') {
+                val = $(el).is(':checked');
+            } else {
+                val = $(el).val();
+            }
+            obj[$(el).attr('name')] = val;
         });
         return obj;
     },
@@ -189,13 +210,13 @@
             success: function (result) {
                 if (result.success) {
                     if (successHandler) {
-                        successHandler(result.message);
+                        successHandler(result);
                     } else {
                         App.message.showSuccessWithOk('Успешно', result.message || 'Успешно выполнено!');
                     }
                 } else {
                     if (errorHandler) {
-                        errorHandler(result.message);
+                        errorHandler(result);
                     } else {
                         App.message.showErrorWithOk('Ошибка', result.message || 'Произошла непредвиденная ошибка!');
                     }

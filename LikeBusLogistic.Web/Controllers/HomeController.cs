@@ -20,5 +20,12 @@ namespace LikeBusLogistic.Web.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public IActionResult GetLocations()
+        {
+            var locations = ServiceFactory.GeolocationManagement.GetLocations();
+            return Json(locations);
+        }
     }
 }
