@@ -9,7 +9,8 @@
              x => x.Id,
              x => $"{x.Producer} {x.Model}",
              Model.Bus?.VehicleId,
-             new { @class = "uk-select", name = "vehicleId" })
+             new { @class = "uk-select", name = "vehicleId" },
+             x => new { data_vehicle_description = x.Description, data_vehicle_passenger_capacity = x.PassengerCapacity })
         </div>
     </div>
 
