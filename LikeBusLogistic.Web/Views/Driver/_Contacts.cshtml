@@ -54,7 +54,7 @@
             var id = $(this).parents('tr').data('contact-id');
             App.postDataOnServer('@Url.Action("DeleteOrRestoreContact", "Driver")', { contactId: id }, function (result) {
                 App.message.showSuccessWithOk('Успешно', result.message || 'Контакт успешно удалена!');
-                App.useContentState();
+                App.footer.getContent('@Url.Action("_FullInformation", "Driver", new { tab = DriverTab.Contact })');
             });
         });
         $('#add-contact-button').click(function () {

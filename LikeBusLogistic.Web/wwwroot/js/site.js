@@ -2,6 +2,18 @@
     map: L.map('map'),
     geo: {
         locations: [],
+        onClickLocation: function (handler) {
+            if (handler) {
+                for (var i = 0; i < App.geo.locations.length; i++) {
+                    let location = App.geo.locations[i];
+                    location.marker.on('click',
+                        function (obj) {
+                            handler(obj, location)
+                        }
+                    );
+                }
+            }
+        },
         setLocations: function (obj) {
             if (obj) {
                 if (obj.length) {
@@ -36,7 +48,8 @@
                             for (var i = 0; i < result.data.length; i++) {
                                 var marker = L.marker([result.data[i].latitude, result.data[i].longtitude]);
                                 locations.push({
-                                    marker: marker
+                                    marker: marker,
+                                    data: result.data[i]
                                 });
                             }
                         }

@@ -5,7 +5,7 @@
 </button>
 <div uk-grid>
     <div class="uk-width-1-4@l uk-width-1-1@m" id="toggle-animation">
-        <div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom" id="current-location-card">
+        <div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom uk-card-hover" id="current-location-card">
             @{
                 await Html.RenderPartialAsync("_Location.cshtml", new LikeBusLogistic.Web.Models.Geolocations.LocationVM
                 {
@@ -51,4 +51,9 @@
 <script>
     App.footer.setBreadcrumbs([{ name: 'Логистика', url: '@Url.Action("_FullInformation", "Geolocation")' }]);
     App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
+    App.geo.onClickLocation(function (obj, location) {
+        var selector = "marker_" + location.marker._leaflet_id;
+        location.marker.unbindPopup().bindPopup('<div style="width: 400px;" id="' + selector + '"></div>', { maxWidth: 560 }).openPopup();
+        App.loadContent('#' + selector, '@Url.Action("_LocationPopup" , "Home")', { id: location.data.id });
+    });
 </script>
