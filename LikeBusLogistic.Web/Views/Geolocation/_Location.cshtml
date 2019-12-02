@@ -1,0 +1,128 @@
+﻿@model LikeBusLogistic.Web.Models.Geolocations.LocationVM
+
+<div id="location-grid">
+    <div class="uk-grid-small" uk-grid>
+        <div class="uk-width-1-2@l">
+            <label class="uk-form-label">Долгота:</label>
+            <input class="uk-input" type="text" name="longtitude" placeholder="Долгота...">
+        </div>
+        <div class="uk-width-1-2@l">
+            <label class="uk-form-label">Широта:</label>
+            <input class="uk-input" type="text" name="latitude" placeholder="Широта...">
+        </div>
+    </div>
+    <div class="uk-grid-small" uk-grid>
+        <div class="uk-width-1-1@l">
+            <label class="uk-form-label">Наименование:</label>
+            <input class="uk-input" type="text" name="name" placeholder="Наименование...">
+        </div>
+        <div class="uk-width-1-1@l">
+            <label class="uk-form-label"></label>
+            <div class="uk-form-controls">
+                @Model.Countries.SelectListWithEmptyOption(
+                 x => x.Id,
+                 x => x.Name,
+                 "Выберите страну...",
+                 Model.Location?.CountryId,
+                 new { @class = "uk-select", name = "countryId" })
+            </div>
+        </div>
+        <div class="uk-width-1-1@l">
+            <label class="uk-form-label"></label>
+            <div class="uk-form-controls">
+                @Model.Districts.SelectListWithEmptyOption(
+                 x => x.Id,
+                 x => x.Name,
+                 "Выберите регион...",
+                 Model.Location?.DistrictId,
+                 new { @class = "uk-select", name = "districtId" })
+            </div>
+        </div>
+        <div class="uk-width-1-1@l">
+            <label class="uk-form-label"></label>
+            <div class="uk-form-controls">
+                @Model.Cities.SelectListWithEmptyOption(
+                 x => x.Id,
+                 x => x.Name,
+                 "Выберите город...",
+                 Model.Location?.CityId,
+                 new { @class = "uk-select", name = "cityId" })
+            </div>
+        </div>
+        <label><input class="uk-checkbox" name="IsParking" type="checkbox" checked> Парковка</label>
+        <label><input class="uk-checkbox" name="IsCarRepair" type="checkbox"> Ремонт</label>
+    </div>
+    <div class="uk-margin uk-flex uk-float-right">
+        <button class="uk-button uk-button-danger uk-button-small uk-margin-small-right" id="cancel-location-btn">Отмена</button>
+        <button class="uk-button uk-button-primary uk-button-small" id="save-location-btn">Сохранить</button>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        function setLatLng(obj) {
+            $('input[name="longtitude"]').val(obj.latlng.lng);
+            $('input[name="latitude"]').val(obj.latlng.lat);
+        }
+        function clickLocation(obj) {
+            App.map.off('mousemove');
+            App.map.off('click');
+            var marker = L.marker([obj.latlng.lat, obj.latlng.lng])
+                .addTo(App.map)
+                .bindPopup('<p class="uk-text-meta uk-margin-remove">Заполните все поля для добавления локации!</p>')
+                .openPopup();
+            setTimeout(App.footer.maximize, 1300);
+            $('#cancel-location-btn').click(function () {
+                App.map.removeControl(marker);
+            });
+            $('.menu-item').click(function removeMarker() {
+                App.map.removeControl(marker);
+                $('.menu-item').off('click', removeMarker);
+            });
+            var zoom = App.map.getZoom();
+            App.map.setView([obj.latlng.lat, obj.latlng.lng], zoom > 10 ? zoom : 10);
+        }
+
+        App.map.on('mousemove', setLatLng);
+        App.map.on('click', clickLocation);
+
+        window.onresize = function () {
+            if ($('#toggle-animation').attr('hidden')) {
+                UIkit.toggle('#toggler').toggle();
+            }
+        }
+        UIkit.util.on(document, 'show', '#toggle-animation', function () {
+            var toggler = $('#toggler');
+            toggler.removeClass('uk-button-primary')
+                .addClass('uk-button-default')
+                .text('Свернуть');
+        });
+        UIkit.util.on(document, 'hide', '#toggle-animation', function () {
+            var toggler = $('#toggler');
+            toggler.removeClass('uk-button-default')
+                .addClass('uk-button-primary')
+                .text('Показать');
+        });
+
+        $('#cancel-location-btn').click(function () {
+            var grid = $('#location-grid');
+            grid.find('input').val(null);
+            grid.find('select').each(function (i, el) {
+                $(el).val($(el).find('option:first').val());
+            })
+        });
+        $('#cancel-location-btn,#save-location-btn').click(function () {
+            App.map.on('mousemove', setLatLng);
+            App.map.on('click', clickLocation);
+            App.footer.show();
+        });
+
+        $('#save-location-btn').click(function () {
+            var data = App.serializeInputsToObject('#location-grid input,select,checkbox');
+            App.postDataOnServer('@Url.Action("MergeLocation", "Geolocation")', data, function () {
+                App.footer.getContent('@Url.Action("_FullInformation", "Geolocation")');
+            });
+        });
+    });
+</script>

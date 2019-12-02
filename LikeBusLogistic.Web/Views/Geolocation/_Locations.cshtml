@@ -1,0 +1,78 @@
+﻿@model IEnumerable<LikeBusLogistic.VM.ViewModels.LocationVM>
+@{
+    RoleName roleName = (RoleName)ViewBag.RoleName;
+}
+<div class="uk-clearfix">
+    <div class="uk-float-left">
+        <h4>Локации</h4>
+    </div>
+    <div class="uk-float-right">
+        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+        {
+            <button class="uk-button uk-button-small uk-button-primary" id="add-location-button">Добавить</button>
+        }
+    </div>
+</div>
+<table class="uk-table uk-table-small uk-table-hover" id="locations-table">
+    <thead>
+        <tr>
+            <th>Наименование</th>
+            <th>Долгота</th>
+            <th>Широта</th>
+            <th>Город</th>
+            <th>Регион</th>
+            <th>Страна</th>
+            <th>Парковка</th>
+            <th>Ремонт</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var location in Model)
+        {
+            <tr data-location-id="@location.Id"
+                data-city-id="@location.CityId"
+                data-district-id="@location.DistrictId"
+                data-country-id="@location.CountryId">
+                <td>@location.Name</td>
+                <td class="uk-table-shrink">@location.Longtitude</td>
+                <td class="uk-table-shrink">@location.Latitude</td>
+                <td>@location.CityName</td>
+                <td>@location.DistrictName</td>
+                <td>@location.CountryName</td>
+                <td class="uk-table-shrink">@(location.IsParking ? CustomExtensions.HtmlEnabledIcon : CustomExtensions.HtmlDisabledIcon)</td>
+                <td class="uk-table-shrink">@(location.IsCarRepair ? CustomExtensions.HtmlEnabledIcon : CustomExtensions.HtmlDisabledIcon)</td>
+                <td class="uk-float-right">
+                    @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                    {
+                        @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-location-icon")
+                    }
+                    @if (roleName == RoleName.Administrator)
+                    {
+                        @CustomExtensions.HtmlDeleteOrRestoreIcon(location.IsDeleted, "delete-location-icon")
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function () {
+        $('#locations-table').dataTable();
+        $('.edit-location-icon').click(function () {
+            var id = $(this).parents('tr').data('location-id');
+            App.footer.getContent('@Url.Action("_MergeLocation", "Geolocation")', { id: id });
+        });
+        $('.delete-location-icon').click(function () {
+            var id = $(this).parents('tr').data('location-id');
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreLocation", "Geolocation")', { id: id }, function (message) {
+                App.message.showSuccessWithOk('Успешно', message || 'Машина успешно удалена!');
+                App.useContentState();
+            });
+        });
+        $('#add-location-button').click(function () {
+            App.footer.getContent('@Url.Action("_MergeLocation", "Geolocation")');
+        });
+    });
+</script>

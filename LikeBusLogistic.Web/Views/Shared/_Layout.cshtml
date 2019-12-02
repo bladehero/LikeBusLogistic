@@ -45,8 +45,8 @@
                         Логистика
                     </a>
                     <ul class="uk-nav-sub">
-                        <li><a class="menu-item" data-href="@Url.Action("_Locations", "Geolocation")">Контрольные точки</a></li>
-                        <li><a class="menu-item" data-href="@Url.Action("_CountriesDistrictsCities", "Geolocation")">Города и страны</a></li>
+                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Locations })">Контрольные точки</a></li>
+                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Cities })">Города и страны</a></li>
                         <li class="uk-nav-divider"></li>
                         <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Route")">Маршруты</a></li>
                         <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Logistic")">Рейсы</a></li>

@@ -1,0 +1,65 @@
+﻿@model IEnumerable<CityVM>
+@{
+    RoleName roleName = (RoleName)ViewBag.RoleName;
+}
+<div class="uk-clearfix">
+    <div class="uk-float-left">
+        <h4>Города</h4>
+    </div>
+    <div class="uk-float-right">
+        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+        {
+            <button class="uk-button uk-button-small uk-button-primary" id="add-city-button">Добавить</button>
+        }
+    </div>
+</div>
+<table class="uk-table uk-table-small uk-table-hover" id="cities-table">
+    <thead>
+        <tr>
+            <th>Город</th>
+            <th>Регион</th>
+            <th>Страна</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var city in Model)
+        {
+            <tr data-city-id="@city.Id" data-district-id="@city.DistrictId" data-country-id="@city.CountryId">
+                <td>@city.Name</td>
+                <td>@city.DistrictName</td>
+                <td>@city.CountryName</td>
+                <td class="uk-float-right">
+                    @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                    {
+                        @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-city-icon")
+                    }
+                    @if (roleName == RoleName.Administrator)
+                    {
+                        @CustomExtensions.HtmlDeleteOrRestoreIcon(city.IsDeleted, "delete-city-icon")
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function () {
+        $('#cities-table').dataTable();
+        $('.edit-city-icon').click(function () {
+            var id = $(this).parents('tr').data('city-id');
+            App.footer.getContent('@Url.Action("_MergeCity", "Geolocation")', { id: id });
+        });
+        $('.delete-city-icon').click(function () {
+            var id = $(this).parents('tr').data('city-id');
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreCity", "Geolocation")', { id: id }, function (message) {
+                App.message.showSuccessWithOk('Успешно', message || 'Машина успешно удалена!');
+                App.useContentState();
+            });
+        });
+        $('#add-city-button').click(function () {
+            App.footer.getContent('@Url.Action("_MergeCity", "Geolocation")');
+        });
+    });
+</script>

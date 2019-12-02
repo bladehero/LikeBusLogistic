@@ -3,20 +3,19 @@ using System.Collections.Generic;
 
 namespace LikeBusLogistic.Web.Models.Geolocations
 {
-    public class FullInformationVM
+    public class LocationVM
     {
+        public VM.ViewModels.LocationVM Location { get; set; }
+
         public IEnumerable<CountryVM> Countries { get; set; }
         public IEnumerable<DistrictVM> Districts { get; set; }
         public IEnumerable<CityVM> Cities { get; set; }
-        public IEnumerable<VM.ViewModels.LocationVM> Locations { get; set; }
-        public GeolocationTab Tab { get; set; }
 
-        public FullInformationVM()
+        public LocationVM()
         {
             Countries = new List<CountryVM>();
             Districts = new List<DistrictVM>();
             Cities = new List<CityVM>();
-            Locations = new List<VM.ViewModels.LocationVM>();
         }
     }
 }
