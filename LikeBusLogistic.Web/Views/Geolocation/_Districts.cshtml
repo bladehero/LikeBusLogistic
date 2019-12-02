@@ -51,9 +51,9 @@
         });
         $('.delete-district-icon').click(function () {
             var id = $(this).parents('tr').data('district-id');
-            App.postDataOnServer('@Url.Action("DeleteOrRestoreDistrict", "Geolocation")', { id: id }, function (message) {
-                App.message.showSuccessWithOk('Успешно', message || 'Машина успешно удалена!');
-                App.useContentState();
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreDistrict", "Geolocation")', { id: id }, function (result) {
+                App.message.showSuccessWithOk('Успешно', result.message || 'Регион успешно удалена!');
+                App.footer.getContent('@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Districts })');
             });
         });
         $('#add-district-button').click(function () {

@@ -76,7 +76,7 @@ namespace LikeBusLogistic.DAL.Dao
             item.IsDeleted = false;
             return Restore(item.Id);
         }
-        public virtual bool DeleteOrRestore(int id) => FindById(id) is T item ? item.IsDeleted ? Restore(item) : Delete(item) : false;
+        public virtual bool DeleteOrRestore(int id) => FindById(id, true) is T item ? item.IsDeleted ? Restore(item) : Delete(item) : false;
         public virtual bool DeleteOrRestore(T item) => item.IsDeleted ? Restore(item) : Delete(item);
         public virtual bool Merge(T item) => item?.Id == 0 ? Insert(item) > 0 : Update(item);
 

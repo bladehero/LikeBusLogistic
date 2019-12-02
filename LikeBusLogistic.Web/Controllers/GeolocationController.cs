@@ -13,6 +13,7 @@ namespace LikeBusLogistic.Web.Controllers
     {
         public GeolocationController(ServiceFactory serviceFactory) : base(serviceFactory) { }
 
+
         [HttpGet]
         public IActionResult _FullInformation(GeolocationTab tab = GeolocationTab.Locations)
         {
@@ -32,9 +33,21 @@ namespace LikeBusLogistic.Web.Controllers
             return PartialView(model);
         }
         [HttpGet]
-        public IActionResult _Location()
+        public IActionResult _Location(int? id)
         {
-            return PartialView();
+            var cities = ServiceFactory.GeolocationManagement.GetCities().Data;
+            var districts = ServiceFactory.GeolocationManagement.GetDistricts().Data;
+            var countries = ServiceFactory.GeolocationManagement.GetCountries().Data;
+            var location = ServiceFactory.GeolocationManagement.GetLocation(id).Data;
+
+            var model = new Models.Geolocations.LocationVM
+            {
+                Cities = cities,
+                Countries = countries,
+                Districts = districts,
+                Location = location
+            };
+            return PartialView(model);
         }
         [HttpGet]
         public IActionResult _MergeCountry(int? id)
@@ -126,6 +139,72 @@ namespace LikeBusLogistic.Web.Controllers
                 result.Message = mergeCityResult.Message;
             }
             catch (Exception ex)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
+
+
+        [HttpPost]
+        public IActionResult DeleteOrRestoreLocation(int id)
+        {
+            var result = new Result();
+            try
+            {
+                var deleteOrRestoreLocationResult = ServiceFactory.GeolocationManagement.DeleteOrRestoreLocation(id);
+                result.Success = deleteOrRestoreLocationResult.Success;
+                result.Message = deleteOrRestoreLocationResult.Message;
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
+        [HttpPost]
+        public IActionResult DeleteOrRestoreCountry(int id)
+        {
+            var result = new Result();
+            try
+            {
+                var deleteOrRestoreCountryResult = ServiceFactory.GeolocationManagement.DeleteOrRestoreCountry(id);
+                result.Success = deleteOrRestoreCountryResult.Success;
+                result.Message = deleteOrRestoreCountryResult.Message;
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
+        [HttpPost]
+        public IActionResult DeleteOrRestoreDistrict(int id)
+        {
+            var result = new Result();
+            try
+            {
+                var deleteOrRestoreDistrictResult = ServiceFactory.GeolocationManagement.DeleteOrRestoreDistrict(id);
+                result.Success = deleteOrRestoreDistrictResult.Success;
+                result.Message = deleteOrRestoreDistrictResult.Message;
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
+        [HttpPost]
+        public IActionResult DeleteOrRestoreCity(int id)
+        {
+            var result = new Result();
+            try
+            {
+                var deleteOrRestoreCityResult = ServiceFactory.GeolocationManagement.DeleteOrRestoreCity(id);
+                result.Success = deleteOrRestoreCityResult.Success;
+                result.Message = deleteOrRestoreCityResult.Message;
+            }
+            catch (Exception)
             {
                 result.Success = false;
             }

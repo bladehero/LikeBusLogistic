@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using LikeBusLogistic.BLL;
+﻿using LikeBusLogistic.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +20,7 @@ namespace LikeBusLogistic.Web.Controllers
         [HttpGet]
         public IActionResult GetLocations()
         {
-            var locations = ServiceFactory.GeolocationManagement.GetLocations();
+            var locations = ServiceFactory.GeolocationManagement.GetLocations(false);
             return Json(locations);
         }
     }

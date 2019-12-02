@@ -1,11 +1,11 @@
 ﻿@model LikeBusLogistic.Web.Models.Geolocations.FullInformationVM
 
+<button id="toggler" href="#toggle-animation" class="uk-button uk-button-small uk-button-default uk-margin-small-bottom" type="button" uk-toggle="target: #toggle-animation; animation: uk-animation-fade">
+    Свернуть
+</button>
 <div uk-grid>
-    <div class="uk-width-1-4@l uk-width-1-1@m">
-        <button id="toggler" href="#toggle-animation" class="uk-button uk-button-small uk-button-default uk-margin-small-bottom uk-hidden@l uk-visible@m" type="button" uk-toggle="target: #toggle-animation; animation: uk-animation-fade">
-            Свернуть
-        </button>
-        <div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom" id="toggle-animation">
+    <div class="uk-width-1-4@l uk-width-1-1@m" id="toggle-animation">
+        <div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom" id="current-location-card">
             @{
                 await Html.RenderPartialAsync("_Location.cshtml", new LikeBusLogistic.Web.Models.Geolocations.LocationVM
                 {
@@ -50,23 +50,5 @@
 
 <script>
     App.footer.setBreadcrumbs([{ name: 'Логистика', url: '@Url.Action("_FullInformation", "Geolocation")' }]);
-    App.postDataOnServer('@Url.Action("GetLocations", "Home")', null,
-        function (result) {
-            debugger;
-            if (result.success) {
-                if (result.data.length) {
-                    var locations = [];
-                    for (var i = 0; i < result.data.length; i++) {
-                        var marker = L.marker([result.data[i].latitude, result.data[i].longtitude]);
-                        locations.push({
-                            marker: marker
-                        });
-                    }
-                    App.geo.setLocations(locations);
-                }
-            }
-        },
-        (result) => { console.log(result) },
-        'GET'
-    );
+    App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
 </script>

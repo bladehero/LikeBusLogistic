@@ -55,8 +55,8 @@
         });
         $('.delete-vehicle-icon').click(function () {
             var id = $(this).parents('tr').data('vehicle-id');
-            App.postDataOnServer('@Url.Action("DeleteOrRestoreVehicle", "Bus")', { vehicleId: id }, function (message) {
-                App.message.showSuccessWithOk('Успешно', message || 'Модель успешно удалена!');
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreVehicle", "Bus")', { vehicleId: id }, function (result) {
+                App.message.showSuccessWithOk('Успешно', result.message || 'Модель успешно удалена!');
                 App.useContentState();
             });
         });

@@ -51,9 +51,9 @@
         });
         $('.delete-country-icon').click(function () {
             var id = $(this).parents('tr').data('country-id');
-            App.postDataOnServer('@Url.Action("DeleteOrRestoreCountry", "Geolocation")', { id: id }, function (message) {
-                App.message.showSuccessWithOk('Успешно', message || 'Машина успешно удалена!');
-                App.useContentState();
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreCountry", "Geolocation")', { id: id }, function (result) {
+                App.message.showSuccessWithOk('Успешно', result.message || 'Страна успешно удалена!');
+                App.footer.getContent('@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Countries })');
             });
         });
         $('#add-country-button').click(function () {

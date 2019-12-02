@@ -53,9 +53,9 @@
         });
         $('.delete-city-icon').click(function () {
             var id = $(this).parents('tr').data('city-id');
-            App.postDataOnServer('@Url.Action("DeleteOrRestoreCity", "Geolocation")', { id: id }, function (message) {
-                App.message.showSuccessWithOk('Успешно', message || 'Машина успешно удалена!');
-                App.useContentState();
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreCity", "Geolocation")', { id: id }, function (result) {
+                App.message.showSuccessWithOk('Успешно', result.message || 'Город успешно удалена!');
+                App.footer.getContent('@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Cities })');
             });
         });
         $('#add-city-button').click(function () {

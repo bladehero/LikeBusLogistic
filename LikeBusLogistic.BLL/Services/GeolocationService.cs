@@ -259,12 +259,12 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
-        public BaseResult<IEnumerable<LocationVM>> GetLocations()
+        public BaseResult<IEnumerable<LocationVM>> GetLocations(bool withDeleted = true)
         {
             var result = new BaseResult<IEnumerable<LocationVM>>();
             try
             {
-                var location = UnitOfWork.StoredProcedureDao.GetLocation(withDeleted: RoleName == Variables.RoleName.Administrator);
+                var location = UnitOfWork.StoredProcedureDao.GetLocation(withDeleted: RoleName == Variables.RoleName.Administrator && withDeleted);
                 result.Data = Mapper.Map<IEnumerable<LocationVM>>(location);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;

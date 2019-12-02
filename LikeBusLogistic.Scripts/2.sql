@@ -352,8 +352,8 @@ go
    
   select l.Id as Id
        , l.Name as Name
-       , round(l.Latitude, 6) as Latitude
-       , round(l.Longtitude, 6) as Longtitude
+       , l.Latitude as Latitude
+       , l.Longtitude as Longtitude
        , l.IsCarRepair as IsCarRepair
        , l.IsParking as IsParking
        , c.Id as CityId

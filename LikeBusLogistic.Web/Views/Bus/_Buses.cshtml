@@ -56,8 +56,8 @@
         });
         $('.delete-bus-icon').click(function () {
             var id = $(this).parents('tr').data('bus-id');
-            App.postDataOnServer('@Url.Action("DeleteOrRestoreBus", "Bus")', { busId: id }, function (message) {
-                App.message.showSuccessWithOk('Успешно', message || 'Машина успешно удалена!');
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreBus", "Bus")', { busId: id }, function (result) {
+                App.message.showSuccessWithOk('Успешно', result.message || 'Машина успешно удалена!');
                 App.useContentState();
             });
         });

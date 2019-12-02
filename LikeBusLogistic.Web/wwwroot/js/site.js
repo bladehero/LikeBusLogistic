@@ -14,6 +14,39 @@
                     obj.marker.addTo(App.map);
                 }
             }
+        },
+        clearLocations: function () {
+            let location;
+            while (App.geo.locations.length > 0) {
+                location = App.geo.locations.pop();
+                App.map.removeControl(location.marker);
+            }
+        },
+        resetLocations: function (url) {
+            App.geo.clearLocations();
+            let locations = App.geo.getAllLocations(url);
+            App.geo.setLocations(locations);
+        },
+        getAllLocations: function (url) {
+            var locations = [];
+            App.postDataOnServer(url, null,
+                function (result) {
+                    if (result.success) {
+                        if (result.data.length) {
+                            for (var i = 0; i < result.data.length; i++) {
+                                var marker = L.marker([result.data[i].latitude, result.data[i].longtitude]);
+                                locations.push({
+                                    marker: marker
+                                });
+                            }
+                        }
+                    }
+                },
+                (result) => { console.log(result) },
+                'GET',
+                false
+            );
+            return locations;
         }
     },
     footer: {
@@ -202,11 +235,12 @@
         });
         return obj;
     },
-    postDataOnServer: function (url, data, successHandler = null, errorHandler = null, method = 'POST') {
+    postDataOnServer: function (url, data, successHandler = null, errorHandler = null, method = 'POST', async = true) {
         $.ajax({
             url: url,
             method: method,
             data: data,
+            async: async,
             success: function (result) {
                 if (result.success) {
                     if (successHandler) {
@@ -223,9 +257,34 @@
                 }
             }
         });
+    },
+    loadContent: function (selector, url, data, finished) {
+        let _content = $(selector);
+        _content.html('<div uk-spinner="ratio: 1.5" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);"></div>');
+        $.get(url, data, function (html) {
+            _content.html(html);
+        }).fail(function () {
+            _content.html('Произошла непредвиденная ошибка!');
+        }).then(function () {
+            if (finished) {
+                finished();
+            }
+        });
     }
 };
-
+$.ajaxSetup({
+    complete: function (xhr) {
+        if (xhr.status == 401) {
+            Swal.fire({
+                title: 'Выход',
+                html: 'Ваше сессия истекла!<br />Пожалуйста, перезайдите в систему.',
+                icon: 'info'
+            }).then(() => {
+                $('#logout').click();
+            });
+        }
+    }
+});
 $(document).ready(function () { if (localStorage.getItem('isLoggedOff') === 'true') { App.useContentState(); localStorage.setItem('isLoggedOff', 'false'); } });
 document.addEventListener("DOMContentLoaded", function (event) {
     App.initializeContentState();

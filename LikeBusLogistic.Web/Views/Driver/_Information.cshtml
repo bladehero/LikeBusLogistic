@@ -56,8 +56,8 @@
         });
         $('.delete-driver-icon').click(function () {
             var id = $(this).parents('tr').data('driver-id');
-            App.postDataOnServer('@Url.Action("DeleteOrRestoreDriver", "Driver")', { driverId: id }, function (message) {
-                App.message.showSuccessWithOk('Успешно', message || 'Машина успешно удалена!');
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreDriver", "Driver")', { driverId: id }, function (result) {
+                App.message.showSuccessWithOk('Успешно', result.message || 'Водитель успешно удалена!');
                 App.useContentState();
             });
         });
