@@ -4,8 +4,7 @@
         App.map.on('click', clickLocation);
     }
     else {
-        var zoom = App.map.getZoom();
-        App.map.setView([Number($('input[name="latitude"]').val()), Number($('input[name="longtitude"]').val())], zoom > 10 ? zoom : 10);
+        App.map.setView([Number($('input[name="latitude"]').val()), Number($('input[name="longtitude"]').val())], App.geo.getZoomToView());
     }
 
     function setLatLng(obj) {
@@ -30,8 +29,7 @@
             App.map.removeControl(marker);
             $('.menu-item').off('click', removeMarker);
         });
-        var zoom = App.map.getZoom();
-        App.map.setView([obj.latlng.lat, obj.latlng.lng], zoom > 10 ? zoom : 10);
+        App.map.setView([obj.latlng.lat, obj.latlng.lng], App.geo.getZoomToView());
         $('input[name="name"]').focus();
 
         function deleteLocation(obj) {

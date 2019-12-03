@@ -2,6 +2,11 @@
     map: L.map('map'),
     geo: {
         locations: [],
+        defaultZoom: 10,
+        getZoomToView: function () {
+            let zoom = App.map.getZoom();
+            return zoom > App.geo.defaultZoom ? zoom : App.geo.defaultZoom;
+        },
         onClickLocation: function (handler) {
             if (handler) {
                 for (var i = 0; i < App.geo.locations.length; i++) {

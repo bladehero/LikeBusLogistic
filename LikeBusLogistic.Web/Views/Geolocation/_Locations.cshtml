@@ -28,7 +28,7 @@
                 data-city-id="@location.CityId"
                 data-district-id="@location.DistrictId"
                 data-country-id="@location.CountryId">
-                <td>@location.Name</td>
+                <td class="uk-link uk-text-bolder uk-text-secondary go-to-location">@location.Name</td>
                 <td class="uk-text-truncate">@location.Longtitude</td>
                 <td class="uk-text-truncate">@location.Latitude</td>
                 <td>@location.CityName</td>
@@ -54,18 +54,21 @@
 <script>
     $(document).ready(function () {
         $('#locations-table').dataTable();
-        $('.edit-location-icon').click(function () {
+        $('.go-to-location').click(function () {
             var id = $(this).parents('tr').data('location-id');
-            App.loadContent('#current-location-card', '@Url.Action("_Location", "Geolocation")', { id: id });
-            App.map.off('mousemove');
-            App.map.off('click');
-        });
-        $('.delete-location-icon').click(function () {
-            var id = $(this).parents('tr').data('location-id');
-            App.postDataOnServer('@Url.Action("DeleteOrRestoreLocation", "Geolocation")', { id: id }, function (result) {
-                App.message.showSuccessWithOk('Успешно', result.message || 'Локация успешно удалена!');
-                App.footer.getContent('@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Locations })');
-            });
+            for	(var i = 0; i < App.geo.locations.length; i++)
+            {
+            	if(App.geo.locations[i].data.id === id)
+                {
+                    let location = App.geo.locations[i];
+                    if (!location.marker.isPopupOpen()) {
+                        location.marker.fire('click');
+                    }
+                    App.map.setView([location.data.latitude, location.data.longtitude], App.geo.getZoomToView());
+                    App.footer.show();
+            		break;
+                }
+            }
         });
     });
 </script>
