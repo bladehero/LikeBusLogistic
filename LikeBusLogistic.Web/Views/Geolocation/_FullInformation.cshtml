@@ -56,4 +56,20 @@
         location.marker.unbindPopup().bindPopup('<div style="width: 400px;" id="' + selector + '"></div>', { maxWidth: 560 }).openPopup();
         App.loadContent('#' + selector, '@Url.Action("_LocationPopup" , "Home")', { id: location.data.id });
     });
+    function editLocationFunction() {
+        var id = $(this).parents('tr,div').first().data('location-id');
+        App.loadContent('#current-location-card', '@Url.Action("_Location", "Geolocation")', { id: id });
+        App.map.off('mousemove');
+        App.map.off('click');
+    }
+    function deleteLocationFunction() {
+        var id = $(this).parents('tr,div').first().data('location-id');
+        App.postDataOnServer('@Url.Action("DeleteOrRestoreLocation", "Geolocation")', { id: id }, function (result) {
+            App.message.showSuccessWithOk('Успешно', result.message || 'Локация успешно удалена!');
+            App.footer.getContent('@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Locations })');
+        });
+    }
+
+    $(document).off('click', '.edit-location-icon').on('click', '.edit-location-icon', editLocationFunction);
+    $(document).off('click', '.delete-location-icon').on('click', '.delete-location-icon', deleteLocationFunction);
 </script>
