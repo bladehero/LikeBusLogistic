@@ -47,10 +47,21 @@
                     <ul class="uk-nav-sub">
                         <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Locations })">Контрольные точки</a></li>
                         <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Cities })">Города и страны</a></li>
-                        <li class="uk-nav-divider"></li>
-                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Route")">Маршруты</a></li>
-                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Logistic")">Рейсы</a></li>
                     </ul>
+                </li>
+                <li class="uk-nav-divider"></li>
+                <li class="uk-parent">
+                    <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Route")">
+                        <span class="uk-margin-small-right" uk-icon="icon: bookmark; ratio: 0.8;"></span>
+                        Маршруты
+                    </a>
+                </li>
+                <li class="uk-nav-divider"></li>
+                <li class="uk-parent">
+                    <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Logistic")">
+                        <span class="uk-margin-small-right" uk-icon="icon: forward; ratio: 0.8;"></span>
+                        Рейсы
+                    </a>
                 </li>
                 <li class="uk-nav-divider"></li>
                 <li class="uk-parent">
