@@ -1,5 +1,5 @@
 ﻿var App = {
-    map: L.map('map'),
+    map: null,
     geo: {
         locations: [],
         defaultZoom: 10,
@@ -240,7 +240,7 @@
         var obj = {};
         $(selector).each(function (i, el) {
             if (excludedAttributes && excludedAttributes.length) {
-                for (var i = 0; i < excludedAttributes.length; i++)
+                for (let i = 0; i < excludedAttributes.length; i++)
                     if ($(el).attr(excludedAttributes[i]) || $(el).is(':' + excludedAttributes[i])) return;
             }
             var val;
@@ -276,11 +276,16 @@
             }
         });
     },
-    loadContent: function (selector, url, data, finished) {
+    loadContent: function (selector, url, data, handler, finished) {
         let _content = $(selector);
         _content.html('<div uk-spinner="ratio: 1.5" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);"></div>');
         $.get(url, data, function (html) {
-            _content.html(html);
+            if (handler) {
+                handler(html);
+            }
+            if (selector) {
+                _content.html(html);
+            }
         }).fail(function () {
             _content.html('Произошла непредвиденная ошибка!');
         }).then(function () {
@@ -292,7 +297,7 @@
 };
 $.ajaxSetup({
     complete: function (xhr) {
-        if (xhr.status == 401) {
+        if (xhr.status === 401) {
             Swal.fire({
                 title: 'Выход',
                 html: 'Ваше сессия истекла!<br />Пожалуйста, перезайдите в систему.',

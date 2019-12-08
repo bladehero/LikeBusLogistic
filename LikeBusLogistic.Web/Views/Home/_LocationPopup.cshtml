@@ -1,53 +1,55 @@
 ﻿@model LikeBusLogistic.Web.Models.Home.LocationPopupVM
 
-<ul uk-tab>
-    <li><a href="#">О локации</a></li>
-    <li><a href="#">Логистика</a></li>
-</ul>
-<ul class="uk-switcher uk-margin">
-    <li>
-        <div uk-grid>
-            <div class="uk-width-1-1 uk-margin-small-bottom uk-margin-remove-top">
-                <span class="uk-text-bold">@Model.Location.Name</span>
-            </div>
-            <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
-                Широта: <span class="uk-text-bold">@Model.Location.Latitude</span>
-            </div>
-            <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
-                Долгота: <span class="uk-text-bold">@Model.Location.Longtitude</span>
-            </div>
-            <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-small-top">
-                @if (Model.Location.CityId.HasValue || Model.Location.CountryId.HasValue || Model.Location.DistrictId.HasValue)
-                {
-                    <ul class="uk-breadcrumb">
-                        @if (!string.IsNullOrWhiteSpace(Model.Location.CountryName))
-                        {
-                            <li><span>@Model.Location.CountryName</span></li>
-                        }
-                        @if (!string.IsNullOrWhiteSpace(Model.Location.DistrictName))
-                        {
-                            <li><span>@Model.Location.DistrictName</span></li>
-                        }
-                        @if (!string.IsNullOrWhiteSpace(Model.Location.CityName))
-                        {
-                            <li><span>@Model.Location.CityName</span></li>
-                        }
-                    </ul>
-                }
-                else
-                {
-                    <p>Данные о местоположении отсутствуют...</p>
-                }
-            </div>
-            <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-small-top">
-                <div class="uk-float-right" data-location-id="@Model.Location.Id">
-                    <button class="uk-button uk-button-danger uk-button-small delete-location-icon">Удалить</button>
-                    <button class="uk-button uk-button-primary uk-button-small edit-location-icon">Изменить</button>
+<div style="width: 400px;">
+    <ul uk-tab>
+        <li><a href="#">О локации</a></li>
+        <li><a href="#">Логистика</a></li>
+    </ul>
+    <ul class="uk-switcher uk-margin">
+        <li>
+            <div uk-grid>
+                <div class="uk-width-1-1 uk-margin-small-bottom uk-margin-remove-top">
+                    <span class="uk-text-bold">@Model.Location.Name</span>
+                </div>
+                <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                    Широта: <span class="uk-text-bold">@Model.Location.Latitude</span>
+                </div>
+                <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                    Долгота: <span class="uk-text-bold">@Model.Location.Longtitude</span>
+                </div>
+                <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-small-top">
+                    @if (Model.Location.CityId.HasValue || Model.Location.CountryId.HasValue || Model.Location.DistrictId.HasValue)
+                    {
+                        <ul class="uk-breadcrumb">
+                            @if (!string.IsNullOrWhiteSpace(Model.Location.CountryName))
+                            {
+                                <li><span>@Model.Location.CountryName</span></li>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.Location.DistrictName))
+                            {
+                                <li><span>@Model.Location.DistrictName</span></li>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.Location.CityName))
+                            {
+                                <li><span>@Model.Location.CityName</span></li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p>Данные о местоположении отсутствуют...</p>
+                    }
+                </div>
+                <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-small-top">
+                    <div class="uk-float-right" data-location-id="@Model.Location.Id">
+                        <button class="uk-button uk-button-danger uk-button-small delete-location-icon">Удалить</button>
+                        <button class="uk-button uk-button-primary uk-button-small edit-location-icon">Изменить</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </li>
-    <li>
+        </li>
+        <li>
 
-    </li>
-</ul>
+        </li>
+    </ul>
+</div>

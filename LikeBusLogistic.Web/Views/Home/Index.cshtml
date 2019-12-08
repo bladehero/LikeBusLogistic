@@ -1,5 +1,6 @@
 ﻿@section Scripts {
     <script>
+        App.map = L.map('map');
         App.useContentState();
         App.map.setView([46, 19], 5);
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {

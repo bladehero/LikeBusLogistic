@@ -52,9 +52,17 @@
     App.footer.setBreadcrumbs([{ name: 'Логистика', url: '@Url.Action("_FullInformation", "Geolocation")' }]);
     App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
     App.geo.onClickLocation(function (obj, location) {
-        var selector = "marker_" + location.marker._leaflet_id;
-        location.marker.unbindPopup().bindPopup('<div style="width: 400px;" id="' + selector + '"></div>', { maxWidth: 560 }).openPopup();
-        App.loadContent('#' + selector, '@Url.Action("_LocationPopup" , "Home")', { id: location.data.id });
+        let selector = "marker_" + location.marker._leaflet_id;
+        let popup = location.marker.getPopup();
+        if (!popup) {
+            location.marker.bindPopup('<div style="width: 400px;" id="' + selector + '"></div>', { maxWidth: 560 }).openPopup();
+            popup = location.marker.getPopup();
+        }
+        App.loadContent(null, '@Url.Action("_LocationPopup" , "Home")', { id: location.data.id },
+            function (html) {
+                debugger;
+                popup.setContent(html);
+        });
     });
     function editLocationFunction() {
         var id = $(this).parents('tr,div').first().data('location-id');
