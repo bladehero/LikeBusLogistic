@@ -19,18 +19,29 @@
         }
         var marker = L.marker([obj.latlng.lat, obj.latlng.lng])
             .addTo(App.map)
-            .bindPopup('<p class="uk-text-meta uk-margin-remove">Заполните все поля для добавления локации!</p>')
+            .bindPopup('<p class="uk-text-meta uk-margin-remove">Заполните все поля для добавления локации! Или можете <button class="uk-button uk-button-link uk-text-lowercase" id="new-location-delete">удалить</button>.</p>')
             .openPopup();
-        setTimeout(App.footer.maximize, 800);
+        App.footer.maximize(800);
         $('#cancel-location-btn,#save-location-btn').click(function () {
             App.map.removeControl(marker);
         });
-        $('.menu-item').click(function removeMarker() {
+        function removeMarker() {
             App.map.removeControl(marker);
             $('.menu-item').off('click', removeMarker);
+        }
+        $('.menu-item').click(removeMarker);
+        $(document).on('click', '#new-location-delete', function () {
+            removeMarker();
+            clearForm();
+            App.map.on('mousemove', setLatLng);
+            App.map.on('click', clickLocation);
+            App.footer.show();
         });
         App.map.setView([obj.latlng.lat, obj.latlng.lng], App.geo.getZoomToView());
-        $('input[name="name"]').focus();
+
+        if (window.screen.width >= 992) {
+            setTimeout(() => { $('#location-grid input[name="name"]').focus(); }, 1000);
+        }
 
         function deleteLocation(obj) {
             if (obj.keyCode === 27) {
@@ -39,7 +50,7 @@
                 App.map.on('mousemove', setLatLng);
                 App.map.on('click', clickLocation);
                 App.footer.show();
-                $(document).off('keypress', deleteLocation);
+                $(document).off('keydown', null, deleteLocation);
             }
         }
         $(document).keydown(deleteLocation);

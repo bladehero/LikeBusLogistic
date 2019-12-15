@@ -27,7 +27,7 @@
             <tr data-contact-id="@contact.Id">
                 <td>@contact.DriverInfo</td>
                 <td>@contact.Contact</td>
-                <td class="uk-float-right">
+                <td class="uk-float-right tool-cell">
                     @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
                     {
                         @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-contact-icon")

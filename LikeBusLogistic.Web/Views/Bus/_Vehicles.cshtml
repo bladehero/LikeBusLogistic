@@ -31,7 +31,7 @@
                 <td>@vehicle.Model</td>
                 <td class="uk-table-shrink">@vehicle.PassengerCapacity</td>
                 <td class="uk-text-truncate">@vehicle.Description</td>
-                <td class="uk-float-right">
+                <td class="uk-float-right tool-cell">
                     @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
                     {
                         @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-vehicle-icon")

@@ -54,14 +54,16 @@
     App.geo.onClickLocation(function (obj, location) {
         let selector = "marker_" + location.marker._leaflet_id;
         let popup = location.marker.getPopup();
+        let width = window.innerWidth * 0.75;
+        width = width > 400 ? 400 : width;
         if (!popup) {
-            location.marker.bindPopup('<div style="width: 400px;" id="' + selector + '"></div>', { maxWidth: 560 }).openPopup();
+            location.marker.bindPopup('<div style="width: ' + width + 'px; min-height: 115px;" id="' + selector + '"></div>', { maxWidth: width }).openPopup();
             popup = location.marker.getPopup();
         }
-        App.loadContent(null, '@Url.Action("_LocationPopup" , "Home")', { id: location.data.id },
+        selector = '#' + selector;
+        App.loadContent(selector, '@Url.Action("_LocationPopup" , "Home")', { id: location.data.id },
             function (html) {
-                debugger;
-                popup.setContent(html);
+                $(selector).html(html);
         });
     });
     function editLocationFunction() {
@@ -72,9 +74,20 @@
     }
     function deleteLocationFunction() {
         var id = $(this).parents('tr,div').first().data('location-id');
-        App.postDataOnServer('@Url.Action("DeleteOrRestoreLocation", "Geolocation")', { id: id }, function (result) {
-            App.message.showSuccessWithOk('Успешно', result.message || 'Локация успешно удалена!');
-            App.footer.getContent('@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Locations })');
+        Swal.fire({
+            title: 'Удаление',
+            text: 'Вы уверены, что хотите удалить?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Да',
+            cancelButtonText: 'Отмена'
+        }).then((result) => {
+            if (result.value) {
+                App.postDataOnServer('@Url.Action("DeleteOrRestoreLocation", "Geolocation")', { id: id }, function (result) {
+                    App.message.showSuccessWithOk('Успешно', result.message || 'Локация успешно удалена!');
+                    App.footer.getContent('@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Locations })');
+                });
+            }
         });
     }
 

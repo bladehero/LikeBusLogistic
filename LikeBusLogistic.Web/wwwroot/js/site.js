@@ -77,7 +77,7 @@
             if (App.footer.mode < 0) {
                 App.footer.element.stop().animate({
                     bottom: '0px',
-                    height: 25
+                    height: '0px'
                 }, App.footer.animateTimer);
                 App.footer.slideButton.find('span').attr('uk-icon', 'chevron-up');
                 App.footer.mode = 0;
@@ -102,9 +102,27 @@
             App.footer.mode = m;
             App.footer.slideButton.click();
         },
-        maximize: function () { App.footer.changeMode(1); },
-        show: function () { App.footer.changeMode(0); },
-        hide: function () { App.footer.changeMode(-1); },
+        maximize: function (interval) {
+            if (!interval) {
+                App.footer.changeMode(1);
+            } else {
+                setTimeout(()=>App.footer.changeMode(1), interval);
+            }
+        },
+        show: function (interval) {
+            if (!interval) {
+                App.footer.changeMode(0);
+            } else {
+                setTimeout(() => App.footer.changeMode(0), interval);
+            }
+        },
+        hide: function (interval) {
+            if (!interval) {
+                App.footer.changeMode(-1);
+            } else {
+                setTimeout(() => App.footer.changeMode(-1), interval);
+            }
+        },
         getContent: function (url, data, finished) {
             App.map.off('mousemove');
             App.map.off('click');
@@ -321,5 +339,28 @@ document.addEventListener("DOMContentLoaded", function (event) {
         App.footer.getContent($(this).data('href'), null, function () {
             UIkit.offcanvas('#offcanvas-slide').hide();
         });
+    });
+    $(document).on('click', '#popup-change-location', function () {
+        App.footer.maximize(1500);
+    });
+
+    function deleteLocation(obj) {
+        if (obj.keyCode === 27) {
+            clearForm();
+            App.map.removeControl(marker);
+            App.map.on('mousemove', setLatLng);
+            App.map.on('click', clickLocation);
+            App.footer.show();
+            $(document).off('keydown', null, deleteLocation);
+        }
+    }
+    $(document).keydown(function (obj) {
+        if (obj.keyCode === 27) {
+            if (App.footer.mode === 1) {
+                App.footer.hide();
+            } else if (App.footer.mode === -1){
+                App.footer.show();
+            }
+        }
     });
 });

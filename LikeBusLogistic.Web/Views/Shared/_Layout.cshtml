@@ -63,20 +63,19 @@
                         Рейсы
                     </a>
                 </li>
-                <li class="uk-nav-divider"></li>
-                <li class="uk-parent">
-                    <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Account")">
-                        <span class="uk-margin-small-right" uk-icon="icon: users; ratio: 0.8;"></span>
-                        Учетные записи
-                    </a>
-                    <ul class="uk-nav-sub">
-                        <li><a class="menu-item" data-href="@Url.Action("_AccountManagement", "Account")">Аккаунты</a></li>
-                        <li><a class="menu-item" data-href="@Url.Action("_UserManagement", "Account")">Пользователи</a></li>
-                    </ul>
-                </li>
-                <li class="uk-nav-divider"></li>
+                @*<li class="uk-nav-divider"></li>
+                                <li class="uk-parent">
+                        <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Account")">
+                            <span class="uk-margin-small-right" uk-icon="icon: users; ratio: 0.8;"></span>
+                            Учетные записи
+                        </a>
+                        <ul class="uk-nav-sub">
+                            <li><a class="menu-item" data-href="@Url.Action("_AccountManagement", "Account")">Аккаунты</a></li>
+                            <li><a class="menu-item" data-href="@Url.Action("_UserManagement", "Account")">Пользователи</a></li>
+                        </ul>
+                    </li>*@
             </ul>
-            <form asp-action="Logout" asp-controller="Account">
+            <form class="uk-margin-small-top" asp-action="Logout" asp-controller="Account">
                 <button id="logout" class="uk-button uk-button-danger uk-width-1-1" type="submit">
                     <span class="uk-margin-small-right" uk-icon="icon: sign-out; ratio: 0.8;"></span>
                     Выйти

@@ -27,7 +27,7 @@
             <tr data-country-id="@country.Id">
                 <td>@country.Name</td>
                 <td class="uk-table-shrink">@country.ShortName</td>
-                <td class="uk-float-right">
+                <td class="uk-float-right tool-cell">
                     @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
                     {
                         @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-country-icon")
