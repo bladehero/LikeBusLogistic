@@ -259,117 +259,237 @@ begin
 end;
 go
 
- if object_id(N'dbo.GetDistrict') is null
-   exec('create procedure dbo.GetDistrict as set nocount on;');
- go
- 
- -- ============================================================================
- -- Example    : exec dbo.GetDistrict
- -- Author     : Nikita Dermenzhi
- -- Date       : 25/07/2019
- -- Description: —
- -- ============================================================================
- 
- alter procedure dbo.GetDistrict
- (  
-     @districtId as int = null,
-     @withDeleted as bit = 0
- )  
- as  
- begin  
-   
-  select d.Id as Id
-       , d.Name as Name
-       , c.Id as CountryId
-       , c.Name as CountryName
-       , d.IsDeleted as IsDeleted
-    from District d
-    join Country c on d.CountryId = c.Id
-    where 1=1
-      and (c.IsDeleted = 0 or @withDeleted = 1)
-      and (d.IsDeleted = 0 or @withDeleted = 1)
-      and d.Id  = isnull(@districtId, d.Id)
- 
- end;
- go
+if object_id(N'dbo.GetDistrict') is null
+  exec('create procedure dbo.GetDistrict as set nocount on;');
+go
 
- if object_id(N'dbo.GetCity') is null
-   exec('create procedure dbo.GetCity as set nocount on;');
- go
- 
- -- ============================================================================
- -- Example    : exec dbo.GetCity
- -- Author     : Nikita Dermenzhi
- -- Date       : 25/07/2019
- -- Description: —
- -- ============================================================================
- 
- alter procedure dbo.GetCity
- (  
-     @cityId as int = null,
-     @withDeleted as bit = 0
- )  
- as  
- begin  
-   
-  select c.Id as Id
-       , c.Name as Name
-       , d.Id as DistrictId
-       , d.Name as DistrictName
-       , ctr.Id as CountryId
-       , ctr.Name as CountryName
-       , c.IsDeleted as IsDeleted
-    from City c
-    join District d on c.DistrictId = d.Id
-    join Country ctr on d.CountryId = ctr.Id
-    where 1=1
-      and (c.IsDeleted = 0 or @withDeleted = 1)
-      and (d.IsDeleted = 0 or @withDeleted = 1)
-      and (ctr.IsDeleted = 0 or @withDeleted = 1)
-      and c.Id  = isnull(@cityId, c.Id)
- 
- end;
- go
+-- ============================================================================
+-- Example    : exec dbo.GetDistrict
+-- Author     : Nikita Dermenzhi
+-- Date       : 25/07/2019
+-- Description: —
+-- ============================================================================
 
- if object_id(N'dbo.GetLocation') is null
-   exec('create procedure dbo.GetLocation as set nocount on;');
- go
- 
- -- ============================================================================
- -- Example    : exec dbo.GetLocation
- -- Author     : Nikita Dermenzhi
- -- Date       : 25/07/2019
- -- Description: —
- -- ============================================================================
- 
- alter procedure dbo.GetLocation
- (  
-     @locationId as int = null,
-     @withDeleted as bit = 0
- )  
- as  
- begin  
-   
-  select l.Id as Id
-       , l.Name as Name
-       , l.Latitude as Latitude
-       , l.Longtitude as Longtitude
-       , l.IsCarRepair as IsCarRepair
-       , l.IsParking as IsParking
-       , c.Id as CityId
-       , c.Name as CityName
-       , d.Id as DistrictId
-       , d.Name as DistrictName
-       , ctr.Id as CountryId
-       , ctr.Name as CountryName
-       , l.IsDeleted as IsDeleted
-    from Location l
-    left join City c on l.CityId = c.Id and c.IsDeleted = 0
-    left join District d on l.DistrictId = d.Id and d.IsDeleted = 0
-    left join Country ctr on l.CountryId = ctr.Id and ctr.IsDeleted = 0
-    where 1=1
-      and (l.IsDeleted = 0 or @withDeleted = 1)
-      and l.Id  = isnull(@locationId, l.Id)
- 
- end;
- go
+alter procedure dbo.GetDistrict
+(  
+    @districtId as int = null,
+    @withDeleted as bit = 0
+)  
+as  
+begin  
+  
+ select d.Id as Id
+      , d.Name as Name
+      , c.Id as CountryId
+      , c.Name as CountryName
+      , d.IsDeleted as IsDeleted
+   from District d
+   join Country c on d.CountryId = c.Id
+   where 1=1
+     and (c.IsDeleted = 0 or @withDeleted = 1)
+     and (d.IsDeleted = 0 or @withDeleted = 1)
+     and d.Id  = isnull(@districtId, d.Id)
+
+end;
+go
+
+if object_id(N'dbo.GetCity') is null
+  exec('create procedure dbo.GetCity as set nocount on;');
+go
+
+-- ============================================================================
+-- Example    : exec dbo.GetCity
+-- Author     : Nikita Dermenzhi
+-- Date       : 25/07/2019
+-- Description: —
+-- ============================================================================
+
+alter procedure dbo.GetCity
+(  
+    @cityId as int = null,
+    @withDeleted as bit = 0
+)  
+as  
+begin  
+  
+ select c.Id as Id
+      , c.Name as Name
+      , d.Id as DistrictId
+      , d.Name as DistrictName
+      , ctr.Id as CountryId
+      , ctr.Name as CountryName
+      , c.IsDeleted as IsDeleted
+   from City c
+   join District d on c.DistrictId = d.Id
+   join Country ctr on d.CountryId = ctr.Id
+   where 1=1
+     and (c.IsDeleted = 0 or @withDeleted = 1)
+     and (d.IsDeleted = 0 or @withDeleted = 1)
+     and (ctr.IsDeleted = 0 or @withDeleted = 1)
+     and c.Id  = isnull(@cityId, c.Id)
+
+end;
+go
+
+if object_id(N'dbo.GetLocation') is null
+  exec('create procedure dbo.GetLocation as set nocount on;');
+go
+
+-- ============================================================================
+-- Example    : exec dbo.GetLocation
+-- Author     : Nikita Dermenzhi
+-- Date       : 25/07/2019
+-- Description: —
+-- ============================================================================
+
+alter procedure dbo.GetLocation
+(  
+    @locationId as int = null,
+    @withDeleted as bit = 0
+)  
+as  
+begin  
+  
+ select l.Id as Id
+      , l.Name as Name
+      , l.Latitude as Latitude
+      , l.Longtitude as Longtitude
+      , l.IsCarRepair as IsCarRepair
+      , l.IsParking as IsParking
+      , c.Id as CityId
+      , c.Name as CityName
+      , d.Id as DistrictId
+      , d.Name as DistrictName
+      , ctr.Id as CountryId
+      , ctr.Name as CountryName
+      , l.IsDeleted as IsDeleted
+   from Location l
+   left join City c on l.CityId = c.Id and c.IsDeleted = 0
+   left join District d on l.DistrictId = d.Id and d.IsDeleted = 0
+   left join Country ctr on l.CountryId = ctr.Id and ctr.IsDeleted = 0
+   where 1=1
+     and (l.IsDeleted = 0 or @withDeleted = 1)
+     and l.Id  = isnull(@locationId, l.Id)
+
+end;
+go
+
+if object_id(N'dbo.GetRouteLocation') is null
+  exec('create procedure dbo.GetRouteLocation as set nocount on;');
+go
+
+-- ============================================================================
+-- Example    : exec dbo.GetRouteLocation 1
+-- Author     : Nikita Dermenzhi
+-- Date       : 13/12/2019
+-- Description: —
+-- ============================================================================
+
+alter procedure dbo.GetRouteLocation
+(  
+    @routeId as int = null
+)  
+as  
+begin  
+  
+  with LinkedList (RouteId
+                 , RouteName
+                 , EstimatedDurationInHours
+                 , CurrentLocationId
+                 , PreviousLocationId
+                 , StopDurationInHours
+                 , [Level])
+  as
+  (
+    select r1.Id as RouteId
+         , r1.[Name] as RouteName
+         , rl1.EstimatedDurationInHours as EstimatedDurationInHours
+         , rl1.CurrentLocationId as CurrentLocationId
+         , rl1.PreviousLocationId as PreviousLocationId
+         , rl1.StopDurationInHours as StopDurationInHours
+         , 0 as [Level]
+      from [Route] r1
+      join RouteLocation rl1 
+        on r1.Id = rl1.RouteId
+      where 1=1
+        and r1.Id = @routeId
+        and r1.IsDeleted = 0
+        and rl1.IsDeleted = 0
+        and rl1.PreviousLocationId is null
+  
+      union all
+  
+    select r2.Id as RouteId
+         , r2.[Name] as RouteName
+         , rl2.EstimatedDurationInHours as EstimatedDurationInHours
+         , rl2.CurrentLocationId as CurrentLocationId
+         , rl2.PreviousLocationId as PreviousLocationId
+         , rl2.StopDurationInHours as StopDurationInHours
+         , [Level] + 1 as [Level]
+      from [Route] r2
+      join RouteLocation rl2 
+        on r2.Id = rl2.RouteId
+      join LinkedList as l
+        on rl2.PreviousLocationId = l.CurrentLocationId
+      where 1=1
+        and r2.Id = @routeId
+        and r2.IsDeleted = 0
+        and rl2.IsDeleted = 0
+  )
+  select ll.RouteId as RouteId
+       , ll.RouteName as RouteName
+       , ll.EstimatedDurationInHours as EstimatedDurationInHours
+       , ll.StopDurationInHours as StopDurationInHours
+       , ll.CurrentLocationId as CurrentLocationId
+       , ll.PreviousLocationId as PreviousLocationId
+
+       -- Current Location
+       , cl.[Name] as CurrentName
+       , cl.CityId as CurrentCityId
+       , c1.[Name] as CurrentCityName
+       , cl.CountryId as CurrentCountryId
+       , co1.[Name] as CurrentCountryName
+       , cl.DistrictId as CurrentDistrictId
+       , d1.[Name] as CurrentDistrictName
+       , cl.IsCarRepair as CurrentIsCarRepair
+       , cl.IsParking as CurrentIsParking
+       , cl.Latitude as CurrentLatitude
+       , cl.Longtitude as CurrentLongtitude
+
+       -- Previous Location
+       , pl.[Name] as PreviousName
+       , pl.CityId as PreviousCityId
+       , c2.[Name] as PreviousCityName
+       , pl.CountryId as PreviousCountryId
+       , co2.[Name] as PreviousCountryName
+       , pl.DistrictId as PreviousDistrictId
+       , d2.[Name] as PreviousDistrictName
+       , pl.IsCarRepair as PreviousIsCarRepair
+       , pl.IsParking as PreviousIsParking
+       , pl.Latitude as PreviousLatitude
+       , pl.Longtitude as PreviousLongtitude
+
+    from LinkedList ll
+
+    -- Current location
+    left join [Location] cl 
+      on ll.CurrentLocationId = cl.Id and cl.IsDeleted = 0
+    left join City c1
+      on cl.CityId = c1.Id
+    left join Country co1
+      on cl.CountryId = co1.Id
+    left join District d1
+      on cl.DistrictId = d1.Id
+      
+    -- Previous Location
+    left join [Location] pl
+      on ll.PreviousLocationId = pl.Id and pl.IsDeleted = 0
+    left join City c2
+      on pl.CityId = c2.Id
+    left join Country co2
+      on pl.CountryId = co2.Id
+    left join District d2
+      on pl.DistrictId = d2.Id
+
+end;
+go
