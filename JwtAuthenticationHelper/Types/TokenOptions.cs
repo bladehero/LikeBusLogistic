@@ -27,9 +27,9 @@ namespace JwtAuthenticationHelper.Types
         /// the encoded 128-bit string.
         /// Any string that is sufficiently long and unguessable will do.
         /// </param>
-        /// <param name="tokenExpiryInMinutes">Defaults to 5 minutes
+        /// <param name="tokenExpiryInMinutes">Defaults to 60 minutes
         /// but can be longer or shorter.</param>
-        public TokenOptions(string issuer, string audience, string rawSigningKey, int tokenExpiryInMinutes = 5)
+        public TokenOptions(string issuer, string audience, string rawSigningKey, int tokenExpiryInMinutes = 60)
         {
             if (string.IsNullOrWhiteSpace(audience))
             {
