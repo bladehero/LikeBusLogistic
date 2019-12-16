@@ -481,7 +481,7 @@ if object_id(N'dbo.GetRouteLocation') is null
 go
 
 -- ============================================================================
--- Example    : exec dbo.GetRouteLocation 1
+-- Example    : exec dbo.GetRouteLocation 1, 8
 -- Author     : Nikita Dermenzhi
 -- Date       : 13/12/2019
 -- Description: —
@@ -489,7 +489,8 @@ go
 
 alter procedure dbo.GetRouteLocation
 (  
-    @routeId as int = null
+    @routeId as int = null,
+    @locationId as int = null
 )  
 as  
 begin  
@@ -546,6 +547,7 @@ begin
        , ll.PreviousLocationId as PreviousLocationId
 
        -- Current Location
+       , concat(c.[Name], ' ('+concat( c.CountryName+', ', c.DistrictName+', ', c.CityName)+')') as CurrentFullName
        , c.[Name] as CurrentName
        , c.CityId as CurrentCityId
        , c.CityName as CurrentCityName
@@ -559,6 +561,7 @@ begin
        , c.Longtitude as CurrentLongtitude
 
        -- Previous Location
+       , concat(p.[Name], ' ('+concat( p.CountryName+', ', p.DistrictName+', ', p.CityName)+')') as PreviousFullName
        , p.[Name] as PreviousName
        , p.CityId as PreviousCityId
        , p.CityName as PreviousCityName
@@ -583,6 +586,8 @@ begin
       select *
         from dbo.GetLocationInfo(ll.PreviousLocationId)
     ) p
+    where 1=1 
+      and ll.CurrentLocationId = isnull(@locationId, ll.CurrentLocationId)
 
 end;
 go

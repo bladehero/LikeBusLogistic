@@ -14,6 +14,7 @@ namespace LikeBusLogistic.Web.Controllers
     {
         public RouteController(ServiceFactory serviceFactory) : base(serviceFactory) { }
 
+        [HttpGet]
         public IActionResult _FullInformation()
         {
             var routes = ServiceFactory.RouteManagement.GetRoutes();
@@ -23,6 +24,13 @@ namespace LikeBusLogistic.Web.Controllers
                 Routes = routes.Data
             };
             return PartialView(model);
+        }
+
+        [HttpGet]
+        public IActionResult GetRouteLocations(int id)
+        {
+            var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(id);
+            return Json(routeLocations);
         }
     }
 }

@@ -92,11 +92,12 @@ namespace LikeBusLogistic.DAL.Dao
 
             return Connection.Query<GetRoute_Result>("dbo.GetRoute", parameters, commandType: CommandType.StoredProcedure);
         }
-        public IEnumerable<GetRouteLocation_Result> GetRouteLocation(int? routeId = null)
+        public IEnumerable<GetRouteLocation_Result> GetRouteLocation(int? routeId = null, int? locationId = null)
         {
             var parameters = new
             {
                 @routeId = routeId,
+                @locationId = locationId
             };
 
             return Connection.Query<GetRouteLocation_Result>("dbo.GetRouteLocation", parameters, commandType: CommandType.StoredProcedure);

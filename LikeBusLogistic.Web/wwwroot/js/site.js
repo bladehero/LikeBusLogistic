@@ -65,6 +65,60 @@
                 false
             );
             return locations;
+        },
+        route: {
+            id: null,
+            path: null,
+            routeLocations: [],
+            resetRouteLocations: function (url, id) {
+                App.geo.route.clear();
+                let routeLocations = App.geo.route.getRouteLocations(url, id);
+                App.geo.route.setRouteLocations(routeLocations, id);
+            },
+            setRouteLocations: function (routeLocations, id) {
+                let latlngs = [];
+                for (var i = 0; i < routeLocations.length; i++) {
+                    latlngs.push([routeLocations[i].routeLocation.currentLatitude, routeLocations[i].routeLocation.currentLongtitude]);
+                }
+                let options = { use: L.polyline, delay: 800, dashArray: [10, 10], weight: 4, color: "#C3C3FF", pulseColor: "#0059FF" };
+                let path = new L.Polyline.AntPath(latlngs, options);
+                path.addTo(App.map);
+                App.geo.route.routeLocations = routeLocations;
+                App.geo.route.path = path;
+                App.geo.route.id = id;
+            },
+            getRouteLocations: function (url, id) {
+                var routeLocations = [];
+                App.postDataOnServer(url, { id: id },
+                    function (result) {
+                        if (result.success) {
+                            if (result.data.length) {
+                                for (var i = 0; i < result.data.length; i++) {
+                                    for (var j = 0; j < App.geo.locations.length; j++) {
+                                        if (App.geo.locations[j].data.id === result.data[i].currentLocationId) {
+                                            routeLocations.push({
+                                                routeLocation: result.data[i]
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    (result) => { console.log(result) },
+                    'GET',
+                    false
+                );
+                return routeLocations;
+            },
+            clear: function () {
+                if (App.geo.route.path) {
+                    App.map.removeControl(App.geo.route.path);
+                }
+                App.geo.route.id = null;
+                App.geo.route.path = null;
+                App.geo.route.routeLocations = [];
+            }
         }
     },
     footer: {
@@ -318,7 +372,7 @@ $.ajaxSetup({
         if (xhr.status === 401) {
             Swal.fire({
                 title: 'Выход',
-                html: 'Ваше сессия истекла!<br />Пожалуйста, перезайдите в систему.',
+                html: 'Ваша сессия истекла!<br />Пожалуйста, перезайдите в систему.',
                 icon: 'info'
             }).then(() => {
                 $('#logout').click();
@@ -326,8 +380,8 @@ $.ajaxSetup({
         }
     }
 });
-$(document).ready(function () { if (localStorage.getItem('isLoggedOff') === 'true') { App.useContentState(); localStorage.setItem('isLoggedOff', 'false'); } });
-document.addEventListener("DOMContentLoaded", function (event) {
+$(document).ready(function () {
+    if (localStorage.getItem('isLoggedOff') === 'true') { App.useContentState(); localStorage.setItem('isLoggedOff', 'false'); }
     App.initializeContentState();
     $('#offcanvas-slide').on('shown', function () {
         App.setLastContentState({ isOpenMenu: true });
@@ -344,21 +398,18 @@ document.addEventListener("DOMContentLoaded", function (event) {
         App.footer.maximize(1500);
     });
 
-    function deleteLocation(obj) {
-        if (obj.keyCode === 27) {
-            clearForm();
-            App.map.removeControl(marker);
-            App.map.on('mousemove', setLatLng);
-            App.map.on('click', clickLocation);
-            App.footer.show();
-            $(document).off('keydown', null, deleteLocation);
-        }
-    }
     $(document).keydown(function (obj) {
         if (obj.keyCode === 27) {
             if (App.footer.mode === 1) {
                 App.footer.hide();
             } else if (App.footer.mode === -1){
+                App.footer.show();
+            }
+        }
+        else if (obj.keyCode === 113) {
+            if (App.footer.mode === 1) {
+                App.footer.maximize();
+            } else if (App.footer.mode === 0) {
                 App.footer.show();
             }
         }

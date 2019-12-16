@@ -8,6 +8,7 @@
         public double StopDurationInHours { get; set; }
 
         public int? CurrentLocationId { get; set; }
+        public string CurrentFullName { get; set; }
         public string CurrentName { get; set; }
         public int? CurrentCityId { get; set; }
         public string CurrentCityName { get; set; }
@@ -21,6 +22,7 @@
         public double? CurrentLongtitude { get; set; }
 
         public int? PreviousLocationId { get; set; }
+        public string PreviousFullName { get; set; }
         public string PreviousName { get; set; }
         public int? PreviousCityId { get; set; }
         public string PreviousCityName { get; set; }

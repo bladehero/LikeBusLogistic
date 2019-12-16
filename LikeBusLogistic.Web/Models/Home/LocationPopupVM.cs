@@ -2,6 +2,7 @@
 {
     public class LocationPopupVM
     {
-        public LikeBusLogistic.VM.ViewModels.LocationVM Location { get; set; }
+        public VM.ViewModels.LocationVM Location { get; set; }
+        public VM.ViewModels.RouteLocationVM RouteLocation { get; set; }
     }
 }

@@ -37,7 +37,7 @@
                 </td>
                 <td class="uk-text-right">@route.EstimatedDurationInHours ч.</td>
                 <td class="uk-float-right tool-cell-3">
-                    @CustomExtensions.HtmlRouteIcon("uk-margin-small-right")
+                    @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-route-icon")
                     @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
                     {
                         @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-route-icon")
@@ -68,6 +68,14 @@
         });
         $('#add-route-button').click(function () {
             App.footer.getContent('@Url.Action("_MergeRoute", "Geolocation")');
+        });
+        $('.show-route-icon').click(function () {
+            let _this = $(this);
+            let id = _this.parents('tr').first().data('route-id');
+            App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', id);
+            App.geo.route.path.on('click', function () {
+
+            });
         });
     });
 </script>
