@@ -1,0 +1,73 @@
+﻿@model LikeBusLogistic.Web.Models.Routes.RoutesVM
+
+@{
+    RoleName roleName = (RoleName)ViewBag.RoleName;
+}
+<div class="uk-clearfix">
+    <div class="uk-float-left">
+        <h4>Маршруты</h4>
+    </div>
+    <div class="uk-float-right">
+        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+        {
+            <button class="uk-button uk-button-small uk-button-primary" id="add-route-button">Добавить</button>
+        }
+    </div>
+</div>
+<table class="uk-table uk-table-small uk-table-hover" id="routes-table">
+    <thead>
+        <tr>
+            <th>Маршрут</th>
+            <th>Откуда</th>
+            <th>Куда</th>
+            <th class="uk-table-shrink">Продолжительность</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var route in Model.Routes)
+        {
+            <tr data-route-id="@route.Id">
+                <td>@route.Name</td>
+                <td class="uk-text-truncate" uk-tooltip="@route.DepartureLocationName">
+                    @route.DepartureLocationName
+                </td>
+                <td class="uk-text-truncate" uk-tooltip="@route.ArrivalLocationName">
+                    @route.ArrivalLocationName
+                </td>
+                <td class="uk-text-right">@route.EstimatedDurationInHours ч.</td>
+                <td class="uk-float-right tool-cell-3">
+                    @CustomExtensions.HtmlRouteIcon("uk-margin-small-right")
+                    @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                    {
+                        @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-route-icon")
+                    }
+                    @if (roleName == RoleName.Administrator)
+                    {
+                        @CustomExtensions.HtmlDeleteOrRestoreIcon(route.IsDeleted, "delete-route-icon")
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function () {
+        $('#routes-table').dataTable();
+        $('.edit-route-icon').click(function () {
+            var id = $(this).parents('tr').data('route-id');
+            App.footer.getContent('@Url.Action("_MergeRoute", "Geolocation")', { id: id });
+        });
+        $('.delete-route-icon').click(function () {
+            var id = $(this).parents('tr').data('route-id');
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreRoute", "Route")', { id: id }, function (result) {
+                App.message.showSuccessWithOk('Успешно', result.message || 'Маршрут успешно удален!');
+                App.footer.getContent('@Url.Action("_FullInformation", "Route")');
+            });
+        });
+        $('#add-route-button').click(function () {
+            App.footer.getContent('@Url.Action("_MergeRoute", "Geolocation")');
+        });
+    });
+</script>

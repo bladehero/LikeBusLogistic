@@ -68,6 +68,8 @@ namespace LikeBusLogistic.VM.MapperExtensions
                 cfg.CreateMap<RouteVM, Route>();
                 cfg.CreateMap<Route, RouteVM>();
 
+                cfg.CreateMap<GetRoute_Result, RouteVM>();
+                cfg.CreateMap<RouteVM, GetRoute_Result>();
                 cfg.CreateMap<GetRouteLocation_Result, RouteLocationVM>();
                 cfg.CreateMap<RouteLocationVM, GetRouteLocation_Result>();
                 #endregion

@@ -27,7 +27,7 @@
             <tr data-district-id="@district.Id" data-country-id="@district.CountryId">
                 <td>@district.Name</td>
                 <td>@district.CountryName</td>
-                <td class="uk-float-right tool-cell">
+                <td class="uk-float-right tool-cell-2">
                     @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
                     {
                         @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-district-icon")

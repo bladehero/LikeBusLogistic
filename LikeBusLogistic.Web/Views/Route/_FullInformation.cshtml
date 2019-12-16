@@ -1,0 +1,17 @@
+﻿@model LikeBusLogistic.Web.Models.Routes.FullInformationVM
+
+<ul uk-tab>
+    <li class="uk-active"><a href="#">Маршруты</a></li>
+</ul>
+<ul class="uk-switcher uk-margin">
+    <li>
+        @{
+            await Html.RenderPartialAsync("_Routes.cshtml", new LikeBusLogistic.Web.Models.Routes.RoutesVM { Routes = Model.Routes });
+        }
+    </li>
+</ul>
+
+<script>
+    App.footer.setBreadcrumbs([{ name: 'Маршруты', url: '@Url.Action("_FullInformation", "Route")' }]);
+    App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
+</script>

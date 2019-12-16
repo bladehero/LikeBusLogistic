@@ -331,6 +331,63 @@ begin
 end;
 go
 
+if (object_ID('dbo.GetLocationInfo') is not null)
+   drop function dbo.GetLocationInfo
+go
+
+-- ============================================================================
+-- Example    : select * from dbo.GetLocationInfo(1)
+-- Author     : Nikita Dermenzhi
+-- Date       : 25/07/2019
+-- Description: —
+-- ============================================================================
+
+create function dbo.GetLocationInfo(@locationId int = null)
+returns @result table
+(
+  Id           int not null,
+  Name         nvarchar(500) null,
+  Latitude     float null,
+  Longtitude   float null,
+  IsCarRepair  bit null,
+  IsParking    bit null,
+  CityId       int null,
+  CityName     nvarchar(500) null,
+  DistrictId   int null,
+  DistrictName nvarchar(500) null,
+  CountryId    int null,
+  CountryName  nvarchar(500) null,
+  IsDeleted    bit not null
+)
+as 
+begin 
+
+  insert @result
+  select l.Id
+       , l.Name
+       , l.Latitude
+       , l.Longtitude
+       , l.IsCarRepair
+       , l.IsParking
+       , c.Id
+       , c.Name
+       , d.Id
+       , d.Name
+       , ctr.Id
+       , ctr.Name
+       , l.IsDeleted
+   from Location l
+   left join City c on l.CityId = c.Id and c.IsDeleted = 0
+   left join District d on l.DistrictId = d.Id and d.IsDeleted = 0
+   left join Country ctr on l.CountryId = ctr.Id and ctr.IsDeleted = 0
+   where 1=1
+     and l.Id = @locationId
+
+   return;
+
+end
+go
+
 if object_id(N'dbo.GetLocation') is null
   exec('create procedure dbo.GetLocation as set nocount on;');
 go
@@ -350,7 +407,7 @@ alter procedure dbo.GetLocation
 as  
 begin  
   
- select l.Id as Id
+  select l.Id as Id
       , l.Name as Name
       , l.Latitude as Latitude
       , l.Longtitude as Longtitude
@@ -370,6 +427,51 @@ begin
    where 1=1
      and (l.IsDeleted = 0 or @withDeleted = 1)
      and l.Id  = isnull(@locationId, l.Id)
+
+end;
+go
+
+if object_id(N'dbo.GetRoute') is null
+  exec('create procedure dbo.GetRoute as set nocount on;');
+go
+
+-- ============================================================================
+-- Example    : exec dbo.GetRoute 1
+-- Author     : Nikita Dermenzhi
+-- Date       : 25/07/2019
+-- Description: —
+-- ============================================================================
+
+alter procedure dbo.GetRoute
+(  
+    @routeId as int = null,
+    @withDeleted as bit = 0
+)  
+as  
+begin  
+  
+  select r.Id as Id
+       , r.Name as Name
+       , r.EstimatedDurationInHours as EstimatedDurationInHours
+       , r.DepartureId as DepartureId
+       , concat(d.Name, ' ('+concat( d.CountryName+', ', d.DistrictName+', ', d.CityName)+')') as DepartureLocationName
+       , r.ArrivalId as ArrivalId
+       , concat(a.Name, ' ('+concat( a.CountryName+', ', a.DistrictName+', ', a.CityName)+')') as ArrivalLocationName
+       , r.IsDeleted as IsDeleted
+    from [Route] r
+    cross apply
+    (
+      select *from dbo.GetLocationInfo
+        (r.DepartureId) l
+    ) d
+    cross apply
+    (
+      select *
+        from dbo.GetLocationInfo(r.ArrivalId) l
+    ) a
+    where 1=1
+      and r.Id = isnull(@routeId, r.Id)
+      and (r.IsDeleted = 0 or @withDeleted = 1)
 
 end;
 go
@@ -444,52 +546,43 @@ begin
        , ll.PreviousLocationId as PreviousLocationId
 
        -- Current Location
-       , cl.[Name] as CurrentName
-       , cl.CityId as CurrentCityId
-       , c1.[Name] as CurrentCityName
-       , cl.CountryId as CurrentCountryId
-       , co1.[Name] as CurrentCountryName
-       , cl.DistrictId as CurrentDistrictId
-       , d1.[Name] as CurrentDistrictName
-       , cl.IsCarRepair as CurrentIsCarRepair
-       , cl.IsParking as CurrentIsParking
-       , cl.Latitude as CurrentLatitude
-       , cl.Longtitude as CurrentLongtitude
+       , c.[Name] as CurrentName
+       , c.CityId as CurrentCityId
+       , c.CityName as CurrentCityName
+       , c.CountryId as CurrentCountryId
+       , c.CountryName as CurrentCountryName
+       , c.DistrictId as CurrentDistrictId
+       , c.DistrictName as CurrentDistrictName
+       , c.IsCarRepair as CurrentIsCarRepair
+       , c.IsParking as CurrentIsParking
+       , c.Latitude as CurrentLatitude
+       , c.Longtitude as CurrentLongtitude
 
        -- Previous Location
-       , pl.[Name] as PreviousName
-       , pl.CityId as PreviousCityId
-       , c2.[Name] as PreviousCityName
-       , pl.CountryId as PreviousCountryId
-       , co2.[Name] as PreviousCountryName
-       , pl.DistrictId as PreviousDistrictId
-       , d2.[Name] as PreviousDistrictName
-       , pl.IsCarRepair as PreviousIsCarRepair
-       , pl.IsParking as PreviousIsParking
-       , pl.Latitude as PreviousLatitude
-       , pl.Longtitude as PreviousLongtitude
-
+       , p.[Name] as PreviousName
+       , p.CityId as PreviousCityId
+       , p.CityName as PreviousCityName
+       , p.CountryId as PreviousCountryId
+       , p.CountryName as PreviousCountryName
+       , p.DistrictId as PreviousDistrictId
+       , p.DistrictName as PreviousDistrictName
+       , p.IsCarRepair as PreviousIsCarRepair
+       , p.IsParking as PreviousIsParking
+       , p.Latitude as PreviousLatitude
+       , p.Longtitude as PreviousLongtitude
     from LinkedList ll
-
     -- Current location
-    left join [Location] cl 
-      on ll.CurrentLocationId = cl.Id and cl.IsDeleted = 0
-    left join City c1
-      on cl.CityId = c1.Id
-    left join Country co1
-      on cl.CountryId = co1.Id
-    left join District d1
-      on cl.DistrictId = d1.Id
-      
+    cross apply
+    (
+      select *
+        from dbo.GetLocationInfo(ll.CurrentLocationId)
+    ) c
     -- Previous Location
-    left join [Location] pl
-      on ll.PreviousLocationId = pl.Id and pl.IsDeleted = 0
-    left join City c2
-      on pl.CityId = c2.Id
-    left join Country co2
-      on pl.CountryId = co2.Id
-    left join District d2
-      on pl.DistrictId = d2.Id
+    outer apply
+    (
+      select *
+        from dbo.GetLocationInfo(ll.PreviousLocationId)
+    ) p
 
 end;
 go

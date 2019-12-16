@@ -81,13 +81,18 @@ footer {
         margin-right: 0px !important;
     }
 }
-
-td.tool-cell {
+td.tool-cell-1 {
+    min-width: 27px;
+}
+td.tool-cell-2 {
     min-width: 54px;
+}
+td.tool-cell-3 {
+    min-width: 81px;
 }
 
 table {
-    overflow-x: auto;
+    overflow-x: scroll;
 }
 
 #location-popup .location-info > span:nth-child(n+2):not(:first-child)::before {

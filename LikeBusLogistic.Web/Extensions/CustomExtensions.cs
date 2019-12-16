@@ -89,6 +89,7 @@ namespace LikeBusLogistic.Web.Extensions
             }
         }
 
+        public static HtmlString HtmlRouteIcon(string @class = "") => new HtmlString($"<span class=\"uk-text-muted {@class}\" uk-icon=\"social\"></span>");
         public static HtmlString HtmlEditIcon(string @class = "") => new HtmlString($"<span class=\"uk-text-warning {@class}\" uk-icon=\"cog\"></span>");
         public static HtmlString HtmlDeleteIcon(string @class = "") => new HtmlString($"<span class=\"uk-text-danger {@class}\" uk-icon=\"trash\"></span>");
         public static HtmlString HtmlRestoreIcon(string @class = "") => new HtmlString($"<span class=\"uk-text-success {@class}\" uk-icon=\"refresh\"></span>");

@@ -36,7 +36,7 @@
                 <td>@location.CountryName</td>
                 <td class="uk-table-shrink">@(location.IsParking ? CustomExtensions.HtmlEnabledIcon : CustomExtensions.HtmlDisabledIcon)</td>
                 <td class="uk-table-shrink">@(location.IsCarRepair ? CustomExtensions.HtmlEnabledIcon : CustomExtensions.HtmlDisabledIcon)</td>
-                <td class="uk-float-right tool-cell">
+                <td class="uk-float-right tool-cell-2">
                     @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
                     {
                         @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-location-icon")
