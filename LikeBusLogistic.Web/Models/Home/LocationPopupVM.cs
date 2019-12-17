@@ -3,6 +3,7 @@
     public class LocationPopupVM
     {
         public VM.ViewModels.LocationVM Location { get; set; }
+        public VM.ViewModels.RouteVM Route { get; set; }
         public VM.ViewModels.RouteLocationVM RouteLocation { get; set; }
     }
 }

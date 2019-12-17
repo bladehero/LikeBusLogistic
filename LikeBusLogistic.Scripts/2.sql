@@ -346,6 +346,7 @@ create function dbo.GetLocationInfo(@locationId int = null)
 returns @result table
 (
   Id           int not null,
+  FullName     nvarchar(max) null,
   Name         nvarchar(500) null,
   Latitude     float null,
   Longtitude   float null,
@@ -364,6 +365,7 @@ begin
 
   insert @result
   select l.Id
+       , concat(l.Name, ' ('+concat( ctr.Name, ', '+d.Name, ', '+c.Name)+')') as FullName
        , l.Name
        , l.Latitude
        , l.Longtitude
@@ -408,6 +410,7 @@ as
 begin  
   
   select l.Id as Id
+      , concat(l.Name, ' ('+concat(ctr.Name, ', '+d.Name, ', '+c.Name)+')') as FullName
       , l.Name as Name
       , l.Latitude as Latitude
       , l.Longtitude as Longtitude
@@ -496,6 +499,7 @@ as
 begin  
   
   with LinkedList (RouteId
+                 , RouteLocationId
                  , RouteName
                  , EstimatedDurationInHours
                  , CurrentLocationId
@@ -505,6 +509,7 @@ begin
   as
   (
     select r1.Id as RouteId
+         , rl1.Id as RouteLocationId
          , r1.[Name] as RouteName
          , rl1.EstimatedDurationInHours as EstimatedDurationInHours
          , rl1.CurrentLocationId as CurrentLocationId
@@ -523,6 +528,7 @@ begin
       union all
   
     select r2.Id as RouteId
+         , rl2.Id as RouteLocationId
          , r2.[Name] as RouteName
          , rl2.EstimatedDurationInHours as EstimatedDurationInHours
          , rl2.CurrentLocationId as CurrentLocationId
@@ -540,6 +546,7 @@ begin
         and rl2.IsDeleted = 0
   )
   select ll.RouteId as RouteId
+       , ll.RouteLocationId as RouteLocationId
        , ll.RouteName as RouteName
        , ll.EstimatedDurationInHours as EstimatedDurationInHours
        , ll.StopDurationInHours as StopDurationInHours
@@ -547,7 +554,7 @@ begin
        , ll.PreviousLocationId as PreviousLocationId
 
        -- Current Location
-       , concat(c.[Name], ' ('+concat( c.CountryName+', ', c.DistrictName+', ', c.CityName)+')') as CurrentFullName
+       , c.FullName as CurrentFullName
        , c.[Name] as CurrentName
        , c.CityId as CurrentCityId
        , c.CityName as CurrentCityName
@@ -561,7 +568,7 @@ begin
        , c.Longtitude as CurrentLongtitude
 
        -- Previous Location
-       , concat(p.[Name], ' ('+concat( p.CountryName+', ', p.DistrictName+', ', p.CityName)+')') as PreviousFullName
+       , p.FullName as PreviousFullName
        , p.[Name] as PreviousName
        , p.CityId as PreviousCityId
        , p.CityName as PreviousCityName

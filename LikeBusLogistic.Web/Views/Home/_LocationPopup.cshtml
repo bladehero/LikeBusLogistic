@@ -1,6 +1,6 @@
 ﻿@model LikeBusLogistic.Web.Models.Home.LocationPopupVM
 
-<div id="location-popup">
+<div id="location-popup" data-location-id="@Model.Location.Id" data-route-location-id="@Model.RouteLocation?.CurrentLocationId">
     <ul class="uk-margin-remove-bottom" uk-tab>
         <li><a href="#">О локации</a></li>
         <li><a href="#">Логистика</a></li>
@@ -49,58 +49,159 @@
             </div>
         </li>
         <li>
-            @if (Model.RouteLocation?.CurrentLocationId == null)
+            @if (Model.Route?.Id != null)
             {
+                if (Model.RouteLocation?.CurrentLocationId == null)
+                {
+                    <div class="uk-margin-remove-bottom uk-margin-remove-top" uk-grid>
 
+                        <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                            <p>Маршрут:</p>
+                        </div>
+                        <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                            <p>Продолжительность:</p>
+                        </div>
+
+                        <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                            <span class="uk-text-bold">@Model.Route.Name</span>
+                        </div>
+                        <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                            <span class="uk-text-bold">@Model.Route.EstimatedDurationInHours ч.</span>
+                        </div>
+
+                        <div class="uk-button-group uk-width-1-1 uk-margin-small">
+                            <button class="uk-button uk-button-small uk-button-primary uk-width-1-2"
+                                    uk-tooltip="Добавить <b>ДО</b> локации. Нажмите, чтобы продолжить расширение маршрута."
+                                    id="append-route-location-button">
+                                <span uk-icon="icon: arrow-left; ratio: 1.5;"></span>
+                            </button>
+                            <button class="uk-button uk-button-small uk-button-secondary uk-width-1-2"
+                                    uk-tooltip="Добавить <b>ПОСЛЕ</b> локации. Нажмите, чтобы продолжить расширение маршрута."
+                                    id="prepend-route-location-button">
+                                <span uk-icon="icon: arrow-right; ratio: 1.5;"></span>
+                            </button>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="uk-margin-remove-bottom uk-margin-remove-top" uk-grid>
+                        <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                            <p>Маршрут:</p>
+                        </div>
+
+                        <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                            @if (Model.RouteLocation?.PreviousLocationId != null)
+                            {
+                                <p>Продолжительность:</p>
+                            }
+                        </div>
+
+                        <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                            <span class="uk-text-bold">@Model.RouteLocation.RouteName</span>
+                        </div>
+                        <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                            @if (Model.RouteLocation?.PreviousLocationId != null)
+                            {
+                                <span class="uk-text-bold">@Model.RouteLocation.EstimatedDurationInHours ч.</span>
+                            }
+                        </div>
+
+                        @if (Model.RouteLocation?.PreviousLocationId != null)
+                        {
+                            <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
+                                <p>Предыдущая локация:</p>
+                            </div>
+                            <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
+                                <span class="uk-text-bold">@Model.RouteLocation.PreviousFullName</span>
+                            </div>
+                        }
+
+                        <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
+                            <p>Текущая локация:</p>
+                        </div>
+                        <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
+                            <span class="uk-text-bold">@Model.RouteLocation.CurrentFullName</span>
+                        </div>
+
+                        <div class="uk-button-group uk-width-1-1 uk-margin-small">
+                            <button class="uk-button uk-button-small uk-button-primary uk-width-1-3"
+                                    uk-tooltip="Добавить локацию <b>ДО</b> нее. Нажмите, чтобы продолжить расширение маршрута."
+                                    id="append-route-location-button">
+                                <span uk-icon="icon: arrow-left; ratio: 1.5;"></span>
+                            </button>
+                            <button class="uk-button uk-button-small uk-button-secondary uk-width-1-3"
+                                    uk-tooltip="Добавить локацию <b>ПОСЛЕ</b> нее. Нажмите, чтобы продолжить расширение маршрута."
+                                    id="prepend-route-location-button">
+                                <span uk-icon="icon: arrow-right; ratio: 1.5;"></span>
+                            </button>
+                            <button class="uk-button uk-button-small uk-button-danger uk-width-1-3"
+                                    uk-tooltip="<b>Удалить</b> локацию."
+                                    id="delete-route-location-button">
+                                <span uk-icon="icon: ban;"></span>
+                            </button>
+                        </div>
+                    </div>
+                }
             }
             else
             {
-                <div class="uk-margin-remove-bottom uk-margin-remove-top" uk-grid>
-                    <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
-                        <p>Маршрут:</p>
-                    </div>
+                <button class="uk-button uk-button-small uk-button-primary uk-width-1-1 uk-margin-small-top uk-margin-remove-bottom"
+                        uk-tooltip="Начать новый маршрут с этой локации."
+                        id="create-route-button">
+                    <span uk-icon="icon: settings; ratio: 1;"></span>
 
-                    <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
-                        @if (Model.RouteLocation?.PreviousLocationId != null)
-                        {
-                            <p>Продолжительность:</p>
-                        }
-                    </div>
 
-                    <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
-                        <span class="uk-text-bold">@Model.RouteLocation.RouteName</span>
-                    </div>
-                    <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
-                        @if (Model.RouteLocation?.PreviousLocationId != null)
-                        {
-                            <span class="uk-text-bold">@Model.RouteLocation.EstimatedDurationInHours ч.</span>
-                        }
-                    </div>
 
-                    @if (Model.RouteLocation?.PreviousLocationId != null)
-                    {
-                        <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
-                            <p>Предыдущая локация:</p>
-                        </div>
-                        <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
-                            <span class="uk-text-bold">@Model.RouteLocation.PreviousFullName</span>
-                        </div>
-                    }
-
-                    <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
-                        <p>Текущая локация:</p>
-                    </div>
-                    <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
-                        <span class="uk-text-bold">@Model.RouteLocation.CurrentFullName</span>
-                    </div>
-
-                    <div class="uk-button-group uk-width-1-1 uk-margin-small">
-                        <button class="uk-button uk-button-small uk-button-primary uk-width-1-3" uk-tooltip="Добавить локацию <b>ДО</b> нее."><span uk-icon="icon: arrow-left; ratio: 1.5;"></span></button>
-                        <button class="uk-button uk-button-small uk-button-secondary uk-width-1-3" uk-tooltip="Добавить локацию <b>ПОСЛЕ</b> нее."><span uk-icon="icon: arrow-right; ratio: 1.5;"></span></button>
-                        <button class="uk-button uk-button-small uk-button-danger uk-width-1-3" uk-tooltip="<b>Удалить</b> локацию"><span uk-icon="icon: ban;"></span></button>
-                    </div>
-                </div>
+                </button>
             }
         </li>
     </ul>
 </div>
+
+<script>
+    $('#create-route-button').click(function () {
+
+    });
+    $('#append-route-location-button').click(function () {
+        let _this = $(this);
+        let _popup = _this.parents('#location-popup');
+        let locationId = _popup.data('location-id');
+        let routeLocationId = _popup.data('route-location-id');
+        let tempClicks = [];
+        Swal.fire({
+            title: 'Добавление',
+            text: 'Нажмите на локацию, чтобы добавить в маршрут',
+            icon: 'info',
+            showConfirmButton: false,
+            timer: 1500
+        });
+        for (let i = 0; i < App.geo.locations.length; i++) {
+            tempClicks.push({ locationId: App.geo.locations[i].data.id, clicks: App.geo.locations[i].marker._events.click });
+            App.geo.locations[i].marker.off('click').on('click', function () {
+                if (routeLocationId) {
+                    //var latlng = L.latLng(App.geo.locations[i].marker.latLng.lat, App.geo.locations[i].marker.latLng.lng);
+                    //var latlngs = App.geo.route.path.getLatLngs();
+                    //App.geo.route.path.setLatLngs(latlngs);
+                    App.footer.getContent('@Url.Action("_MergeRouteLocation", "Route")',
+                    {
+                        routeId: App.geo.route.id,
+                        routeLocationId: locationId,
+                        locationToAddId: App.geo.locations[i].data.id,
+                        mode: '@MergeRouteLocationMode.Append'
+                    });
+                }
+                else {
+
+                }
+            });
+        }
+        App.geo.closeAllPopups();
+    });
+    $('#prepend-route-location-button').click(function () {
+
+    });
+    $('#delete-route-location-button').click(function () {
+
+    });
+</script>

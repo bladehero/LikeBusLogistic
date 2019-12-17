@@ -3,6 +3,11 @@
     geo: {
         locations: [],
         defaultZoom: 10,
+        closeAllPopups: function () {
+            App.geo.locations.forEach(function (location) {
+                location.marker.closePopup();
+            });
+        },
         getZoomToView: function () {
             let zoom = App.map.getZoom();
             return zoom > App.geo.defaultZoom ? zoom : App.geo.defaultZoom;
@@ -80,7 +85,7 @@
                 for (var i = 0; i < routeLocations.length; i++) {
                     latlngs.push([routeLocations[i].routeLocation.currentLatitude, routeLocations[i].routeLocation.currentLongtitude]);
                 }
-                let options = { use: L.polyline, delay: 800, dashArray: [10, 10], weight: 4, color: "#C3C3FF", pulseColor: "#0059FF" };
+                let options = { use: L.polyline, delay: 800, dashArray: [10, 10], weight: 6, color: "#C3C3FF", pulseColor: "#0059FF" };
                 let path = new L.Polyline.AntPath(latlngs, options);
                 path.addTo(App.map);
                 App.geo.route.routeLocations = routeLocations;
@@ -115,6 +120,7 @@
                 if (App.geo.route.path) {
                     App.map.removeControl(App.geo.route.path);
                 }
+                App.geo.closeAllPopups();
                 App.geo.route.id = null;
                 App.geo.route.path = null;
                 App.geo.route.routeLocations = [];
@@ -405,6 +411,7 @@ $(document).ready(function () {
             } else if (App.footer.mode === -1){
                 App.footer.show();
             }
+            App.geo.closeAllPopups();
         }
         else if (obj.keyCode === 113) {
             if (App.footer.mode === 1) {

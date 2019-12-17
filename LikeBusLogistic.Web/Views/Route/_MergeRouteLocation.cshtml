@@ -1,0 +1,53 @@
+﻿@model MergeRouteLocationVM
+
+<div class="uk-grid" uk-grid id="save-route-location-grid">
+    <input type="hidden" name="routeId" value="@Model.RouteLocation.RouteId" />
+    <div class="uk-margin uk-width-1-1">
+        <label class="uk-form-label">Новая локация</label>
+        <div class="uk-form-controls">
+            @Model.Locations.Where(x => !Model.RouteLocations.Any(y => y.CurrentLocationId == x.Id)).SelectList(
+             x => x.Id,
+             x => x.FullName,
+             Model.LocationToAdd.Id,
+             new { @class = "uk-select", name = "locationToAddId" })
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-1">
+        <label><input class="uk-radio" type="radio" name="add-mode-radio" value="@MergeRouteLocationMode.Append" @(Model.Mode == MergeRouteLocationMode.Append)> До</label>
+        <label><input class="uk-radio" type="radio" name="add-mode-radio" value="@MergeRouteLocationMode.Prepend" @(Model.Mode == MergeRouteLocationMode.Prepend)> После</label>
+    </div>
+
+    <div class="uk-margin uk-width-1-1">
+        <label class="uk-form-label">Относительно локации</label>
+        <div class="uk-form-controls">
+            @Model.Locations.Where(x => Model.RouteLocations.Any(y => y.CurrentLocationId == x.Id)).SelectList(
+             x => x.Id,
+             x => x.FullName,
+             Model.RouteLocation.CurrentLocationId,
+             new { @class = "uk-select", name = "routeLocationId" })
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-1">
+        <button class="uk-button uk-button-primary uk-float-right" id="save-bus-button">Сохранить</button>
+    </div>
+</div>
+
+<script>
+    App.footer.setBreadcrumbs([
+        { name: 'Маршруты', url: '@Url.Action("_FullInformation","Route")' },
+        { name: 'Новая локация', url: '@Url.Action("_MergeRouteLocation","Route")' }
+    ]);
+
+    $('select[name="vehicleId"]').on('change', function () {
+        var option = $(this).find('option:selected');
+        $('textarea[name="vehicle-description"]').text(option.data('vehicle-description'));
+        $('input[name="vehicle-passenger-capacity"]').val(option.data('vehicle-passenger-capacity'));
+    }).change();
+
+    $('#save-bus-button').click(function () {
+        var data = App.serializeInputsToObject('#save-bus-grid input,textarea,select', ['disabled']);
+        App.postDataOnServer('@Url.Action("MergeBus", "Bus")', data);
+    });
+</script>

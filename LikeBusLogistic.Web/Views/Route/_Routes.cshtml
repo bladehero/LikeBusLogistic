@@ -8,9 +8,10 @@
         <h4>Маршруты</h4>
     </div>
     <div class="uk-float-right">
+        <button class="uk-button uk-button-small uk-button-default" id="reset-route-button">Сбросить</button>
         @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
         {
-            <button class="uk-button uk-button-small uk-button-primary" id="add-route-button">Добавить</button>
+            <button class="uk-button uk-button-small uk-button-primary" id="save-route-button">Сохранить</button>
         }
     </div>
 </div>
@@ -66,16 +67,69 @@
                 App.footer.getContent('@Url.Action("_FullInformation", "Route")');
             });
         });
-        $('#add-route-button').click(function () {
-            App.footer.getContent('@Url.Action("_MergeRoute", "Geolocation")');
+        $('#reset-route-button').click(function () {
+            routeValidation(() => {
+                Swal.fire({
+                    title: 'Сброс',
+                    text: 'Вы уверены, что хотите сбросить изменения в текущем маршруте?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Да',
+                    cancelButtonText: 'Отмена'
+                }).then((result) => {
+                    if (result.value) {
+                        App.geo.route.clear();
+                    }
+                });
+            });
+        });
+        $('#save-route-button').click(function () {
+            routeValidation(() => {
+                Swal.fire({
+                    title: 'Сохранение',
+                    text: 'Вы уверены, что хотите сохранить изменения в текущем маршруте?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Да',
+                    cancelButtonText: 'Отмена'
+                }).then((result) => {
+                    if (result.value) {
+                        // TODO: Saving action
+                    }
+                });
+            });
         });
         $('.show-route-icon').click(function () {
             let _this = $(this);
             let id = _this.parents('tr').first().data('route-id');
             App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', id);
-            App.geo.route.path.on('click', function () {
-
-            });
+            if (App.geo.route.routeLocations.length != 0) {
+                App.geo.route.path.on('click', function () {
+                    // TODO: Updating route modal
+                });
+            }
+            else {
+                Swal.fire({
+                    title: 'Пустой маршрут',
+                    text: 'Маршрут еще не содержит локаций, кликните на любую локацию чтобы начать',
+                    icon: 'info',
+                    timer: 2500
+                });
+            }
         });
+        function routeValidation(handler) {
+            if (App.geo.route.path) {
+                handler();
+            }
+            else {
+                Swal.fire({
+                    title: 'Ошибка',
+                    text: 'Вы не выбрали маршрут!',
+                    icon: 'error',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        }
     });
 </script>

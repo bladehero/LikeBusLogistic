@@ -29,11 +29,13 @@ namespace LikeBusLogistic.Web.Controllers
         public IActionResult _LocationPopup(int id, int? routeId)
         {
             var location = ServiceFactory.GeolocationManagement.GetLocation(id).Data;
+            var route = ServiceFactory.RouteManagement.GetRoute(routeId).Data;
             var routeLocation = ServiceFactory.RouteManagement.GetRouteLocation(routeId, id).Data;
 
             var model = new LocationPopupVM
             {
                 Location = location,
+                Route = route,
                 RouteLocation = routeLocation
             };
             return PartialView(model);
