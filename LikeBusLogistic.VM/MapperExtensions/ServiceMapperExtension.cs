@@ -32,8 +32,8 @@ namespace LikeBusLogistic.VM.MapperExtensions
                 cfg.CreateMap<Vehicle, VehicleVM>();
                 cfg.CreateMap<VehicleVM, Vehicle>();
 
-                cfg.CreateMap<Bus, BusVM>().AfterMap((m, vm) => m.Id = vm.BusId);
-                cfg.CreateMap<BusVM, Bus>().AfterMap((vm, m) => vm.BusId = m.Id);
+                cfg.CreateMap<Bus, BusVM>().AfterMap((m, vm) => vm.BusId = m.Id);
+                cfg.CreateMap<BusVM, Bus>().AfterMap((vm, m) => m.Id = vm.BusId);
                 #endregion
 
                 #region Driver Management Service
