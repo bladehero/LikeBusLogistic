@@ -484,7 +484,7 @@ if object_id(N'dbo.GetRouteLocation') is null
 go
 
 -- ============================================================================
--- Example    : exec dbo.GetRouteLocation 1, 8
+-- Example    : exec dbo.GetRouteLocation 1, 5
 -- Author     : Nikita Dermenzhi
 -- Date       : 13/12/2019
 -- Description: —

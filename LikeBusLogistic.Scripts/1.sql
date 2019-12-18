@@ -281,8 +281,7 @@ if not exists (select 1
 
     constraint FK_dbo_RouteLocation_CurrentLocationId_dbo_Locaiton_Id foreign key (CurrentLocationId) references [Location](Id),
     constraint FK_dbo_RouteLocation_PreviousLocationId_dbo_Location_Id foreign key (PreviousLocationId) references [Location](Id),
-    constraint CK_dbo_RouteLocation_CurrentLocationId_PreviousLocationId check (StopDurationInHours <> PreviousLocationId),
-    constraint CK_dbo_RouteLocation_StopDurationInHours check (StopDurationInHours > 0),
+    constraint CK_dbo_RouteLocation_CurrentLocationId_PreviousLocationId check (CurrentLocationId <> PreviousLocationId),
     constraint CK_dbo_RouteLocation_EstimatedDurationInHours check (EstimatedDurationInHours > 0)
   );
 go

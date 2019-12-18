@@ -8,19 +8,19 @@
         public double EstimatedDurationInHours { get; set; }
         public double StopDurationInHours { get; set; }
 
-        public int? CurrentLocationId { get; set; }
+        public int CurrentLocationId { get; set; }
         public string CurrentFullName { get; set; }
         public string CurrentName { get; set; }
-        public int? CurrentCityId { get; set; }
+        public int CurrentCityId { get; set; }
         public string CurrentCityName { get; set; }
-        public int? CurrentCountryId { get; set; }
+        public int CurrentCountryId { get; set; }
         public string CurrentCountryName { get; set; }
-        public int? CurrentDistrictId { get; set; }
+        public int CurrentDistrictId { get; set; }
         public string CurrentDistrictName { get; set; }
-        public bool? CurrentIsCarRepair { get; set; }
-        public bool? CurrentIsParking { get; set; }
-        public double? CurrentLatitude { get; set; }
-        public double? CurrentLongtitude { get; set; }
+        public bool CurrentIsCarRepair { get; set; }
+        public bool CurrentIsParking { get; set; }
+        public double CurrentLatitude { get; set; }
+        public double CurrentLongtitude { get; set; }
 
         public int? PreviousLocationId { get; set; }
         public string PreviousFullName { get; set; }

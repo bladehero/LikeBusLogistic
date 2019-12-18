@@ -5,8 +5,9 @@ namespace LikeBusLogistic.Web.Models.Routes
 {
     public class MergeRouteLocationVM
     {
-        public RouteLocationVM RouteLocation { get; set; }
-        public LocationVM LocationToAdd { get; set; }
+        public int RouteId { get; set; }
+        public int RouteLocationId { get; set; }
+        public int LocationToAddId { get; set; }
         public IEnumerable<LocationVM> Locations { get; set; }
         public IEnumerable<RouteLocationVM> RouteLocations { get; set; }
         public MergeRouteLocationMode Mode { get; set; }

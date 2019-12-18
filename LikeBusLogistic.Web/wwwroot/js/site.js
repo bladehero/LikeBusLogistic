@@ -74,6 +74,14 @@
         route: {
             id: null,
             path: null,
+            getIndexByRouteLocationId: function (id) {
+                for (let i = 0; i < App.geo.route.routeLocations.length; i++) {
+                    if (App.geo.route.routeLocations[i].routeLocation.currentLocationId == id) {
+                        return i;
+                    }
+                }
+                return -1;
+            },
             routeLocations: [],
             resetRouteLocations: function (url, id) {
                 App.geo.route.clear();
@@ -322,7 +330,7 @@
                     if ($(el).attr(excludedAttributes[i]) || $(el).is(':' + excludedAttributes[i])) return;
             }
             var val;
-            if ($(el).attr('type') === 'checkbox' || $(el).attr('type') === 'radiobutton') {
+            if ($(el).attr('type') === 'checkbox' || $(el).attr('type') === 'radio') {
                 val = $(el).is(':checked');
             } else {
                 val = $(el).val();

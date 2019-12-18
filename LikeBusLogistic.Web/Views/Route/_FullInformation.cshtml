@@ -14,6 +14,7 @@
 <script>
     App.footer.setBreadcrumbs([{ name: 'Маршруты', url: '@Url.Action("_FullInformation", "Route")' }]);
     App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
+    App.geo.route.clear();
     App.geo.onClickLocation(function (obj, location) {
         let selector = "marker_" + location.marker._leaflet_id;
         let popup = location.marker.getPopup();

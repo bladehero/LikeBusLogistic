@@ -1,4 +1,5 @@
 ﻿using LikeBusLogistic.BLL.Results;
+using LikeBusLogistic.DAL.Models;
 using LikeBusLogistic.VM.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<RouteLocationVM>();
             try
             {
-                var routeLocation = UnitOfWork.StoredProcedureDao.GetRouteLocation(routeId, locationId).FirstOrDefault();
+                var routeLocation = UnitOfWork.StoredProcedureDao.GetRouteLocation(routeId, locationId.Value).FirstOrDefault();
                 result.Data = Mapper.Map<RouteLocationVM>(routeLocation);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
@@ -77,6 +78,60 @@ namespace LikeBusLogistic.BLL.Services
             catch (Exception ex)
             {
                 result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+        public BaseResult MergeRouteLocation(RouteLocationVM routeLocationVM, int? nextRouteLocationId)
+        {
+            var result = new BaseResult();
+            try
+            {
+                var nextVM = GetRouteLocation(routeLocationVM.RouteId, nextRouteLocationId).Data;
+                if (nextVM != null)
+                {
+                    nextVM.PreviousLocationId = routeLocationVM.CurrentLocationId;
+                    var next = Mapper.Map<RouteLocation>(nextVM);
+                    UnitOfWork.RouteLocationDao.Update(next);
+                }
+
+                var routeLocation = Mapper.Map<RouteLocation>(routeLocationVM);
+                UnitOfWork.RouteLocationDao.Merge(routeLocation);
+
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+        public BaseResult HardDeleteRouteLocation(int routeId, int locationId)
+        {
+            var result = new BaseResult();
+            try
+            {
+                var routeLocations = GetRouteLocations(routeId).Data;
+                var routeLocation = routeLocations.FirstOrDefault(x => x.CurrentLocationId == locationId);
+
+                var previousVM = routeLocations.SkipWhile(x => x.CurrentLocationId == locationId).FirstOrDefault();
+                routeLocations.Reverse();
+                var nextVM = routeLocations.SkipWhile(x => x.CurrentLocationId != locationId).Skip(1).FirstOrDefault();
+                if (nextVM != null)
+                {
+                    nextVM.PreviousLocationId = previousVM?.CurrentLocationId == nextVM.CurrentLocationId ? null : previousVM?.CurrentLocationId;
+                    var next = Mapper.Map<RouteLocation>(nextVM);
+                    UnitOfWork.RouteLocationDao.Update(next);
+                }
+
+                result.Success = UnitOfWork.RouteLocationDao.HardDelete(routeLocation.RouteLocationId);
+                result.Message = result.Success ? GeneralSuccessMessage : GeneralErrorMessage;
+            }
+            catch (Exception ex)
+            {
                 result.Success = false;
                 result.Message = GeneralErrorMessage;
             }

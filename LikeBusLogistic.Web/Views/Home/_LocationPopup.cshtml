@@ -150,9 +150,6 @@
                         uk-tooltip="Начать новый маршрут с этой локации."
                         id="create-route-button">
                     <span uk-icon="icon: settings; ratio: 1;"></span>
-
-
-
                 </button>
             }
         </li>
@@ -160,14 +157,7 @@
 </div>
 
 <script>
-    $('#create-route-button').click(function () {
-
-    });
-    $('#append-route-location-button').click(function () {
-        let _this = $(this);
-        let _popup = _this.parents('#location-popup');
-        let locationId = _popup.data('location-id');
-        let routeLocationId = _popup.data('route-location-id');
+    function addLocationToRoute(_popup, locationId, routeLocationId, mode, spliceHandler) {
         let tempClicks = [];
         Swal.fire({
             title: 'Добавление',
@@ -180,15 +170,16 @@
             tempClicks.push({ locationId: App.geo.locations[i].data.id, clicks: App.geo.locations[i].marker._events.click });
             App.geo.locations[i].marker.off('click').on('click', function () {
                 if (routeLocationId) {
-                    //var latlng = L.latLng(App.geo.locations[i].marker.latLng.lat, App.geo.locations[i].marker.latLng.lng);
-                    //var latlngs = App.geo.route.path.getLatLngs();
-                    //App.geo.route.path.setLatLngs(latlngs);
+                    var latlng = L.latLng(App.geo.locations[i].marker._latlng.lat, App.geo.locations[i].marker._latlng.lng);
+                    var latlngs = App.geo.route.path.getLatLngs();
+                    spliceHandler(latlngs, latlng);
+                    App.geo.route.path.setLatLngs(latlngs);
                     App.footer.getContent('@Url.Action("_MergeRouteLocation", "Route")',
                     {
                         routeId: App.geo.route.id,
                         routeLocationId: locationId,
                         locationToAddId: App.geo.locations[i].data.id,
-                        mode: '@MergeRouteLocationMode.Append'
+                        mode: mode
                     });
                 }
                 else {
@@ -197,11 +188,36 @@
             });
         }
         App.geo.closeAllPopups();
+    }
+    $('#create-route-button').click(function () {
+
+    });
+    $('#append-route-location-button').click(function () {
+        let _this = $(this);
+        let _popup = _this.parents('#location-popup');
+        let locationId = _popup.data('location-id');
+        let routeLocationId = _popup.data('route-location-id');
+
+        var spliceHandler = (latlngs, latlng) => { latlngs.splice(App.geo.route.getIndexByRouteLocationId(routeLocationId), 0, latlng)}
+        addLocationToRoute(_popup, locationId, routeLocationId,@((int)MergeRouteLocationMode.Append), spliceHandler);
     });
     $('#prepend-route-location-button').click(function () {
+        let _this = $(this);
+        let _popup = _this.parents('#location-popup');
+        let locationId = _popup.data('location-id');
+        let routeLocationId = _popup.data('route-location-id');
 
+        var spliceHandler = (latlngs, latlng) => { latlngs.splice(App.geo.route.getIndexByRouteLocationId(routeLocationId) + 1, 0, latlng)}
+        addLocationToRoute(_popup, locationId, routeLocationId,@((int)MergeRouteLocationMode.Prepend), spliceHandler);
     });
     $('#delete-route-location-button').click(function () {
-
+        let _this = $(this);
+        let _popup = _this.parents('#location-popup');
+        let locationId = _popup.data('location-id');
+        var routeId = App.geo.route.id;
+        App.postDataOnServer('@Url.Action("DeleteRouteLocation", "Route")', {
+            routeId: routeId,
+            locationId: locationId
+        }, () => { App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', routeId); }, null, 'POST');
     });
 </script>

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using LikeBusLogistic.Web.Models.Routes;
 using LikeBusLogistic.VM.ViewModels;
+using LikeBusLogistic.Web.Models;
 
 namespace LikeBusLogistic.Web.Controllers
 {
@@ -35,27 +36,75 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult _MergeRouteLocation(int routeId, int locationToAddId, int routeLocationId, MergeRouteLocationMode mode)
+        public IActionResult _MergeRouteLocation(MergeRouteLocationVM mergeRouteLocationVM)
         {
             var locations = ServiceFactory.GeolocationManagement.GetLocations().Data;
-            var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(routeId).Data;
+            var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(mergeRouteLocationVM.RouteId).Data;
 
-            var model = new MergeRouteLocationVM
+            mergeRouteLocationVM.Locations = locations;
+            mergeRouteLocationVM.RouteLocations = routeLocations;
+            return PartialView(mergeRouteLocationVM);
+        }
+
+        [HttpPost]
+        public IActionResult MergeRouteLocation(MergeRouteLocationVM mergeRouteLocationVM)
+        {
+            var result = new Result();
+            try
             {
-                LocationToAdd = new LocationVM
+                var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(mergeRouteLocationVM.RouteId).Data;
+                var currentRouteLocation = routeLocations.FirstOrDefault(x => x.CurrentLocationId == mergeRouteLocationVM.RouteLocationId);
+
+                var locationToAdd = new RouteLocationVM
                 {
-                    Id = locationToAddId
-                },
-                RouteLocation = new RouteLocationVM
+                    EstimatedDurationInHours = 1,
+                    StopDurationInHours = 0,
+                    RouteId = mergeRouteLocationVM.RouteId,
+                    CurrentLocationId = mergeRouteLocationVM.LocationToAddId
+                };
+                var nextId = (int?)null;
+
+                if (mergeRouteLocationVM.Mode == MergeRouteLocationMode.Append)
                 {
-                    RouteId = routeId,
-                    RouteLocationId = routeLocationId
-                },
-                Mode = mode,
-                Locations = locations,
-                RouteLocations = routeLocations
-            };
-            return PartialView(model);
+                    var previous = routeLocations.FirstOrDefault(x => x.CurrentLocationId == currentRouteLocation.PreviousLocationId);
+                    locationToAdd.PreviousLocationId = previous?.CurrentLocationId;
+                    nextId = currentRouteLocation.CurrentLocationId;
+                }
+                else if(mergeRouteLocationVM.Mode == MergeRouteLocationMode.Prepend)
+                {
+                    var next = routeLocations.FirstOrDefault(x => x.PreviousLocationId == currentRouteLocation.CurrentLocationId);
+                    locationToAdd.PreviousLocationId = currentRouteLocation.CurrentLocationId;
+                    nextId = next?.CurrentLocationId;
+                }
+
+                var serviceResult = ServiceFactory.RouteManagement.MergeRouteLocation(locationToAdd, nextId);
+
+                result.Success = serviceResult.Success;
+                result.Message = serviceResult.Message;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteRouteLocation(int routeId, int locationId)
+        {
+            var result = new Result();
+            try
+            {
+                var serviceResult = ServiceFactory.RouteManagement.HardDeleteRouteLocation(routeId, locationId);
+
+                result.Success = serviceResult.Success;
+                result.Message = serviceResult.Message;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+            }
+            return Json(result);
         }
     }
 }
