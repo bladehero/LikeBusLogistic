@@ -13,6 +13,20 @@ namespace LikeBusLogistic.Web.Controllers
     {
         public GeolocationController(ServiceFactory serviceFactory) : base(serviceFactory) { }
 
+        [HttpGet]
+        public IActionResult GetDistrictsByCountry(int? id)
+        {
+            var result = ServiceFactory.GeolocationManagement.GetDistrictsByCountry(id);
+
+            return Json(result);
+        }
+        [HttpGet]
+        public IActionResult GetCitiesByDistricts(int? id)
+        {
+            var result = ServiceFactory.GeolocationManagement.GetCitiesByDistrict(id);
+
+            return Json(result);
+        }
 
         [HttpGet]
         public IActionResult _FullInformation(GeolocationTab tab = GeolocationTab.Locations)
@@ -35,18 +49,29 @@ namespace LikeBusLogistic.Web.Controllers
         [HttpGet]
         public IActionResult _Location(int? id)
         {
-            var cities = ServiceFactory.GeolocationManagement.GetCities().Data;
-            var districts = ServiceFactory.GeolocationManagement.GetDistricts().Data;
-            var countries = ServiceFactory.GeolocationManagement.GetCountries().Data;
             var location = ServiceFactory.GeolocationManagement.GetLocation(id).Data;
 
             var model = new Models.Geolocations.LocationVM
             {
-                Cities = cities,
-                Countries = countries,
-                Districts = districts,
-                Location = location
+                Location = location,
+                Countries = ServiceFactory.GeolocationManagement.GetCountries().Data
             };
+
+            if (id.HasValue)
+            {
+                if (location.CountryId.HasValue)
+                {
+                    var districts = ServiceFactory.GeolocationManagement.GetDistrictsByCountry(location.CountryId.Value).Data;
+                    model.Districts = districts;
+                }
+
+                if (location.DistrictId.HasValue)
+                {
+                    var cities = ServiceFactory.GeolocationManagement.GetCitiesByDistrict(location.DistrictId.Value).Data;
+                    model.Cities = cities;
+                }
+            }
+
             return PartialView(model);
         }
         [HttpGet]

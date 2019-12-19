@@ -46,7 +46,9 @@
                     </a>
                     <ul class="uk-nav-sub">
                         <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Locations })">Контрольные точки</a></li>
-                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Cities })">Города и страны</a></li>
+                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Cities })">Города</a></li>
+                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Districts })">Регионы</a></li>
+                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Countries })">Страны</a></li>
                     </ul>
                 </li>
                 <li class="uk-nav-divider"></li>
@@ -64,16 +66,16 @@
                     </a>
                 </li>
                 @*<li class="uk-nav-divider"></li>
-                                <li class="uk-parent">
-                        <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Account")">
-                            <span class="uk-margin-small-right" uk-icon="icon: users; ratio: 0.8;"></span>
-                            Учетные записи
-                        </a>
-                        <ul class="uk-nav-sub">
-                            <li><a class="menu-item" data-href="@Url.Action("_AccountManagement", "Account")">Аккаунты</a></li>
-                            <li><a class="menu-item" data-href="@Url.Action("_UserManagement", "Account")">Пользователи</a></li>
-                        </ul>
-                    </li>*@
+                    <li class="uk-parent">
+            <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Account")">
+                <span class="uk-margin-small-right" uk-icon="icon: users; ratio: 0.8;"></span>
+                Учетные записи
+            </a>
+            <ul class="uk-nav-sub">
+                <li><a class="menu-item" data-href="@Url.Action("_AccountManagement", "Account")">Аккаунты</a></li>
+                <li><a class="menu-item" data-href="@Url.Action("_UserManagement", "Account")">Пользователи</a></li>
+            </ul>
+        </li>*@
             </ul>
             <form class="uk-margin-small-top" asp-action="Logout" asp-controller="Account">
                 <button id="logout" class="uk-button uk-button-danger uk-width-1-1" type="submit">

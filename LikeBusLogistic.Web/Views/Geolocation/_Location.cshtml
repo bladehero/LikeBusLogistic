@@ -50,8 +50,8 @@
                  new { @class = "uk-select", name = "cityId" })
             </div>
         </div>
-        <label><input class="uk-checkbox" name="IsParking" type="checkbox"@(Model.Location?.IsParking == true ? " checked" : "")> Парковка</label>
-        <label><input class="uk-checkbox" name="IsCarRepair" type="checkbox"@(Model.Location?.IsCarRepair == true ? " checked" : "")> Ремонт</label>
+        <label><input class="uk-checkbox" name="IsParking" type="checkbox" @(Model.Location?.IsParking == true ? " checked" : "")> Парковка</label>
+        <label><input class="uk-checkbox" name="IsCarRepair" type="checkbox" @(Model.Location?.IsCarRepair == true ? " checked" : "") disabled> Ремонт</label>
     </div>
     <div class="uk-margin uk-flex uk-float-right">
         <button class="uk-button uk-button-danger uk-button-small uk-margin-small-right" id="cancel-location-btn">Отмена</button>
@@ -66,6 +66,48 @@
             App.footer.getContent('@Url.Action("_FullInformation", "Geolocation")');
             App.message.showSuccessWithOk('Успешно', result.message || 'Успешно выполнено!');
             App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
+        });
+    });
+    $('select[name="countryId"]').change(function () {
+        var _this = $(this);
+        var id = _this.val();
+        $.ajax({
+            url: '@Url.Action("GetDistrictsByCountry", "Geolocation")',
+            data: { id: id },
+            success: function (result) {
+                var districts = $('select[name="districtId"]');
+                var first = districts.find('option').first();
+                districts.html(first);
+                if (result.success) {
+                    var list = '';
+                    for (var i = 0; i < result.data.length; i++) {
+                        list += '<option value="' + result.data[i].id + '">' + result.data[i].name + '</option>';
+                    }
+                    districts.append(list);
+                    districts.change();
+                }
+            }
+        });
+    });
+    $('select[name="districtId"]').change(function () {
+        var _this = $(this);
+        var id = _this.val();
+        $.ajax({
+            url: '@Url.Action("GetCitiesByDistricts", "Geolocation")',
+            data: { id: id },
+            success: function (result) {
+                var cities = $('select[name="cityId"]');
+                var first = cities.find('option').first();
+                cities.html(first);
+                if (result.success) {
+                    var list = '';
+                    for (var i = 0; i < result.data.length; i++) {
+                        list += '<option value="' + result.data[i].id + '">' + result.data[i].name + '</option>';
+                    }
+                    cities.append(list);
+                    cities.change();
+                }
+            }
         });
     });
 </script>

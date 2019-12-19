@@ -1,11 +1,19 @@
 ﻿var App = {
     map: null,
+    tab: {
+        name: null,
+        isName: function (name) {
+            return App.tab.name === name;
+        }
+    },
     geo: {
         locations: [],
         defaultZoom: 10,
         closeAllPopups: function () {
             App.geo.locations.forEach(function (location) {
-                location.marker.closePopup();
+                if ($(location.marker).is(':focus') || $(document.activeElement).is('.leaflet-marker-icon')) {
+                    location.marker.closePopup();
+                }
             });
         },
         getZoomToView: function () {
@@ -174,7 +182,7 @@
             if (!interval) {
                 App.footer.changeMode(1);
             } else {
-                setTimeout(()=>App.footer.changeMode(1), interval);
+                setTimeout(() => App.footer.changeMode(1), interval);
             }
         },
         show: function (interval) {
@@ -412,20 +420,30 @@ $(document).ready(function () {
         App.footer.maximize(1500);
     });
 
+    $(document).on('click', 'ul.uk-tab>li', function () {
+        var url = $(this).data('url');
+        var data = $(this).data('data');
+        App.setLastContentState({ footerOptions: { url: url, data: data } });
+    });
+
     $(document).keydown(function (obj) {
         if (obj.keyCode === 27) {
-            if (App.footer.mode === 1) {
-                App.footer.hide();
-            } else if (App.footer.mode === -1){
-                App.footer.show();
+            if ($(document.activeElement).is('body,footer,#slide,#slide-up,#map')) {
+                if (App.footer.mode === 1) {
+                    App.footer.hide();
+                } else if (App.footer.mode === -1) {
+                    App.footer.show();
+                }
             }
             App.geo.closeAllPopups();
         }
         else if (obj.keyCode === 113) {
-            if (App.footer.mode === 1) {
-                App.footer.maximize();
-            } else if (App.footer.mode === 0) {
-                App.footer.show();
+            if ($(document.activeElement).is('body,footer,#slide,#slide-up,#map')) {
+                if (App.footer.mode === 1) {
+                    App.footer.maximize();
+                } else if (App.footer.mode === 0) {
+                    App.footer.show();
+                }
             }
         }
     });

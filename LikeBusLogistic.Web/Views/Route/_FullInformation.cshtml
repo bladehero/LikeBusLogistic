@@ -15,6 +15,7 @@
     App.footer.setBreadcrumbs([{ name: 'Маршруты', url: '@Url.Action("_FullInformation", "Route")' }]);
     App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
     App.geo.route.clear();
+    App.tab.name = 'route';
     App.geo.onClickLocation(function (obj, location) {
         let selector = "marker_" + location.marker._leaflet_id;
         let popup = location.marker.getPopup();
@@ -30,4 +31,34 @@
                 $(selector).html(html);
         });
     });
+
+    function editLocationFunction() {
+        var id = $(this).parents('tr,div').first().data('location-id');
+        App.footer.getContent('@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Locations })',
+            null,
+            () => App.loadContent('#current-location-card', '@Url.Action("_Location", "Geolocation")', { id: id }));
+        App.map.off('mousemove');
+        App.map.off('click');
+    }
+    function deleteLocationFunction() {
+        var id = $(this).parents('tr,div').first().data('location-id');
+        Swal.fire({
+            title: 'Удаление',
+            text: 'Вы уверены, что хотите удалить?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Да',
+            cancelButtonText: 'Отмена'
+        }).then((result) => {
+            if (result.value) {
+                App.postDataOnServer('@Url.Action("DeleteOrRestoreLocation", "Geolocation")', { id: id }, function (result) {
+                    App.message.showSuccessWithOk('Успешно', result.message || 'Локация успешно удалена!');
+                    App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
+                });
+            }
+        });
+    }
+
+    $(document).off('click', '.edit-location-icon').on('click', '.edit-location-icon', editLocationFunction);
+    $(document).off('click', '.delete-location-icon').on('click', '.delete-location-icon', deleteLocationFunction);
 </script>

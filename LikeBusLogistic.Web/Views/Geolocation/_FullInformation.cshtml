@@ -7,21 +7,28 @@
     <div class="uk-width-1-4@l uk-width-1-1@m" id="toggle-animation">
         <div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom uk-card-hover" id="current-location-card">
             @{
-                await Html.RenderPartialAsync("_Location.cshtml", new LikeBusLogistic.Web.Models.Geolocations.LocationVM
-                {
-                    Cities = Model.Cities,
-                    Countries = Model.Countries,
-                    Districts = Model.Districts
-                });
+                await Html.RenderPartialAsync("_Location.cshtml", new LikeBusLogistic.Web.Models.Geolocations.LocationVM { Countries = Model.Countries });
             }
         </div>
     </div>
     <div class="uk-width-expand@l uk-width-1-1@m uk-margin-remove-top">
         <ul uk-tab>
-            <li class="@(Model.Tab == GeolocationTab.Locations ? "uk-active" : "")"><a href="#">Локации</a></li>
-            <li class="@(Model.Tab == GeolocationTab.Cities ? "uk-active" : "")"><a href="#">Города</a></li>
-            <li class="@(Model.Tab == GeolocationTab.Districts ? "uk-active" : "")"><a href="#">Регионы</a></li>
-            <li class="@(Model.Tab == GeolocationTab.Countries ? "uk-active" : "")"><a href="#">Страны</a></li>
+            <li class="@(Model.Tab == GeolocationTab.Locations ? "uk-active" : "")"
+                data-url="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Locations })">
+                <a href="#">Локации</a>
+            </li>
+            <li class="@(Model.Tab == GeolocationTab.Cities ? "uk-active" : "")"
+                data-url="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Cities })">
+                <a href="#">Города</a>
+            </li>
+            <li class="@(Model.Tab == GeolocationTab.Districts ? "uk-active" : "")"
+                data-url="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Districts })">
+                <a href="#">Регионы</a>
+            </li>
+            <li class="@(Model.Tab == GeolocationTab.Countries ? "uk-active" : "")"
+                data-url="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Countries })">
+                <a href="#">Страны</a>
+            </li>
         </ul>
         <ul class="uk-switcher uk-margin">
             <li>
@@ -51,6 +58,7 @@
 <script>
     App.footer.setBreadcrumbs([{ name: 'Логистика', url: '@Url.Action("_FullInformation", "Geolocation")' }]);
     App.geo.route.clear();
+    App.tab.name = 'geolocation';
     App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
     App.geo.onClickLocation(function (obj, location) {
         let selector = "marker_" + location.marker._leaflet_id;

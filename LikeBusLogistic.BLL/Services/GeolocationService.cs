@@ -84,7 +84,7 @@ namespace LikeBusLogistic.BLL.Services
             return result;
         }
 
-        public BaseResult<CountryVM> GetCountryByCity(int cityId)
+        public BaseResult<CountryVM> GetCountryByCity(int? cityId)
         {
             var result = new BaseResult<CountryVM>();
             try
@@ -104,7 +104,7 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
-        public BaseResult<CountryVM> GetCountryByDistrict(int districtId)
+        public BaseResult<CountryVM> GetCountryByDistrict(int? districtId)
         {
             var result = new BaseResult<CountryVM>();
             try
@@ -123,7 +123,7 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
-        public BaseResult<DistrictVM> GetDistrictByCity(int cityId)
+        public BaseResult<DistrictVM> GetDistrictByCity(int? cityId)
         {
             var result = new BaseResult<DistrictVM>();
             try
@@ -144,7 +144,7 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
-        public BaseResult<IEnumerable<DistrictVM>> GetDistrictsByCountry(int countryId)
+        public BaseResult<IEnumerable<DistrictVM>> GetDistrictsByCountry(int? countryId)
         {
             var result = new BaseResult<IEnumerable<DistrictVM>>();
             try
@@ -164,7 +164,7 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
-        public BaseResult<IEnumerable<CityVM>> GetCitiesByCountry(int countryId)
+        public BaseResult<IEnumerable<CityVM>> GetCitiesByCountry(int? countryId)
         {
             var result = new BaseResult<IEnumerable<CityVM>>();
             try
@@ -184,7 +184,7 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
-        public BaseResult<IEnumerable<CityVM>> GetCitiesByDistrict(int districtId)
+        public BaseResult<IEnumerable<CityVM>> GetCitiesByDistrict(int? districtId)
         {
             var result = new BaseResult<IEnumerable<CityVM>>();
             try

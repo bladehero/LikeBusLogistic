@@ -369,7 +369,16 @@ begin
        , l.Name
        , l.Latitude
        , l.Longtitude
-       , l.IsCarRepair
+       , case
+           when exists
+           (
+             select 1
+               from RepairSpecialist rs
+               where LocationId = l.Id
+           )
+             then 1
+             else 0
+         end as IsCarRepair
        , l.IsParking
        , c.Id
        , c.Name
@@ -414,7 +423,16 @@ begin
       , l.Name as Name
       , l.Latitude as Latitude
       , l.Longtitude as Longtitude
-      , l.IsCarRepair as IsCarRepair
+      , case
+          when exists
+          (
+            select 1
+              from RepairSpecialist rs
+              where LocationId = l.Id
+          )
+            then 1
+            else 0
+        end as IsCarRepair
       , l.IsParking as IsParking
       , c.Id as CityId
       , c.Name as CityName

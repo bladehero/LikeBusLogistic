@@ -225,7 +225,6 @@ if not exists (select 1
     Latitude float not null,
     Longtitude float not null,
     IsParking bit not null,
-    IsCarRepair bit not null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
     DateCreated datetime not null default(getdate()),
@@ -235,6 +234,28 @@ if not exists (select 1
     constraint FK_dbo_Location_CountryId_dbo_Country_Id foreign key (CountryId) references Country(Id),
     constraint FK_dbo_Location_DistrictId_dbo_District_Id foreign key (DistrictId) references District(Id),
     constraint FK_dbo_Location_CityId_dbo_City_Id foreign key (CityId) references City(Id)
+  );
+go
+
+if not exists (select 1 
+               from sys.tables t 
+               where t.name='RepairSpecialist' 
+               and t.schema_id = schema_id('dbo'))
+  create table dbo.RepairSpecialist
+  (
+    Id int not null primary key identity,
+    FirstName nvarchar(200) null,
+    LastName nvarchar(200) null,
+    MiddleName nvarchar(200) null,
+    LocationId int not null,
+    Contact nvarchar(500) null,
+    CreatedBy int null foreign key references Account(Id),
+    ModifiedBy int null foreign key references Account(Id),
+    DateCreated datetime not null default(getdate()),
+    DateModified datetime not null default(getdate()),
+    IsDeleted bit not null default(0)
+
+    constraint FK_dbo_RepairSpecialist_LocationId_dbo_Location_Id foreign key (LocationId) references [Location](Id)
   );
 go
 
