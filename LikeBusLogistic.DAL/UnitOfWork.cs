@@ -17,6 +17,7 @@ namespace LikeBusLogistic.DAL
         public DriverDao DriverDao { get; set; }
         public DriverContactDao DriverContactDao { get; set; }
         public LocationDao LocationDao { get; set; }
+        public RepairSpecialistDao RepairSpecialistDao { get; set; }
         public RoleDao RoleDao { get; set; }
         public RouteDao RouteDao { get; set; }
         public RouteLocationDao RouteLocationDao { get; set; }

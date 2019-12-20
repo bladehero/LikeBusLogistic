@@ -103,7 +103,11 @@ namespace LikeBusLogistic.Web.Controllers
             };
             return PartialView(model);
         }
+        [HttpGet]
+        public IActionResult _RepairSpecialists()
+        {
 
+        }
 
         [HttpPost]
         public IActionResult MergeLocation(VM.ViewModels.LocationVM locationVM)

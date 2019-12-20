@@ -83,6 +83,42 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
+        public BaseResult<RepairSpecialistVM> GetRepairSpecialist(int? specialistId)
+        {
+            var result = new BaseResult<RepairSpecialistVM>();
+            try
+            {
+                var country = UnitOfWork.RepairSpecialistDao.FindById(specialistId, RoleName == Variables.RoleName.Administrator);
+                result.Data = Mapper.Map<RepairSpecialistVM>(country);
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+        public BaseResult<IEnumerable<RepairSpecialistVM>> GetRepairSpecialistsByLocationId(int? locationId)
+        {
+            var result = new BaseResult<IEnumerable<RepairSpecialistVM>>();
+            try
+            {
+                var country = UnitOfWork.RepairSpecialistDao.FindAll(RoleName == Variables.RoleName.Administrator);
+                result.Data = Mapper.Map<IEnumerable<RepairSpecialistVM>>(country);
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
 
         public BaseResult<CountryVM> GetCountryByCity(int? cityId)
         {
@@ -277,6 +313,24 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
+        public BaseResult<IEnumerable<RepairSpecialistVM>> GetRepairSpecialists()
+        {
+            var result = new BaseResult<IEnumerable<RepairSpecialistVM>>();
+            try
+            {
+                var country = UnitOfWork.RepairSpecialistDao.FindAll(RoleName == Variables.RoleName.Administrator);
+                result.Data = Mapper.Map<IEnumerable<RepairSpecialistVM>>(country);
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
 
         public BaseResult MergeCountry(CountryVM countryVM)
         {
@@ -362,6 +416,27 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
+        public BaseResult MergeCountry(RepairSpecialistVM specialistVM)
+        {
+            var result = new BaseResult();
+            try
+            {
+                var specialist = Mapper.Map<RepairSpecialist>(specialistVM);
+                if (specialistVM.Id == 0)
+                {
+                    specialist.CreatedBy = AccountId;
+                }
+                specialist.ModifiedBy = AccountId;
+                result.Success = UnitOfWork.RepairSpecialistDao.Merge(specialist);
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
 
         public BaseResult DeleteOrRestoreCountry(int countryId)
         {
@@ -414,6 +489,21 @@ namespace LikeBusLogistic.BLL.Services
             try
             {
                 result.Success = UnitOfWork.LocationDao.DeleteOrRestore(locationId);
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+        public BaseResult DeleteOrRestoreRepairSpecialist(int specialistId)
+        {
+            var result = new BaseResult();
+            try
+            {
+                result.Success = UnitOfWork.RepairSpecialistDao.DeleteOrRestore(specialistId);
                 result.Message = GeneralSuccessMessage;
             }
             catch (Exception ex)

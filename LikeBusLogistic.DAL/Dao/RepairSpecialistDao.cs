@@ -5,5 +5,7 @@ namespace LikeBusLogistic.DAL.Dao
     public class RepairSpecialistDao : BaseDao<RepairSpecialist>
     {
         public RepairSpecialistDao(IDbConnection connection) : base("dbo.RepairSpecialist", connection) { }
+
+        // TODO: Create find by location id method 
     }
 }
