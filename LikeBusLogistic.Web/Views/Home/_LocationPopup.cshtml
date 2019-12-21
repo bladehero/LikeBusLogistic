@@ -41,7 +41,7 @@
                     }
                 </div>
                 <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
-                    <a href="#specialists-modal" uk-toggle>Данные о ремонте...</a>
+                    <a id="specialists-link" href="#specialists-modal" uk-toggle>Данные о ремонте...</a>
                 </div>
                 <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-small-top uk-padding-small">
                     <div class="uk-float-right" data-location-id="@Model.Location.Id">
@@ -209,6 +209,14 @@
         }
         App.geo.closeAllPopups();
     }
+    $('#specialists-link').click(function () {
+        var id = $(this).parents('#location-popup').data('locationd-id');
+        App.loadContent(
+            '#specialists-modal>div.uk-modal-body',
+            '@Url.Action("_RepairSpecialistsForLocation", "Geolocation")',
+            { locationId: id }
+        );
+    });
     $('#create-route-button').click(function () {
 
     });

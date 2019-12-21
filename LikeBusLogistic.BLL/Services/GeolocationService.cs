@@ -101,24 +101,6 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
-        public BaseResult<IEnumerable<RepairSpecialistVM>> GetRepairSpecialistsByLocationId(int? locationId)
-        {
-            var result = new BaseResult<IEnumerable<RepairSpecialistVM>>();
-            try
-            {
-                var country = UnitOfWork.RepairSpecialistDao.FindAll(RoleName == Variables.RoleName.Administrator);
-                result.Data = Mapper.Map<IEnumerable<RepairSpecialistVM>>(country);
-                result.Success = true;
-                result.Message = GeneralSuccessMessage;
-            }
-            catch (Exception ex)
-            {
-                result.Data = null;
-                result.Success = false;
-                result.Message = GeneralErrorMessage;
-            }
-            return result;
-        }
 
         public BaseResult<CountryVM> GetCountryByCity(int? cityId)
         {
@@ -229,6 +211,24 @@ namespace LikeBusLogistic.BLL.Services
                              .GetCity(withDeleted: RoleName == Variables.RoleName.Administrator)
                              .Where(x => x.DistrictId == districtId);
                 result.Data = Mapper.Map<IEnumerable<CityVM>>(cities);
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+        public BaseResult<IEnumerable<RepairSpecialistVM>> GetRepairSpecialistsByLocationId(int? locationId)
+        {
+            var result = new BaseResult<IEnumerable<RepairSpecialistVM>>();
+            try
+            {
+                var country = UnitOfWork.RepairSpecialistDao.FindAll(RoleName == Variables.RoleName.Administrator);
+                result.Data = Mapper.Map<IEnumerable<RepairSpecialistVM>>(country);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
             }
@@ -416,7 +416,7 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
-        public BaseResult MergeCountry(RepairSpecialistVM specialistVM)
+        public BaseResult MergeRepairSpecialist(RepairSpecialistVM specialistVM)
         {
             var result = new BaseResult();
             try

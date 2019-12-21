@@ -104,9 +104,18 @@ namespace LikeBusLogistic.Web.Controllers
             return PartialView(model);
         }
         [HttpGet]
-        public IActionResult _RepairSpecialists()
+        public IActionResult _RepairSpecialistsForLocation(int? locationdId)
         {
+            var location = ServiceFactory.GeolocationManagement.GetLocation(locationdId).Data;
+            var specialists = 
+                ServiceFactory.GeolocationManagement.GetRepairSpecialistsByLocationId(locationdId).Data;
 
+            var model = new RepairSpecialistsForLocationVM
+            {
+                Location = location,
+                RepairSpecialists = specialists
+            };
+            return PartialView(model);
         }
 
         [HttpPost]
@@ -173,6 +182,23 @@ namespace LikeBusLogistic.Web.Controllers
             }
             return Json(result);
         }
+        [HttpPost]
+        public IActionResult MergeRepairSpecialist(RepairSpecialistVM repairSpecialistVM)
+        {
+            var result = new Result();
+            try
+            {
+                var mergeRepairSpecialistResult = 
+                    ServiceFactory.GeolocationManagement.MergeRepairSpecialist(repairSpecialistVM);
+                result.Success = mergeRepairSpecialistResult.Success;
+                result.Message = mergeRepairSpecialistResult.Message;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
 
 
         [HttpPost]
@@ -230,6 +256,23 @@ namespace LikeBusLogistic.Web.Controllers
             try
             {
                 var deleteOrRestoreCityResult = ServiceFactory.GeolocationManagement.DeleteOrRestoreCity(id);
+                result.Success = deleteOrRestoreCityResult.Success;
+                result.Message = deleteOrRestoreCityResult.Message;
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
+        [HttpPost]
+        public IActionResult DeleteOrRestoreSpecialist(int id)
+        {
+            var result = new Result();
+            try
+            {
+                var deleteOrRestoreCityResult = 
+                    ServiceFactory.GeolocationManagement.DeleteOrRestoreRepairSpecialist(id);
                 result.Success = deleteOrRestoreCityResult.Success;
                 result.Message = deleteOrRestoreCityResult.Message;
             }

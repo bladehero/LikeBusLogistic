@@ -244,9 +244,7 @@ if not exists (select 1
   create table dbo.RepairSpecialist
   (
     Id int not null primary key identity,
-    FirstName nvarchar(200) null,
-    LastName nvarchar(200) null,
-    MiddleName nvarchar(200) null,
+    [Name] nvarchar(200) null,
     LocationId int not null,
     Contact nvarchar(500) null,
     CreatedBy int null foreign key references Account(Id),

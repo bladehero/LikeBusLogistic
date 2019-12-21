@@ -2,9 +2,7 @@
 {
     public class RepairSpecialist : UserTrackedEntity
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string MiddleName { get; set; }
+        public string Name { get; set; }
         public int LocationId { get; set; }
         public string Contact { get; set; }
     }

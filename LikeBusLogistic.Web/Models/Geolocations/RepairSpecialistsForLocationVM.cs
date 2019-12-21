@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace LikeBusLogistic.Web.Models.Geolocations
 {
-    public class RepairSpecialistsVM
+    public class RepairSpecialistsForLocationVM
     {
-        public LocationVM Location { get; set; }
+        public VM.ViewModels.LocationVM Location { get; set; }
         public IEnumerable<RepairSpecialistVM> RepairSpecialists { get; set; }
 
-        public RepairSpecialistsVM()
+        public RepairSpecialistsForLocationVM()
         {
             RepairSpecialists = new List<RepairSpecialistVM>();
         }

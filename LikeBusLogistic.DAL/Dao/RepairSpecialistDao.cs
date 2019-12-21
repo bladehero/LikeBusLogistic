@@ -1,4 +1,5 @@
-﻿using LikeBusLogistic.DAL.Models;
+﻿using Dapper;
+using LikeBusLogistic.DAL.Models;
 using System.Data;
 namespace LikeBusLogistic.DAL.Dao
 {
@@ -6,6 +7,9 @@ namespace LikeBusLogistic.DAL.Dao
     {
         public RepairSpecialistDao(IDbConnection connection) : base("dbo.RepairSpecialist", connection) { }
 
-        // TODO: Create find by location id method 
+        public RepairSpecialist FindRepairSpecialistByLocationId(int? locationId, bool withDeleted = false)
+        {
+            return Connection.QueryFirstOrDefault<RepairSpecialist>($"select top 1 * from {TableName} where LocationId = {locationId}{(withDeleted ? string.Empty : " and IsDeleted = 0")}");
+        }
     }
 }
