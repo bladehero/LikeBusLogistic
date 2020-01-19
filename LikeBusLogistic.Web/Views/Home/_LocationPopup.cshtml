@@ -210,9 +210,9 @@
         App.geo.closeAllPopups();
     }
     $('#specialists-link').click(function () {
-        var id = $(this).parents('#location-popup').data('locationd-id');
+        var id = $(this).parents('#location-popup').data('location-id');
         App.loadContent(
-            '#specialists-modal>div.uk-modal-body',
+            '#specialists-modal div.uk-modal-body',
             '@Url.Action("_RepairSpecialistsForLocation", "Geolocation")',
             { locationId: id }
         );

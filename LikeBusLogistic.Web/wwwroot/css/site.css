@@ -100,3 +100,7 @@ table {
     display: inline-block;
     margin: 0 5px 0px -3px;
 }
+
+.uk-modal-dialog {
+    width: auto !important;
+}

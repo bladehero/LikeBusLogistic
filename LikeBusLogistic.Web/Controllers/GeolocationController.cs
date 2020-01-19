@@ -104,11 +104,10 @@ namespace LikeBusLogistic.Web.Controllers
             return PartialView(model);
         }
         [HttpGet]
-        public IActionResult _RepairSpecialistsForLocation(int? locationdId)
+        public IActionResult _RepairSpecialistsForLocation(int? locationId)
         {
-            var location = ServiceFactory.GeolocationManagement.GetLocation(locationdId).Data;
-            var specialists = 
-                ServiceFactory.GeolocationManagement.GetRepairSpecialistsByLocationId(locationdId).Data;
+            var location = ServiceFactory.GeolocationManagement.GetLocation(locationId).Data;
+            var specialists = ServiceFactory.GeolocationManagement.GetRepairSpecialistsByLocationId(locationId).Data;
 
             var model = new RepairSpecialistsForLocationVM
             {

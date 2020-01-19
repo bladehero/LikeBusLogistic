@@ -41,6 +41,7 @@ namespace LikeBusLogistic.DAL
             DriverDao = new DriverDao(connection);
             DriverContactDao = new DriverContactDao(connection);
             LocationDao = new LocationDao(connection);
+            RepairSpecialistDao = new RepairSpecialistDao(connection);
             RoleDao = new RoleDao(connection);
             RouteDao = new RouteDao(connection);
             RouteLocationDao = new RouteLocationDao(connection);

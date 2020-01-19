@@ -227,8 +227,8 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<IEnumerable<RepairSpecialistVM>>();
             try
             {
-                var country = UnitOfWork.RepairSpecialistDao.FindAll(RoleName == Variables.RoleName.Administrator);
-                result.Data = Mapper.Map<IEnumerable<RepairSpecialistVM>>(country);
+                var specialists = UnitOfWork.RepairSpecialistDao.FindRepairSpecialistsByLocationId(locationId, RoleName == Variables.RoleName.Administrator);
+                result.Data = Mapper.Map<IEnumerable<RepairSpecialistVM>>(specialists);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
             }
