@@ -60,6 +60,13 @@
             let locations = App.geo.getAllLocations(url);
             App.geo.setLocations(locations);
         },
+        getLocationById: function (id) {
+            for (let location of App.geo.locations) {
+                if (location.data.id === id) {
+                    return location;
+                }
+            }
+        },
         getAllLocations: function (url) {
             var locations = [];
             App.postDataOnServer(url, null,
