@@ -111,19 +111,28 @@
     $('.edit-specialist-icon').click(async function () {
         let id = $(this).parents('tr').first().data('specialist-id');
         let locationId = $(this).parents('tbody').first().data('location-id');
+        let name = '';
+        let contact = '';
+
+        App.postDataOnServer('@Url.Action("GetRepairSpecialist", "Geolocation")',
+                             { specialistId: id },
+                             (result) => { name = result.data.name; contact = result.data.contact; },
+                             null,
+                             'GET',
+                             false);
 
         let formValues = await Swal.fire({
             title: 'Обновление контакта по ремонту',
             html: '<div class="uk-margin uk-text-left">'+
                   '    <label class="uk-form-label" for="form-stacked-text">Имя</label>'+
                   '    <div class="uk-form-controls">'+
-                  '        <input class="uk-input" id="specialist-name" type="text" placeholder="Введите имя...">'+
+                  '        <textarea style="height: 100px;" class="uk-input" id="specialist-name" type="text" placeholder="Введите имя..." rows="3">' + name + '</textarea>'+
                   '    </div>'+
                   '</div>'+
                   '<div class="uk-margin uk-text-left">'+
                   '    <label class="uk-form-label" for="form-stacked-text">Контакт</label>'+
                   '    <div class="uk-form-controls">'+
-                  '        <input class="uk-input" id="specialist-contacts" type="text" placeholder="Введите контакт...">'+
+                  '        <textarea style="height: 100px;" class="uk-input" id="specialist-contacts" type="text" placeholder="Введите контакт..." rows="3">' + contact + '</textarea>'+
                   '    </div>'+
                   '</div>',
             focusConfirm: false,

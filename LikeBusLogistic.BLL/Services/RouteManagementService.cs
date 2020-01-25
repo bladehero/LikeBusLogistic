@@ -117,12 +117,11 @@ namespace LikeBusLogistic.BLL.Services
                 var routeLocations = GetRouteLocations(routeId).Data;
                 var routeLocation = routeLocations.FirstOrDefault(x => x.CurrentLocationId == locationId);
 
-                var previousVM = routeLocations.SkipWhile(x => x.CurrentLocationId == locationId).FirstOrDefault();
-                routeLocations.Reverse();
-                var nextVM = routeLocations.SkipWhile(x => x.CurrentLocationId != locationId).Skip(1).FirstOrDefault();
+                var previousVM = routeLocations.FirstOrDefault(x => x.CurrentLocationId == routeLocation.PreviousLocationId);
+                var nextVM = routeLocations.FirstOrDefault(x => x.PreviousLocationId == locationId);
                 if (nextVM != null)
                 {
-                    nextVM.PreviousLocationId = previousVM?.CurrentLocationId == nextVM.CurrentLocationId ? null : previousVM?.CurrentLocationId;
+                    nextVM.PreviousLocationId = previousVM?.CurrentLocationId;
                     var next = Mapper.Map<RouteLocation>(nextVM);
                     UnitOfWork.RouteLocationDao.Update(next);
                 }

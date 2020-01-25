@@ -116,6 +116,13 @@ namespace LikeBusLogistic.Web.Controllers
             };
             return PartialView(model);
         }
+        [HttpGet]
+        public IActionResult GetRepairSpecialist(int specialistId)
+        {
+            var result = ServiceFactory.GeolocationManagement.GetRepairSpecialist(specialistId);
+
+            return Json(result);
+        }
 
         [HttpPost]
         public IActionResult MergeLocation(VM.ViewModels.LocationVM locationVM)

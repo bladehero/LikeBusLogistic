@@ -48,6 +48,7 @@
     }
 
     $('#reset-route-button').click(function () {
+        let routeId = $('input[name="routeId"]').val();
         Swal.fire({
             title: 'Сброс',
             text: 'Вы уверены, что хотите сбросить изменения в текущем маршруте?',
@@ -58,7 +59,10 @@
         }).then((result) => {
             if (result.value) {
                 App.geo.route.clear();
-                App.footer.getContent('@Url.Action("_FullInformation", "Route")');
+                App.footer.getContent('@Url.Action("_FullInformation", "Route")', null,
+                    function () {
+                        App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', routeId);
+                    });
             }
         });
     });

@@ -88,8 +88,8 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<RepairSpecialistVM>();
             try
             {
-                var country = UnitOfWork.RepairSpecialistDao.FindById(specialistId, RoleName == Variables.RoleName.Administrator);
-                result.Data = Mapper.Map<RepairSpecialistVM>(country);
+                var specialist = UnitOfWork.RepairSpecialistDao.FindById(specialistId, RoleName == Variables.RoleName.Administrator);
+                result.Data = Mapper.Map<RepairSpecialistVM>(specialist);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
             }

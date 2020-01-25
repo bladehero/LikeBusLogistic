@@ -56,7 +56,7 @@ using
     select top 1 Id from [User] where FirstName = 'Администратор' and Phone = '+380949466705'
   ) as u
 ) as src
-on trg.RoleId = src.RoleId and trg.UserId = src.UserId and trg.Login = src.Login
+on trg.Login = src.Login
   when not matched then
     insert (RoleId, UserId, Login, Password)
     values (src.RoleId, src.UserId, src.Login, src.Password)

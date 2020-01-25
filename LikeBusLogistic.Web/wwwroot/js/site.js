@@ -9,12 +9,15 @@
     geo: {
         locations: [],
         defaultZoom: 10,
-        closeAllPopups: function () {
+        closeAllPopups: function (is_forced) {
+            let is_closed = false;
             App.geo.locations.forEach(function (location) {
-                if ($(location.marker).is(':focus') || $(document.activeElement).is('.leaflet-marker-icon')) {
+                if (location.marker.isPopupOpen()) {
                     location.marker.closePopup();
+                    is_closed = true;
                 }
             });
+            return is_closed;
         },
         getZoomToView: function () {
             let zoom = App.map.getZoom();
@@ -84,7 +87,7 @@
             path: null,
             getIndexByRouteLocationId: function (id) {
                 for (let i = 0; i < App.geo.route.routeLocations.length; i++) {
-                    if (App.geo.route.routeLocations[i].routeLocation.currentLocationId == id) {
+                    if (App.geo.route.routeLocations[i].routeLocation.currentLocationId === id) {
                         return i;
                     }
                 }
@@ -427,18 +430,18 @@ $(document).ready(function () {
     });
 
     $(document).keydown(function (obj) {
-        if (obj.keyCode === 27) {
-            if ($(document.activeElement).is('body,footer,#slide,#slide-up,#map')) {
-                if (App.footer.mode === 1) {
-                    App.footer.hide();
-                } else if (App.footer.mode === -1) {
-                    App.footer.show();
+        if (!$(document.activeElement).parents().hasClass('uk-offcanvas-container')) {
+            if (obj.keyCode === 27) {
+                let isClosedPopup = App.geo.closeAllPopups();
+                if (!isClosedPopup) {
+                    if (App.footer.mode === 1) {
+                        App.footer.hide();
+                    } else if (App.footer.mode === -1) {
+                        App.footer.show();
+                    }
                 }
             }
-            App.geo.closeAllPopups();
-        }
-        else if (obj.keyCode === 113) {
-            if ($(document.activeElement).is('body,footer,#slide,#slide-up,#map')) {
+            else if (obj.keyCode === 113) {
                 if (App.footer.mode === 1) {
                     App.footer.maximize();
                 } else if (App.footer.mode === 0) {

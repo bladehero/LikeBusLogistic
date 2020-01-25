@@ -220,6 +220,9 @@
     $('#create-route-button').click(function () {
 
     });
+    $('#delete-route-location-button,#append-route-location-button,#prepend-route-location-button').click(function () {
+        App.geo.closeAllPopups();
+    });
     $('#append-route-location-button').click(function () {
         let _this = $(this);
         let _popup = _this.parents('#location-popup');
@@ -239,13 +242,35 @@
         addLocationToRoute(_popup, locationId, routeLocationId,@((int)MergeRouteLocationMode.Prepend), spliceHandler);
     });
     $('#delete-route-location-button').click(function () {
-        let _this = $(this);
-        let _popup = _this.parents('#location-popup');
-        let locationId = _popup.data('location-id');
-        var routeId = App.geo.route.id;
-        App.postDataOnServer('@Url.Action("DeleteRouteLocation", "Route")', {
-            routeId: routeId,
-            locationId: locationId
-        }, () => { App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', routeId); }, null, 'POST');
+        Swal.fire({
+            title: 'Удаление',
+            text: 'Вы уверены, что хотите удалить эту локацию из текущего маршрута?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Да',
+            cancelButtonText: 'Отмена'
+        }).then((result) => {
+            if (result.value) {
+                let _this = $(this);
+                let _popup = _this.parents('#location-popup');
+                let locationId = _popup.data('location-id');
+                var routeId = App.geo.route.id;
+                App.postDataOnServer('@Url.Action("DeleteRouteLocation", "Route")', {
+                    routeId: routeId,
+                    locationId: locationId
+                }, () =>
+                    {
+                        App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', routeId);
+                        Swal.fire({
+                            title: 'Удалено',
+                            text: 'Локация успешно удалена из маршрута',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }, null, 'POST');
+            }
+        });
+        
     });
 </script>

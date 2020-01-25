@@ -78,7 +78,7 @@
                     cancelButtonText: 'Отмена'
                 }).then((result) => {
                     if (result.value) {
-                        App.geo.route.clear();
+                        App.footer.getContent('@Url.Action("_FullInformation", "Route")');
                     }
                 });
             });
