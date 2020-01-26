@@ -1,0 +1,123 @@
+﻿@model LikeBusLogistic.Web.Models.Routes.CreateRouteVM
+
+<div class="uk-grid-small" uk-grid>
+    <div class="uk-width-auto uk-margin-small-top">
+        <ul class="uk-iconnav uk-iconnav-vertical">
+            <li uk-tooltip="Отменить предыдущее действие<br/><b>Ctrl</b> + <b>Z</b>">
+                <a href="#" id="cancel-action" uk-icon="icon: history"></a>
+            </li>
+            <li uk-tooltip="Сбросить текущий маршрут<br/><b>Ctrl</b> + <b>X</b>">
+                <a href="#" id="reset" uk-icon="icon: close"></a>
+            </li>
+            <li uk-tooltip="Сохранить текущий маршрут<br/><b>Ctrl</b> + <b>C</b>">
+                <a href="#" id="save" uk-icon="icon: check"></a>
+            </li>
+        </ul>
+    </div>
+    <div class="uk-width-expand">
+        <small class="uk-padding-remove uk-margin-remove">Отправление из:</small>
+        <ul class="uk-breadcrumb uk-padding-remove uk-margin-remove" id="route-location-list">
+            <li><span data-location-id="@Model.StartLocation.Id">@Model.StartLocation.FullName</span></li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    App.footer.setBreadcrumbs([{ name: 'Маршруты', url: '@Url.Action("_FullInformation", "Route")' }, { name: 'Новый маршрут' }]);
+
+    function initPosition() {
+        App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
+        App.geo.route.clear();
+        App.geo.route.routeLocations[0] = @Html.Raw(Json.Serialize(Model.StartLocation));
+        $('#route-location-list li:not(:first)').remove();
+        for (let location of App.geo.locations) {
+            location.marker.off('click');
+            if (location.data.id !== @Model.StartLocation.Id) {
+                location.marker.on('click', function () {
+                    addToRoute(location.data);
+                    location.marker.off('click');
+                });
+            }
+        }
+    }
+    initPosition();
+
+    function cancelLastAction() {
+        if (App.geo.route.routeLocations.length > 1) {
+            let location = App.geo.route.routeLocations.pop();
+            App.geo.getLocationById(location.id).marker.on('click',
+            function () {
+                addToRoute(location);
+                location.marker.off('click');
+            });
+            $('#route-location-list li:last').remove();
+            App.geo.route.setRouteLocations(App.geo.route.routeLocations);
+        }
+    }
+
+    function addToRoute(location) {
+        App.geo.route.routeLocations[App.geo.route.routeLocations.length] = location;
+        var element = '<li><span data-location-id="' + location.id + '">' + location.fullName + '</span></li>';
+        $('#route-location-list').append(element);
+        App.geo.route.setRouteLocations(App.geo.route.routeLocations);
+    }
+
+    async function saveRoute() {
+        if (!App.geo.route.routeLocations || App.geo.route.routeLocations.length <= 1) {
+            App.message.showError('Ошибка', 'Маршрут должен включать в себя минимум две локации!');
+            return;
+        }
+
+        let formValues = await Swal.fire({
+            title: 'Создание нового маршрута',
+            html: '<div class="uk-margin uk-text-left">'+
+                  '    <label class="uk-form-label" for="form-stacked-text">Название маршрута</label>'+
+                  '    <div class="uk-form-controls">'+
+                  '        <input class="uk-input" id="route-name" type="text" placeholder="Введите название маршрута...">'+
+                  '    </div>'+
+                  '</div>'+
+                  '<div class="uk-margin uk-text-left">'+
+                  '    <label class="uk-form-label" for="form-stacked-text">Ожидаемая продолжительность</label>'+
+                  '    <div class="uk-form-controls">'+
+                  '        <input class="uk-input" id="route-duration" type="number" step="0.5" placeholder="Введите продолжительность маршрута...">'+
+                  '    </div>'+
+                  '</div>',
+            focusConfirm: false,
+            showCancelButton: true,
+            cancelButtonText: "Отмена",
+            preConfirm: () => {
+                return [
+                    $('#route-name').val(),
+                    $('#route-duration').val()
+                ]
+            }
+        });
+
+        if (formValues && formValues.value[0] && formValues.value[1]) {
+            let name = formValues.value[0];
+            let duration = formValues.value[1];
+            App.postDataOnServer(
+                '@Url.Action("CreateRoute", "Route")',
+                { locations: App.geo.route.routeLocations, name: name, estimatedDurationInHours: duration }
+            );
+        }
+    }
+
+    $(document).keydown(function (e) {
+        if (e.ctrlKey) {
+            debugger;
+            if (e.key == 'z') {
+                cancelLastAction();
+            }
+            if (e.key == 'x') {
+                initPosition();
+            }
+            if (e.key == 'c') {
+                saveRoute();
+            }
+        }
+    });
+    $('#cancel-action').click(cancelLastAction);
+    $('#reset').click(initPosition);
+    $('#save').click(saveRoute);
+</script>

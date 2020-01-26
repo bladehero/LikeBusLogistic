@@ -17,7 +17,6 @@
             <th>Регион</th>
             <th>Страна</th>
             <th>Парковка</th>
-            <th>Ремонт</th>
             <th></th>
         </tr>
     </thead>
@@ -35,7 +34,6 @@
                 <td>@location.DistrictName</td>
                 <td>@location.CountryName</td>
                 <td class="uk-table-shrink">@(location.IsParking ? CustomExtensions.HtmlEnabledIcon : CustomExtensions.HtmlDisabledIcon)</td>
-                <td class="uk-table-shrink">@(location.IsCarRepair ? CustomExtensions.HtmlEnabledIcon : CustomExtensions.HtmlDisabledIcon)</td>
                 <td class="uk-float-right tool-cell-2">
                     @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
                     {
@@ -54,7 +52,7 @@
 <script>
     $(document).ready(function () {
         $('#locations-table').dataTable();
-        $('.go-to-location').click(function () {
+        $('#locations-table').on('click', '.go-to-location', function () {
             var id = $(this).parents('tr').data('location-id');
             for	(var i = 0; i < App.geo.locations.length; i++)
             {

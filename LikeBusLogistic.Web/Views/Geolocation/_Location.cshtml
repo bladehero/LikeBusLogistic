@@ -51,7 +51,7 @@
             </div>
         </div>
         <label><input class="uk-checkbox" name="IsParking" type="checkbox" @(Model.Location?.IsParking == true ? " checked" : "")> Парковка</label>
-        <label><input class="uk-checkbox" name="IsCarRepair" type="checkbox" @(Model.Location?.IsCarRepair == true ? " checked" : "") disabled> Ремонт</label>
+        <label><input class="uk-checkbox" name="IsCarRepair" type="checkbox" @(Model.IsCarRepair ? "checked" : "") disabled> Ремонт</label>
     </div>
     <div class="uk-margin uk-flex uk-float-right">
         <button class="uk-button uk-button-danger uk-button-small uk-margin-small-right" id="cancel-location-btn">Отмена</button>

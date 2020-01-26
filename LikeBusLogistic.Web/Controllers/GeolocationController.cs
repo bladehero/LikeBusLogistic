@@ -5,6 +5,7 @@ using LikeBusLogistic.Web.Models.Geolocations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 
 namespace LikeBusLogistic.Web.Controllers
 {
@@ -50,11 +51,13 @@ namespace LikeBusLogistic.Web.Controllers
         public IActionResult _Location(int? id)
         {
             var location = ServiceFactory.GeolocationManagement.GetLocation(id).Data;
+            var isCarRepair = ServiceFactory.GeolocationManagement.GetRepairSpecialistsByLocationId(id).Data?.Count() > 0;
 
             var model = new Models.Geolocations.LocationVM
             {
                 Location = location,
-                Countries = ServiceFactory.GeolocationManagement.GetCountries().Data
+                Countries = ServiceFactory.GeolocationManagement.GetCountries().Data,
+                IsCarRepair = isCarRepair
             };
 
             if (id.HasValue)

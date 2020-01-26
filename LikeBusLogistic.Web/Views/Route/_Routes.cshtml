@@ -9,10 +9,6 @@
     </div>
     <div class="uk-float-right">
         <button class="uk-button uk-button-small uk-button-default" id="reset-route-button">Сбросить</button>
-        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
-        {
-            <button class="uk-button uk-button-small uk-button-primary" id="save-route-button">Сохранить</button>
-        }
     </div>
 </div>
 <table class="uk-table uk-table-small uk-table-hover" id="routes-table">
@@ -58,7 +54,7 @@
         $('#routes-table').dataTable();
         $('.edit-route-icon').click(function () {
             var id = $(this).parents('tr').data('route-id');
-            App.footer.getContent('@Url.Action("_MergeRoute", "Geolocation")', { id: id });
+            App.footer.getContent('@Url.Action("_MergeRoute", "Route")', { id: id });
         });
         $('.delete-route-icon').click(function () {
             var id = $(this).parents('tr').data('route-id');
@@ -79,22 +75,6 @@
                 }).then((result) => {
                     if (result.value) {
                         App.footer.getContent('@Url.Action("_FullInformation", "Route")');
-                    }
-                });
-            });
-        });
-        $('#save-route-button').click(function () {
-            routeValidation(() => {
-                Swal.fire({
-                    title: 'Сохранение',
-                    text: 'Вы уверены, что хотите сохранить изменения в текущем маршруте?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Да',
-                    cancelButtonText: 'Отмена'
-                }).then((result) => {
-                    if (result.value) {
-                        // TODO: Saving action
                     }
                 });
             });

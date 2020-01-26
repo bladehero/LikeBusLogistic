@@ -83,6 +83,63 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
+        public BaseResult CreateRoute(IEnumerable<LocationVM> locations, string name, float? estimatedDurationInHours = null)
+        {
+            var result = new BaseResult();
+            try
+            {
+                var routeId = UnitOfWork.RouteDao.Insert(new Route
+                {
+                    ArrivalId = locations.FirstOrDefault().Id,
+                    DepartureId = locations.LastOrDefault().Id,
+                    Name = name,
+                    EstimatedDurationInHours = estimatedDurationInHours,
+                    CreatedBy = AccountId,
+                    ModifiedBy = AccountId
+                });
+
+                var previousLocation = (LocationVM)null;
+                foreach (var location in locations)
+                {
+                    UnitOfWork.RouteLocationDao.Insert(new RouteLocation
+                    {
+                        RouteId = routeId,
+                        CurrentLocationId = location.Id,
+                        PreviousLocationId = previousLocation?.Id,
+                        CreatedBy = AccountId,
+                        ModifiedBy = AccountId
+                    });
+                    previousLocation = location;
+                }
+
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+        public BaseResult MergeRoute(RouteVM routeVM)
+        {
+            var result = new BaseResult();
+            try
+            {
+                var route = Mapper.Map<Route>(routeVM);
+                UnitOfWork.RouteDao.Merge(route);
+
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
         public BaseResult MergeRouteLocation(RouteLocationVM routeLocationVM, int? nextRouteLocationId)
         {
             var result = new BaseResult();

@@ -267,7 +267,7 @@ if not exists (select 1
     DepartureId int null,
     ArrivalId int null,
     Name nvarchar(100) not null,
-    EstimatedDurationInHours float not null,
+    EstimatedDurationInHours float null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
     DateCreated datetime not null default(getdate()),
@@ -290,8 +290,6 @@ if not exists (select 1
     RouteId int not null,
     CurrentLocationId int not null,
     PreviousLocationId int null,
-    StopDurationInHours float null,
-    EstimatedDurationInHours float null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
     DateCreated datetime not null default(getdate()),
@@ -301,7 +299,64 @@ if not exists (select 1
     constraint FK_dbo_RouteLocation_CurrentLocationId_dbo_Locaiton_Id foreign key (CurrentLocationId) references [Location](Id),
     constraint FK_dbo_RouteLocation_PreviousLocationId_dbo_Location_Id foreign key (PreviousLocationId) references [Location](Id),
     constraint CK_dbo_RouteLocation_CurrentLocationId_PreviousLocationId check (CurrentLocationId <> PreviousLocationId),
-    constraint CK_dbo_RouteLocation_EstimatedDurationInHours check (EstimatedDurationInHours > 0)
+  );
+go
+
+if not exists (select 1 
+               from sys.tables t 
+               where t.name='Schedule' 
+               and t.schema_id = schema_id('dbo'))
+  create table dbo.Schedule
+  (
+    Id int not null primary key identity,
+    Name nvarchar(100) not null,
+    RouteId int not null,
+    CreatedBy int null foreign key references Account(Id),
+    ModifiedBy int null foreign key references Account(Id),
+    DateCreated datetime not null default(getdate()),
+    DateModified datetime not null default(getdate()),
+    IsDeleted bit not null default(0)
+
+    constraint FK_dbo_Schedule_RouteId_dbo_Route_Id foreign key (RouteId) references [Route](Id)
+  );
+go
+
+if not exists (select 1 
+               from sys.tables t 
+               where t.name='ScheduleRouteLocation' 
+               and t.schema_id = schema_id('dbo'))
+  create table dbo.ScheduleRouteLocation
+  (
+    Id int not null primary key identity,
+    Name nvarchar(100) not null,
+    ScheduleId int not null,
+    RouteLocationId int not null,
+    ArrivalTime time null,
+    DeparuteTime time null,
+    CreatedBy int null foreign key references Account(Id),
+    ModifiedBy int null foreign key references Account(Id),
+    DateCreated datetime not null default(getdate()),
+    DateModified datetime not null default(getdate()),
+    IsDeleted bit not null default(0)
+
+    constraint FK_dbo_ScheduleRouteLocation_ScheduleId_dbo_Schedule_Id 
+    foreign key (ScheduleId) references Schedule(Id),
+
+    constraint FK_dbo_ScheduleRouteLocation_RouteLocationId_dbo_RouteLocation_Id 
+    foreign key (RouteLocationId) references RouteLocation(Id),
+
+    constraint CK_dbo_ScheduleRouteLocation_ScheduleId_RouteLocationId 
+    check
+    (
+       exists 
+       (
+         select 1
+           from RouteLocation rl
+           join Schedule s
+             on rl.RouteId = s.RouteId
+           where RouteLocationId = rl.Id
+       )
+    )
   );
 go
 
@@ -313,7 +368,7 @@ if not exists (select 1
   (
     Id int not null primary key identity,
     BusId int not null,
-    RouteId int not null,
+    ScheduleId int not null,
     Departure datetime not null,
     Arrival datetime not null,
     CreatedBy int null foreign key references Account(Id),
@@ -323,7 +378,7 @@ if not exists (select 1
     IsDeleted bit not null default(0)
 
     constraint FK_dbo_Trip_BusId_dbo_Bus_Id foreign key (BusId) references Bus(Id),
-    constraint FK_dbo_Trip_RouteId_dbo_Route_Id foreign key (RouteId) references [Route](Id),
+    constraint FK_dbo_Trip_ScheduleId_dbo_Schedule_Id foreign key (ScheduleId) references Schedule(Id),
     constraint CK_dbo_Trip_Departure_Arrival check (Arrival > Departure)
   );
 go

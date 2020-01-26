@@ -1,0 +1,48 @@
+﻿@model MergeRouteVM
+
+<div class="uk-grid" uk-grid id="save-route-grid">
+    <input type="hidden" name="routeId" value="@Model.RouteId" />
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-2@l uk-width-1-1\@@m">
+        <label class="uk-form-label">Название</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="name" type="text" placeholder="Название маршрута..." value="@Model.Name">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-2@l uk-width-1-1\@@m">
+        <label class="uk-form-label">Ожидаемая длительность</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="duration" type="number" step="0.5" placeholder="Длительность..." value="@Model.Duration">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-margin-remove-top uk-width-1-1">
+        <button class="uk-button uk-button-primary uk-float-right uk-margin-small-left" id="save-route-btn">Сохранить</button>
+        <button class="uk-button uk-button-secondary uk-float-right" id="reverse-route-btn">Обратный маршрут</button>
+    </div>
+</div>
+
+<script>
+    App.footer.setBreadcrumbs([
+        { name: 'Маршруты', url: '@Url.Action("_FullInformation","Route")' },
+        { name: 'Обновление маршрута', url: '@Url.Action("_MergeRouteLocation","Route")' }
+    ]);
+
+    App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
+    App.geo.route.clear();
+    var routes = App.geo.route.getRouteLocations('@Url.Action("GetRouteLocations", "Route")', @Model.RouteId);
+    App.geo.route.setRouteLocations(routes, @Model.RouteId);
+    for (let location of App.geo.locations) {
+        location.marker.off('click');
+    }
+
+    $('#reverse-route-btn').click(function () {
+        var data = App.serializeInputsToObject('#save-route-grid input[name="routeId"]');
+        App.postDataOnServer('@Url.Action("ReverseRoute", "Route")', data);
+    });
+    $('#save-route-btn').click(function () {
+        var data = App.serializeInputsToObject('#save-route-grid input');
+        App.postDataOnServer('@Url.Action("MergeRoute", "Route")', data);
+    });
+</script>

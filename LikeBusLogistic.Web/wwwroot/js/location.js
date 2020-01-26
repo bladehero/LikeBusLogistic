@@ -61,6 +61,8 @@
         grid.find('select').each(function (i, el) {
             $(el).val($(el).find('option:first').val());
         });
+        grid.find('input[name="IsParking"]').prop('checked', false);
+        grid.find('input[name="IsCarRepair"]').prop('checked', false);
     }
 
     window.onresize = function () {

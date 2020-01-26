@@ -1,9 +1,13 @@
 ﻿@model LikeBusLogistic.Web.Models.Home.LocationPopupVM
 
+@{
+    RoleName roleName = (RoleName)ViewBag.RoleName;
+}
+
 <div id="location-popup" data-location-id="@Model.Location.Id" data-route-location-id="@Model.RouteLocation?.CurrentLocationId">
     <ul class="uk-margin-remove-bottom" uk-tab>
         <li><a href="#">О локации</a></li>
-        <li><a href="#">Логистика</a></li>
+        <li class="@(Model.IsRoute ? "uk-active" : "")"><a href="#">Логистика</a></li>
     </ul>
     <ul class="uk-switcher">
         <li>
@@ -45,7 +49,10 @@
                 </div>
                 <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-small-top uk-padding-small">
                     <div class="uk-float-right" data-location-id="@Model.Location.Id">
-                        <button class="uk-button uk-button-danger uk-button-small delete-location-icon">Удалить</button>
+                        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                        {
+                            <button class="uk-button uk-button-danger uk-button-small delete-location-icon">Удалить</button>
+                        }
                         <button class="uk-button uk-button-primary uk-button-small edit-location-icon" id="popup-change-location">Изменить</button>
                     </div>
                 </div>
@@ -89,25 +96,12 @@
                 else
                 {
                     <div class="uk-margin-remove-bottom uk-margin-remove-top" uk-grid>
-                        <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                        <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
                             <p>Маршрут:</p>
                         </div>
 
-                        <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
-                            @if (Model.RouteLocation?.PreviousLocationId != null)
-                            {
-                                <p>Продолжительность:</p>
-                            }
-                        </div>
-
-                        <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                        <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
                             <span class="uk-text-bold">@Model.RouteLocation.RouteName</span>
-                        </div>
-                        <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
-                            @if (Model.RouteLocation?.PreviousLocationId != null)
-                            {
-                                <span class="uk-text-bold">@Model.RouteLocation.EstimatedDurationInHours ч.</span>
-                            }
                         </div>
 
                         @if (Model.RouteLocation?.PreviousLocationId != null)
@@ -138,11 +132,14 @@
                                     id="prepend-route-location-button">
                                 <span uk-icon="icon: arrow-right; ratio: 1.5;"></span>
                             </button>
-                            <button class="uk-button uk-button-small uk-button-danger uk-width-1-3"
-                                    uk-tooltip="<b>Удалить</b> локацию."
-                                    id="delete-route-location-button">
-                                <span uk-icon="icon: ban;"></span>
-                            </button>
+                            @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                            {
+                                <button class="uk-button uk-button-small uk-button-danger uk-width-1-3"
+                                        uk-tooltip="<b>Удалить</b> локацию."
+                                        id="delete-route-location-button">
+                                    <span uk-icon="icon: ban;"></span>
+                                </button>
+                            }
                         </div>
                     </div>
                 }
@@ -178,7 +175,6 @@
 
 <script>
     function addLocationToRoute(_popup, locationId, routeLocationId, mode, spliceHandler) {
-        let tempClicks = [];
         Swal.fire({
             title: 'Добавление',
             text: 'Нажмите на локацию, чтобы добавить в маршрут',
@@ -188,7 +184,6 @@
         });
         const isRouteLocation = (element) => element.routeLocation.currentLocationId == locationId;
         for (let i = 0; i < App.geo.locations.length; i++) {
-            tempClicks.push({ locationId: App.geo.locations[i].data.id, clicks: App.geo.locations[i].marker._events.click });
             App.geo.locations[i].marker.off('click').on('click', function () {
                 if (routeLocationId) {
                     if (!App.geo.route.routeLocations.some(isRouteLocation)) {
@@ -245,11 +240,12 @@
             { locationId: id }
         );
     });
-    $('#create-route-button').click(function () {
-
-    });
-    $('#delete-route-location-button,#append-route-location-button,#prepend-route-location-button').click(function () {
+    $('#create-route-button,#delete-route-location-button,#append-route-location-button,#prepend-route-location-button').click(function () {
         App.geo.closeAllPopups();
+    });
+    $('#create-route-button').click(function () {
+        App.footer.getContent('@Url.Action("_CreateRoute", "Route")',
+            { startLocationId: $('#location-popup').data('location-id') });
     });
     $('#append-route-location-button').click(function () {
         let _this = $(this);
@@ -299,6 +295,6 @@
                     }, null, 'POST');
             }
         });
-        
+
     });
 </script>

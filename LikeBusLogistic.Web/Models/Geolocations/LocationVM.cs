@@ -10,6 +10,7 @@ namespace LikeBusLogistic.Web.Models.Geolocations
         public IEnumerable<CountryVM> Countries { get; set; }
         public IEnumerable<DistrictVM> Districts { get; set; }
         public IEnumerable<CityVM> Cities { get; set; }
+        public bool IsCarRepair { get; set; }
 
         public LocationVM()
         {

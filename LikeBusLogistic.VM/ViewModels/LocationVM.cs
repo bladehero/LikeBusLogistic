@@ -16,7 +16,6 @@
         public string CountryName { get; set; }
 
         public bool IsParking { get; set; }
-        public bool IsCarRepair { get; set; }
         public bool IsDeleted { get; set; }
     }
 }

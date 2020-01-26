@@ -109,13 +109,18 @@
             setRouteLocations: function (routeLocations, id) {
                 let latlngs = [];
                 for (var i = 0; i < routeLocations.length; i++) {
-                    latlngs.push([routeLocations[i].routeLocation.currentLatitude, routeLocations[i].routeLocation.currentLongtitude]);
+                    latlngs.push([routeLocations[i].latitude || routeLocations[i].routeLocation.currentLatitude,
+                        routeLocations[i].longtitude || routeLocations[i].routeLocation.currentLongtitude]);
                 }
                 let options = { use: L.polyline, delay: 800, dashArray: [10, 10], weight: 6, color: "#C3C3FF", pulseColor: "#0059FF" };
                 let path = new L.Polyline.AntPath(latlngs, options);
                 path.addTo(App.map);
                 App.geo.route.routeLocations = routeLocations;
+                let oldPath = App.geo.route.path;
                 App.geo.route.path = path;
+                if (oldPath) {
+                    oldPath.removeFrom(App.map);
+                }
                 App.geo.route.id = id;
             },
             getRouteLocations: function (url, id) {
@@ -270,6 +275,7 @@
         }
     },
     message: {
+        defaultTimer: 3000,
         showMessage: function (type, title, text, timer, showConfirmButton) {
             Swal.fire({
                 icon: type,
@@ -280,13 +286,13 @@
             });
         },
         showError: function (title, text) {
-            this.showMessage('error', title, text, 2000, false);
+            this.showMessage('error', title, text, App.message.defaultTimer, false);
         },
         showSuccess: function (title, text) {
-            this.showMessage('success', title, text, 2000, false);
+            this.showMessage('success', title, text, App.message.defaultTimer, false);
         },
         showInfo: function (title, text) {
-            this.showMessage('info', title, text, 2000, false);
+            this.showMessage('info', title, text, App.message.defaultTimer, false);
         },
         showErrorWithOk: function (title, text) {
             this.showMessage('error', title, text, 0, true);

@@ -519,20 +519,16 @@ begin
   with LinkedList (RouteId
                  , RouteLocationId
                  , RouteName
-                 , EstimatedDurationInHours
                  , CurrentLocationId
                  , PreviousLocationId
-                 , StopDurationInHours
                  , [Level])
   as
   (
     select r1.Id as RouteId
          , rl1.Id as RouteLocationId
          , r1.[Name] as RouteName
-         , rl1.EstimatedDurationInHours as EstimatedDurationInHours
          , rl1.CurrentLocationId as CurrentLocationId
          , rl1.PreviousLocationId as PreviousLocationId
-         , rl1.StopDurationInHours as StopDurationInHours
          , 0 as [Level]
       from [Route] r1
       join RouteLocation rl1 
@@ -548,10 +544,8 @@ begin
     select r2.Id as RouteId
          , rl2.Id as RouteLocationId
          , r2.[Name] as RouteName
-         , rl2.EstimatedDurationInHours as EstimatedDurationInHours
          , rl2.CurrentLocationId as CurrentLocationId
          , rl2.PreviousLocationId as PreviousLocationId
-         , rl2.StopDurationInHours as StopDurationInHours
          , [Level] + 1 as [Level]
       from [Route] r2
       join RouteLocation rl2 
@@ -566,8 +560,6 @@ begin
   select ll.RouteId as RouteId
        , ll.RouteLocationId as RouteLocationId
        , ll.RouteName as RouteName
-       , ll.EstimatedDurationInHours as EstimatedDurationInHours
-       , ll.StopDurationInHours as StopDurationInHours
        , ll.CurrentLocationId as CurrentLocationId
        , ll.PreviousLocationId as PreviousLocationId
 

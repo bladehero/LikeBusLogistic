@@ -26,7 +26,7 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult _LocationPopup(int id, int? routeId)
+        public IActionResult _LocationPopup(int id, int? routeId, bool isRoute = false)
         {
             var location = ServiceFactory.GeolocationManagement.GetLocation(id).Data;
             var route = ServiceFactory.RouteManagement.GetRoute(routeId).Data;
@@ -36,7 +36,8 @@ namespace LikeBusLogistic.Web.Controllers
             {
                 Location = location,
                 Route = route,
-                RouteLocation = routeLocation
+                RouteLocation = routeLocation,
+                IsRoute = isRoute
             };
             return PartialView(model);
         }

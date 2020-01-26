@@ -36,6 +36,20 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpGet]
+        public IActionResult _MergeRoute(int id)
+        {
+            var route = ServiceFactory.RouteManagement.GetRoute(id).Data;
+
+            var model = new MergeRouteVM
+            {
+                Duration = route.EstimatedDurationInHours,
+                Name = route.Name,
+                RouteId = id
+            };
+            return PartialView(model);
+        }
+
+        [HttpGet]
         public IActionResult _MergeRouteLocation(MergeRouteLocationVM mergeRouteLocationVM)
         {
             var locations = ServiceFactory.GeolocationManagement.GetLocations().Data;
@@ -44,6 +58,73 @@ namespace LikeBusLogistic.Web.Controllers
             mergeRouteLocationVM.Locations = locations;
             mergeRouteLocationVM.RouteLocations = routeLocations;
             return PartialView(mergeRouteLocationVM);
+        }
+
+        [HttpGet]
+        public IActionResult _CreateRoute(int startLocationId)
+        {
+            var startLocation = ServiceFactory.GeolocationManagement.GetLocation(startLocationId).Data;
+
+            var model = new CreateRouteVM
+            {
+                StartLocation = startLocation
+            };
+            return PartialView(model);
+        }
+
+        [HttpGet]
+        public IActionResult IsRouteNew(IEnumerable<LocationVM> locations)
+        {
+            var result = new Result();
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
+
+        [HttpPost]
+        public IActionResult CreateRoute(CreateRouteVM createRouteVM)
+        {
+            var result = new Result();
+            try
+            {
+                var serviceResult = ServiceFactory.RouteManagement.CreateRoute(createRouteVM.Locations, createRouteVM.Name, createRouteVM.EstimatedDurationInHours);
+
+                result.Success = serviceResult.Success;
+                result.Message = serviceResult.Message;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
+
+        [HttpPost]
+        public IActionResult MergeRoute(MergeRouteVM mergeRouteVM)
+        {
+            var result = new Result();
+            try
+            {
+                var route = ServiceFactory.RouteManagement.GetRoute(mergeRouteVM.RouteId).Data;
+                route.Name = mergeRouteVM.Name;
+                route.EstimatedDurationInHours = mergeRouteVM.Duration;
+
+                var serviceResult = ServiceFactory.RouteManagement.MergeRoute(route);
+
+                result.Success = serviceResult.Success;
+                result.Message = serviceResult.Message;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+            }
+            return Json(result);
         }
 
         [HttpPost]
@@ -57,8 +138,6 @@ namespace LikeBusLogistic.Web.Controllers
 
                 var locationToAdd = new RouteLocationVM
                 {
-                    EstimatedDurationInHours = 1,
-                    StopDurationInHours = 0,
                     RouteId = mergeRouteLocationVM.RouteId,
                     CurrentLocationId = mergeRouteLocationVM.LocationToAddId
                 };
