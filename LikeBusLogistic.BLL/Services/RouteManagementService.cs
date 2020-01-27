@@ -83,6 +83,50 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="locations">Route location to match.</param>
+        /// <returns>in Data true if any route was matched with all locations</returns>
+        public BaseResult<bool> IsRouteMatch(IEnumerable<LocationVM> locations)
+        {
+            var result = new BaseResult<bool>();
+            bool isMatch = false;
+            try
+            {
+                var list = locations.ToList();
+                var routes = UnitOfWork.RouteDao.GetRouteByLocationCount(list.Count);
+                foreach (var route in routes)
+                {
+                    isMatch = true;
+                    var routeLocations = UnitOfWork.StoredProcedureDao.GetRouteLocation(route.Id).ToList();
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        if (routeLocations[i].CurrentLocationId != list[i].Id)
+                        {
+                            isMatch = false;
+                            break;
+                        }
+                    }
+
+                    if (isMatch)
+                    {
+                        break;
+                    }
+                }
+
+                result.Data = isMatch;
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = false;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
         public BaseResult CreateRoute(IEnumerable<LocationVM> locations, string name, float? estimatedDurationInHours = null)
         {
             var result = new BaseResult();
@@ -90,8 +134,8 @@ namespace LikeBusLogistic.BLL.Services
             {
                 var routeId = UnitOfWork.RouteDao.Insert(new Route
                 {
-                    ArrivalId = locations.FirstOrDefault().Id,
-                    DepartureId = locations.LastOrDefault().Id,
+                    ArrivalId = locations.LastOrDefault().Id,
+                    DepartureId = locations.FirstOrDefault().Id,
                     Name = name,
                     EstimatedDurationInHours = estimatedDurationInHours,
                     CreatedBy = AccountId,

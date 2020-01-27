@@ -68,39 +68,63 @@
             return;
         }
 
-        let formValues = await Swal.fire({
-            title: 'Создание нового маршрута',
-            html: '<div class="uk-margin uk-text-left">'+
-                  '    <label class="uk-form-label" for="form-stacked-text">Название маршрута</label>'+
-                  '    <div class="uk-form-controls">'+
-                  '        <input class="uk-input" id="route-name" type="text" placeholder="Введите название маршрута...">'+
-                  '    </div>'+
-                  '</div>'+
-                  '<div class="uk-margin uk-text-left">'+
-                  '    <label class="uk-form-label" for="form-stacked-text">Ожидаемая продолжительность</label>'+
-                  '    <div class="uk-form-controls">'+
-                  '        <input class="uk-input" id="route-duration" type="number" step="0.5" placeholder="Введите продолжительность маршрута...">'+
-                  '    </div>'+
-                  '</div>',
-            focusConfirm: false,
-            showCancelButton: true,
-            cancelButtonText: "Отмена",
-            preConfirm: () => {
-                return [
-                    $('#route-name').val(),
-                    $('#route-duration').val()
-                ]
-            }
-        });
+        App.message.showMessage('info', 'Проверка', 'Идет сопоставление текущих маршрутных листов...', 0, false);
+        App.postDataOnServer(
+            '@Url.Action("IsRouteMatch", "Route")',
+            { locations: App.geo.route.routeLocations },
+            async function (result) {
+                let response;
+                if (result.data) {
+                    await Swal.fire({
+                        title: 'Предупреждение',
+                        text: 'Найдено совпадение, маршрут имеет точно такой же путь. Вы уверены что хотите продолжить?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        cancelButtonText: 'Отмена',
+                    }).then(function (res) {
+                        response = !res.value;
+                    });
+                }
 
-        if (formValues && formValues.value[0] && formValues.value[1]) {
-            let name = formValues.value[0];
-            let duration = formValues.value[1];
-            App.postDataOnServer(
-                '@Url.Action("CreateRoute", "Route")',
-                { locations: App.geo.route.routeLocations, name: name, estimatedDurationInHours: duration }
-            );
-        }
+                if (response) {
+                    return;
+                }
+
+                let formValues = await Swal.fire({
+                    title: 'Создание нового маршрута',
+                    html: '<div class="uk-margin uk-text-left">'+
+                          '    <label class="uk-form-label" for="form-stacked-text">Название маршрута</label>'+
+                          '    <div class="uk-form-controls">'+
+                          '        <input class="uk-input" id="route-name" type="text" placeholder="Введите название маршрута...">'+
+                          '    </div>'+
+                          '</div>'+
+                          '<div class="uk-margin uk-text-left">'+
+                          '    <label class="uk-form-label" for="form-stacked-text">Ожидаемая продолжительность</label>'+
+                          '    <div class="uk-form-controls">'+
+                          '        <input class="uk-input" id="route-duration" type="number" step="0.5" placeholder="Введите продолжительность маршрута...">'+
+                          '    </div>'+
+                          '</div>',
+                    focusConfirm: false,
+                    showCancelButton: true,
+                    cancelButtonText: "Отмена",
+                    preConfirm: () => {
+                        return [
+                            $('#route-name').val(),
+                            $('#route-duration').val()
+                        ]
+                    }
+                });
+
+                if (formValues && formValues.value[0] && formValues.value[1]) {
+                    let name = formValues.value[0];
+                    let duration = formValues.value[1];
+                    App.postDataOnServer(
+                        '@Url.Action("CreateRoute", "Route")',
+                        { locations: App.geo.route.routeLocations, name: name, estimatedDurationInHours: duration }
+                    );
+                }
+            }
+        );
     }
 
     $(document).keydown(function (e) {

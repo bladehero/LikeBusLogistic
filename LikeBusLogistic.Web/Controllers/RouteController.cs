@@ -72,16 +72,20 @@ namespace LikeBusLogistic.Web.Controllers
             return PartialView(model);
         }
 
-        [HttpGet]
-        public IActionResult IsRouteNew(IEnumerable<LocationVM> locations)
+        [HttpPost]
+        public IActionResult IsRouteMatch(IEnumerable<LocationVM> locations)
         {
-            var result = new Result();
+            var result = new Result<bool>();
             try
             {
-
+                var response = ServiceFactory.RouteManagement.IsRouteMatch(locations);
+                result.Data = response.Data;
+                result.Success = response.Success;
+                result.Message = response.Message;
             }
             catch (Exception ex)
             {
+                result.Data = false;
                 result.Success = false;
             }
             return Json(result);

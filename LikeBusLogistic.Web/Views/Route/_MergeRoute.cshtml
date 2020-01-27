@@ -37,9 +37,66 @@
         location.marker.off('click');
     }
 
-    $('#reverse-route-btn').click(function () {
-        var data = App.serializeInputsToObject('#save-route-grid input[name="routeId"]');
-        App.postDataOnServer('@Url.Action("ReverseRoute", "Route")', data);
+    $('#reverse-route-btn').click(async function () {
+        debugger;
+        App.message.showMessage('info', 'Проверка', 'Идет сопоставление текущих маршрутных листов...', 0, false);
+        let locations = App.geo.route.routeLocationsAsLocations().reverse();
+        App.postDataOnServer(
+            '@Url.Action("IsRouteMatch", "Route")',
+            { locations: locations },
+            async function (result) {
+                let response;
+                if (result.data) {
+                    await Swal.fire({
+                        title: 'Предупреждение',
+                        text: 'Найдено совпадение, маршрут имеет точно такой же путь. Вы уверены что хотите продолжить?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        cancelButtonText: 'Отмена',
+                    }).then(function (res) {
+                        response = !res.value;
+                    });
+                }
+
+                if (response) {
+                    return;
+                }
+
+                let formValues = await Swal.fire({
+                    title: 'Создание нового маршрута',
+                    html: '<div class="uk-margin uk-text-left">'+
+                          '    <label class="uk-form-label" for="form-stacked-text">Название маршрута</label>'+
+                          '    <div class="uk-form-controls">'+
+                          '        <input class="uk-input" id="route-name" type="text" placeholder="Введите название маршрута...">'+
+                          '    </div>'+
+                          '</div>'+
+                          '<div class="uk-margin uk-text-left">'+
+                          '    <label class="uk-form-label" for="form-stacked-text">Ожидаемая продолжительность</label>'+
+                          '    <div class="uk-form-controls">'+
+                          '        <input class="uk-input" id="route-duration" type="number" step="0.5" placeholder="Введите продолжительность маршрута...">'+
+                          '    </div>'+
+                          '</div>',
+                    focusConfirm: false,
+                    showCancelButton: true,
+                    cancelButtonText: "Отмена",
+                    preConfirm: () => {
+                        return [
+                            $('#route-name').val(),
+                            $('#route-duration').val()
+                        ]
+                    }
+                });
+
+                if (formValues && formValues.value[0] && formValues.value[1]) {
+                    let name = formValues.value[0];
+                    let duration = formValues.value[1];
+                    App.postDataOnServer(
+                        '@Url.Action("CreateRoute", "Route")',
+                        { locations: locations, name: name, estimatedDurationInHours: duration }
+                    );
+                }
+            }
+        );
     });
     $('#save-route-btn').click(function () {
         var data = App.serializeInputsToObject('#save-route-grid input');

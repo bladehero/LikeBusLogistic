@@ -29,7 +29,7 @@
                     let location = App.geo.locations[i];
                     location.marker.on('click',
                         function (obj) {
-                            handler(obj, location)
+                            handler(obj, location);
                         }
                     );
                 }
@@ -122,6 +122,16 @@
                     oldPath.removeFrom(App.map);
                 }
                 App.geo.route.id = id;
+            },
+            routeLocationsAsLocations: function () {
+                let locations = [];
+                for (let routeLocation of App.geo.route.routeLocations) {
+                    let l = App.geo.getLocationById(routeLocation.routeLocation.currentLocationId);
+                    if (l && l.data) {
+                        locations.push(l.data);
+                    }
+                }
+                return locations;
             },
             getRouteLocations: function (url, id) {
                 var routeLocations = [];
