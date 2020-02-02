@@ -1,3 +1,16 @@
+-- sp_configure 'show advanced options', 1
+-- EXEC master.dbo.sp_configure 'xp_cmdshell', 1
+-- RECONFIGURE WITH OVERRIDE
+-- GO
+
+
+-- DECLARE @Text AS VARCHAR(100)
+-- DECLARE @Cmd AS VARCHAR(100)
+-- SET @Text = 'text'
+-- SET @Cmd ='echo ' +  @Text + ' > AppTextFile.txt'
+-- EXECUTE Master.dbo.xp_CmdShell  @Cmd
+
+
 declare @modelsUsing varchar(max)= 'using System;';
 declare @modelsNamespace varchar(max)= 'LikeBusLogistic.DAL.Models';
 declare @baseModelClass varchar(max)= 'BaseEntity';
