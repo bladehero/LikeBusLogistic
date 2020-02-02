@@ -30,6 +30,7 @@ namespace AutoDataLayerGenerator
                 BaseClass = "BaseDao",
                 Namespace = "LikeBusLogistic.DAL.Dao",
                 Using = "using System.Data;",
+                ModelsNamespace = modelData.Namespace
             };
 
             var connection = new SqlConnection("Data Source=localhost;Initial Catalog=LikeBusLogisticDatabase;Integrated Security=True;");
