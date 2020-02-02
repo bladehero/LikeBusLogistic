@@ -33,8 +33,7 @@ namespace AutoDataLayerGenerator
                 ModelsNamespace = modelData.Namespace
             };
 
-            var connection = new SqlConnection("Data Source=localhost;Initial Catalog=LikeBusLogisticDatabase;Integrated Security=True;");
-            var generator = new Generator(connection);
+            var generator = new Generator("Data Source=localhost;Initial Catalog=LikeBusLogisticDatabase;Integrated Security=True;");
             var watch = new Stopwatch();
 
             Console.WriteLine(modelData);

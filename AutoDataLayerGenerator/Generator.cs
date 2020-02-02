@@ -1,6 +1,7 @@
 ﻿using AutoDataLayerGenerator.Data;
 using Dapper;
 using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -13,7 +14,8 @@ namespace AutoDataLayerGenerator
         public const string Pattern = "{{(.*?)}}";
         public static Regex Regex => new Regex(Pattern);
 
-        public IDbConnection Connection { get; }
+        private string _connectionString;
+        public IDbConnection Connection => new SqlConnection(_connectionString);
 
         public async Task GenerateStructure(BaseData data)
         {
@@ -57,6 +59,6 @@ namespace AutoDataLayerGenerator
             }
         }
 
-        public Generator(IDbConnection connection) => Connection = connection;
+        public Generator(string connection) => _connectionString = connection;
     }
 }
