@@ -10,5 +10,7 @@
         public string Using { get; set; }
         public string BaseClass { get; set; }
         public string IgnorableColumns { get; set; }
+
+        public override bool ReplaceWhenExists => true;
     }
 }

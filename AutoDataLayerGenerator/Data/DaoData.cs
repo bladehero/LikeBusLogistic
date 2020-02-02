@@ -12,5 +12,7 @@ namespace AutoDataLayerGenerator
         public string ModelsNamespace { get; set; }
         public string Using { get; set; }
         public string BaseClass { get; set; }
+
+        public override bool ReplaceWhenExists => false;
     }
 }

@@ -42,9 +42,12 @@ namespace AutoDataLayerGenerator
             async model =>
             {
                 var path = Path.Combine(data.FolderPath, model.File);
-                using (var sw = new StreamWriter(path))
+                if (data.ReplaceWhenExists || !File.Exists(path))
                 {
-                    await sw.WriteAsync(model.Content);
+                    using (var sw = new StreamWriter(path))
+                    {
+                        await sw.WriteAsync(model.Content);
+                    }
                 }
             });
         }

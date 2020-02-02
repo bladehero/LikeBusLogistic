@@ -4,8 +4,9 @@
     {
         public string ScriptPath { get; }
         public string FolderPath { get; }
+        public abstract bool ReplaceWhenExists { get; }
 
-        public BaseData(string scriptPath, string folderPath) => 
+        public BaseData(string scriptPath, string folderPath) =>
             (ScriptPath, FolderPath) = (scriptPath, folderPath);
     }
 }
