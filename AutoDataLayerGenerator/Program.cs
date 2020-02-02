@@ -1,7 +1,9 @@
 ﻿using AutoDataLayerGenerator.Data;
 using System;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace AutoDataLayerGenerator
 {
@@ -32,7 +34,21 @@ namespace AutoDataLayerGenerator
 
             var connection = new SqlConnection("Data Source=localhost;Initial Catalog=LikeBusLogisticDatabase;Integrated Security=True;");
             var generator = new Generator(connection);
+            var watch = new Stopwatch();
+
+            Console.WriteLine(modelData);
+            watch.Start();
             generator.GenerateStructure(modelData);
+            watch.Stop();
+            Console.WriteLine($"Finished with the time: {watch.ElapsedMilliseconds}ms");
+
+            watch.Reset();
+
+            Console.WriteLine(daoData);
+            watch.Start();
+            generator.GenerateStructure(daoData);
+            watch.Stop();
+            Console.WriteLine($"Finished with the time: {watch.ElapsedMilliseconds}ms");
 
             Console.ReadKey();
         }

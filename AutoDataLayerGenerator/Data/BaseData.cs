@@ -8,5 +8,10 @@
 
         public BaseData(string scriptPath, string folderPath) =>
             (ScriptPath, FolderPath) = (scriptPath, folderPath);
+
+        public override string ToString()
+        {
+            return $"{GetType()}\nScript: {ScriptPath}\nFolder: {FolderPath}";
+        }
     }
 }
