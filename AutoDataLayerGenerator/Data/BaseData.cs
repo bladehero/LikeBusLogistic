@@ -1,0 +1,11 @@
+﻿namespace AutoDataLayerGenerator.Data
+{
+    public abstract class BaseData
+    {
+        public string ScriptPath { get; }
+        public string FolderPath { get; }
+
+        public BaseData(string scriptPath, string folderPath) => 
+            (ScriptPath, FolderPath) = (scriptPath, folderPath);
+    }
+}
