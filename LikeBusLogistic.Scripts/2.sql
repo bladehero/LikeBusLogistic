@@ -608,3 +608,116 @@ begin
 
 end;
 go
+
+if object_id(N'dbo.GetSchedule') is null
+  exec('create procedure dbo.GetSchedule as set nocount on;');
+go
+   
+-- ============================================================================  
+-- Example    : exec dbo.GetSchedule  
+-- Author     : Nikita Dermenzhi  
+-- Date       : 01/03/2020  
+-- Description: —  
+-- ============================================================================  
+  
+alter procedure dbo.GetSchedule  
+(    
+   @scheduleId as int = null,  
+   @withDeleted as bit = 0  
+)    
+as    
+begin    
+    
+  select s.Id as Id  
+       , s.Name as Name  
+       , s.RouteId as RouteId  
+       , r.Name as RouteName  
+       , s.IsDeleted as IsDeleted  
+    from Schedule s  
+    join [Route] r on s.RouteId = r.Id  
+    where 1=1  
+     and (s.IsDeleted = 0 or @withDeleted = 1)  
+     and (r.IsDeleted = 0 or @withDeleted = 1)  
+     and s.Id  = isnull(@scheduleId, s.Id)  
+  
+end;  
+
+if object_id(N'dbo.GetScheduleInfo') is null
+  exec('create procedure dbo.GetScheduleInfo as set nocount on;');
+go
+
+-- ============================================================================  
+-- Example    : exec dbo.GetScheduleInfo  
+-- Author     : Nikita Dermenzhi  
+-- Date       : 01/03/2020  
+-- Description: —  
+-- ============================================================================  
+
+alter procedure dbo.GetScheduleInfo
+(  
+    @scheduleId as int = null
+)  
+as  
+begin  
+  
+  select s.Id                as ScheduleId  
+       , s.Name              as ScheduleName
+
+       , s.RouteId           as RouteId  
+       , r.Name              as RouteName
+
+       , srl.RouteLocationId as RouteLocationId
+       , srl.Name            as RouteLocationName
+       , srl.ArrivalTime     as ArrivalTime
+       , srl.DeparuteTime    as DeparuteTime
+
+       , li.FullName         as LocationFullName    
+       , li.Name             as LocationName    
+       , li.Latitude         as LocationLatitude    
+       , li.Longtitude       as LocationLongtitude  
+       , li.IsCarRepair      as LocationIsCarRepair 
+       , li.IsParking        as LocationIsParking   
+       , li.CityId           as LocationCityId      
+       , li.CityName         as LocationCityName    
+       , li.DistrictId       as LocationDistrictId  
+       , li.DistrictName     as LocationDistrictName
+       , li.CountryId        as LocationCountryId   
+       , li.CountryName      as LocationCountryName 
+        
+       , s.IsDeleted         as IsDeleted
+
+    from Schedule s 
+    join ScheduleRouteLocation srl on s.Id = srl.ScheduleId
+    join RouteLocation rl on srl.RouteLocationId = rl.Id
+    join [Route] r on s.RouteId = r.Id  
+    cross apply
+    (
+      select top 1 Id          
+                 , FullName    
+                 , Name        
+                 , Latitude    
+                 , Longtitude  
+                 , IsCarRepair 
+                 , IsParking   
+                 , CityId      
+                 , CityName    
+                 , DistrictId  
+                 , DistrictName
+                 , CountryId   
+                 , CountryName 
+                 , IsDeleted   
+        from dbo.GetLocationInfo(rl.CurrentLocationId)
+    ) as li
+    where 1=1
+     and 
+     (
+       (
+         srl.IsDeleted = 0
+         and s.IsDeleted = 0
+         and r.IsDeleted = 0
+       )
+     )
+     and s.Id  = @scheduleId  
+
+end;
+go

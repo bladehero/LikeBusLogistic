@@ -102,5 +102,24 @@ namespace LikeBusLogistic.DAL.Dao
 
             return Connection.Query<GetRouteLocation_Result>("dbo.GetRouteLocation", parameters, commandType: CommandType.StoredProcedure);
         }
+        public IEnumerable<GetSchedule_Result> GetSchedule(int? scheduleId = null, bool withDeleted = false)
+        {
+            var parameters = new
+            {
+                @scheduleId = scheduleId,
+                @withDeleted = withDeleted
+            };
+
+            return Connection.Query<GetSchedule_Result>("dbo.GetSchedule", parameters, commandType: CommandType.StoredProcedure);
+        }
+        public IEnumerable<GetScheduleInfo_Result> GetScheduleInfo(int scheduleId)
+        {
+            var parameters = new
+            {
+                @scheduleId = scheduleId
+            };
+
+            return Connection.Query<GetScheduleInfo_Result>("dbo.GetScheduleInfo", parameters, commandType: CommandType.StoredProcedure);
+        }
     }
 }

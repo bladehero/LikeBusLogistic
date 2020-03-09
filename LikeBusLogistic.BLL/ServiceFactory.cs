@@ -25,6 +25,7 @@ namespace LikeBusLogistic.BLL
         public DriverManagementService DriverManagement { get; set; }
         public GeolocationService GeolocationManagement { get; set; }
         public RouteManagementService RouteManagement { get; set; }
+        public ScheduleManagementService ScheduleManagement { get; set; }
 
         public ServiceFactory(string connection)
         {
@@ -33,6 +34,7 @@ namespace LikeBusLogistic.BLL
             DriverManagement = new DriverManagementService(connection);
             GeolocationManagement = new GeolocationService(connection);
             RouteManagement = new RouteManagementService(connection);
+            ScheduleManagement = new ScheduleManagementService(connection, RouteManagement);
         }
 
         public void Dispose()
@@ -42,6 +44,7 @@ namespace LikeBusLogistic.BLL
             DriverManagement.Dispose();
             GeolocationManagement.Dispose();
             RouteManagement.Dispose();
+            ScheduleManagement.Dispose();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 namespace LikeBusLogistic.DAL.Models
 {
-    public class ScheduleRouteLocation : BaseEntity
+    public class ScheduleRouteLocation : UserTrackedEntity
     {
         public string Name { get; set; }
         public int ScheduleId { get; set; }

@@ -77,6 +77,16 @@ namespace LikeBusLogistic.VM.MapperExtensions
                 cfg.CreateMap<GetRouteLocation_Result, RouteLocationVM>();
                 cfg.CreateMap<RouteLocationVM, GetRouteLocation_Result>();
                 #endregion
+
+                #region Schedule Management Service
+                cfg.CreateMap<ScheduleVM, GetSchedule_Result>();
+                cfg.CreateMap<GetSchedule_Result, ScheduleVM>();
+
+                cfg.CreateMap<GetScheduleInfo_Result, ScheduleRouteLocationVM>();
+                cfg.CreateMap<ScheduleRouteLocationVM, GetScheduleInfo_Result>();
+                cfg.CreateMap<ScheduleRouteLocation, ScheduleRouteLocationVM>();
+                cfg.CreateMap<ScheduleRouteLocationVM, ScheduleRouteLocation>();
+                #endregion
             });
         }
     }

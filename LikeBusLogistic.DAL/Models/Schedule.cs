@@ -1,6 +1,6 @@
 ﻿namespace LikeBusLogistic.DAL.Models
 {
-    public class Schedule : BaseEntity
+    public class Schedule : UserTrackedEntity
     {
         public string Name { get; set; }
         public int RouteId { get; set; }

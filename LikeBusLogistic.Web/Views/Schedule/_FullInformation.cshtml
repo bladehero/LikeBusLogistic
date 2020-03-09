@@ -1,0 +1,19 @@
+﻿@model LikeBusLogistic.Web.Models.Schedule.FullInformationVM
+
+<ul uk-tab>
+    <li class="@(Model.Tab == BusTab.Bus ? "uk-active" : "")" data-url="@Url.Action("_FullInformation", "Bus", new { tab = BusTab.Bus })"><a href="#">Автобусы</a></li>
+</ul>
+<ul class="uk-switcher uk-margin">
+    <li>
+        @{
+            await Html.RenderPartialAsync("_Vehicles.cshtml", new LikeBusLogistic.Web.Models.Buses.VehiclesVM { Vehicles = Model.Vehicles });
+        }
+    </li>
+</ul>
+
+<script>
+    App.footer.setBreadcrumbs([{ name: 'Автобусы', url: '@Url.Action("_FullInformation","Bus")' }]);
+    App.geo.clearLocations();
+    App.geo.route.clear();
+    App.tab.name = 'bus';
+</script>
