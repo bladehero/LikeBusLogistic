@@ -1,19 +1,23 @@
-﻿@model LikeBusLogistic.Web.Models.Schedule.FullInformationVM
+﻿@using LikeBusLogistic.Web.Models.Schedule;
+@model LikeBusLogistic.Web.Models.Schedule.FullInformationVM
 
 <ul uk-tab>
-    <li class="@(Model.Tab == BusTab.Bus ? "uk-active" : "")" data-url="@Url.Action("_FullInformation", "Bus", new { tab = BusTab.Bus })"><a href="#">Автобусы</a></li>
+    <li class="@(Model.Tab == ScheduleTab.Schedule ? "uk-active" : "")" 
+        data-url="@Url.Action("_FullInformation", "Schedule", new { tab = ScheduleTab.Schedule })">
+        <a href="#">Расписания</a>
+    </li>
 </ul>
 <ul class="uk-switcher uk-margin">
     <li>
         @{
-            await Html.RenderPartialAsync("_Vehicles.cshtml", new LikeBusLogistic.Web.Models.Buses.VehiclesVM { Vehicles = Model.Vehicles });
+            await Html.RenderPartialAsync("_Schedule.cshtml", new LikeBusLogistic.Web.Models.Schedule.ScheduleVM { Schedules = Model.Schedules });
         }
     </li>
 </ul>
 
 <script>
-    App.footer.setBreadcrumbs([{ name: 'Автобусы', url: '@Url.Action("_FullInformation","Bus")' }]);
+    App.footer.setBreadcrumbs([{ name: 'Расписания', url: '@Url.Action("_FullInformation", "Schedule")' }]);
     App.geo.clearLocations();
     App.geo.route.clear();
-    App.tab.name = 'bus';
+    App.tab.name = 'schedule';
 </script>

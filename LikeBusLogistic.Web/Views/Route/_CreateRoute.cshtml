@@ -67,11 +67,11 @@
             App.message.showError('Ошибка', 'Маршрут должен включать в себя минимум две локации!');
             return;
         }
-
+        let locations = App.geo.route.routeLocations;
         App.message.showMessage('info', 'Проверка', 'Идет сопоставление текущих маршрутных листов...', 0, false);
         App.postDataOnServer(
             '@Url.Action("IsRouteMatch", "Route")',
-            { locations: App.geo.route.routeLocations },
+            { locations: locations },
             async function (result) {
                 let response;
                 if (result.data) {
@@ -90,12 +90,20 @@
                     return;
                 }
 
+                let first = locations[0];
+                let last = locations[locations.length - 1];
+                let hasDifferentCountries = first.countryName !== last.countryName;
+                let routeName = (first.cityName || first.name || '?') +
+                                (hasDifferentCountries ? ' (' + (first.countryName || '?') + ')' : '') + 
+                                ' - ' + (last.cityName || last.name || '?') +
+                                (hasDifferentCountries ? ' (' + (last.countryName || '?') + ')' : '');
+
                 let formValues = await Swal.fire({
                     title: 'Создание нового маршрута',
                     html: '<div class="uk-margin uk-text-left">'+
                           '    <label class="uk-form-label" for="form-stacked-text">Название маршрута</label>'+
                           '    <div class="uk-form-controls">'+
-                          '        <input class="uk-input" id="route-name" type="text" placeholder="Введите название маршрута...">'+
+                          '        <input class="uk-input" id="route-name" type="text" value="' + routeName + '" placeholder="Введите название маршрута...">'+
                           '    </div>'+
                           '</div>'+
                           '<div class="uk-margin uk-text-left">'+
@@ -114,8 +122,7 @@
                         ]
                     }
                 });
-
-                if (formValues && formValues.value[0] && formValues.value[1]) {
+                if (formValues) {
                     let name = formValues.value[0];
                     let duration = formValues.value[1];
                     App.postDataOnServer(
@@ -129,7 +136,6 @@
 
     $(document).keydown(function (e) {
         if (e.ctrlKey) {
-            debugger;
             if (e.key == 'z') {
                 cancelLastAction();
             }

@@ -1,4 +1,4 @@
-use LikeBusLogisticDatabase;
+п»їuse LikeBusLogisticDatabase;
 go
 
 merge dbo.[Role] as trg
@@ -26,7 +26,7 @@ using
        , u.Phone
   from
   (
-    values ('Администратор', '+380949466705')
+    values ('Administrator', '+380949466705')
   ) as u(FirstName, Phone)
 ) as src
 on trg.FirstName = src.FirstName and trg.Phone = src.Phone
@@ -53,7 +53,7 @@ using
   ) as r
   cross apply
   (
-    select top 1 Id from [User] where FirstName = 'Администратор' and Phone = '+380949466705'
+    select top 1 Id from [User] where FirstName = N'Administrator' and Phone = '+380949466705'
   ) as u
 ) as src
 on trg.Login = src.Login

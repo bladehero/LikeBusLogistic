@@ -1,0 +1,55 @@
+﻿@model MergeScheduleVM
+
+<div class="uk-grid-small" uk-grid id="save-schedule-grid">
+    <input type="hidden" name="id" value="@Model?.Schedule?.Id" />
+
+    <div class="uk-margin uk-width-1-2">
+        <label class="uk-form-label" for="form-stacked-text">Наименование</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="producer" type="text" placeholder="Наименование..." value="@Model?.Schedule?.Name">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-width-1-2">
+        <label class="uk-form-label">Маршрут</label>
+        <div class="uk-form-controls">
+            @Model.Routes.SelectListWithEmptyOption(
+             x => x.Id,
+             x => $"{x.Name} ({x.DepartureLocationName} - {x.ArrivalLocationName})",
+             "Выберите маршрут...",
+             Model?.Schedule?.RouteId,
+             new { @class = "uk-select", name = "routeId" })
+        </div>
+    </div>
+
+    <div class="uk-margin uk-width-expand"
+         id="schedule-route-locations">
+
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-margin-remove-top uk-width-1-1">
+        <button class="uk-button uk-button-primary uk-float-right" id="save-schedule-btn">Сохранить</button>
+    </div>
+</div>
+
+<script>
+    App.footer.setBreadcrumbs([
+        { name: 'Расписания', url: '@Url.Action("_FullInformation", "Schedule", new { tab = ScheduleTab.Schedule })' },
+        { name: '@(Model.Schedule == null ? "Добавить" : "Изменить")', url: '@Url.Action("_MergeSchedule", "Schedule")' }
+    ]);
+
+    $('select[name="routeId"]').change(function () {
+        let _this = this;
+        var routeId = $(_this.selectedOptions).first().val();
+        App.loadContent(
+            '#schedule-route-locations',
+            '@Url.Action("_ScheduleRouteLocations", "Schedule")',
+            { routeId: routeId },
+        );
+    });
+
+    $('#save-schedule-btn').click(function () {
+        var data = App.serializeInputsToObject('#save-schedule-grid input');
+        App.postDataOnServer('@Url.Action("MergeSchedule", "Bus")', data);
+    });
+</script>

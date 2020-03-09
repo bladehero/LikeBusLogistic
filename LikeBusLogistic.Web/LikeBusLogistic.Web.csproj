@@ -50,6 +50,15 @@
     <Content Update="Views\Logistic\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Schedule\_MergeSchedule.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Schedule\_ScheduleRouteLocations.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Schedule\_Schedule.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Schedule\_FullInformation.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

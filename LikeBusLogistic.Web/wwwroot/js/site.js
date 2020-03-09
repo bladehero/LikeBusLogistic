@@ -37,12 +37,12 @@
         },
         setLocations: function (obj) {
             if (obj) {
-                if (obj.length) {
+                if (!!obj.length) {
                     for (var i = 0; i < obj.length; i++) {
                         App.geo.locations.push(obj[i]);
                         obj[i].marker.addTo(App.map);
                     }
-                } else {
+                } else if (!obj.hasOwnProperty('length')) {
                     App.geo.locations.push(obj);
                     obj.marker.addTo(App.map);
                 }
@@ -452,7 +452,7 @@ $(document).ready(function () {
         App.setLastContentState({ footerOptions: { url: url, data: data } });
     });
 
-    $(document).keydown(function (obj) {
+    $(document).keyup(function (obj) {
         if (!$(document.activeElement).parents().hasClass('uk-offcanvas-container')) {
             if (obj.keyCode === 27) {
                 let isClosedPopup = App.geo.closeAllPopups();

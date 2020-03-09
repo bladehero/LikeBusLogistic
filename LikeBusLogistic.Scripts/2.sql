@@ -642,6 +642,7 @@ begin
   
 end;  
 
+
 if object_id(N'dbo.GetScheduleInfo') is null
   exec('create procedure dbo.GetScheduleInfo as set nocount on;');
 go

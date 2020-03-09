@@ -30,13 +30,58 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpGet]
+        public IActionResult _Schedule(ScheduleTab tab = ScheduleTab.Schedule)
+        {
+            var schedules = ServiceFactory.ScheduleManagement.GetSchedules().Data;
+
+            var model = new Models.Schedule.ScheduleVM
+            {
+                Schedules = schedules,
+            };
+            return PartialView(model);
+        }
+
+        [HttpGet]
         public IActionResult _MergeSchedule(int? scheduleId)
         {
-            return PartialView();
+            var schedule = ServiceFactory.ScheduleManagement.GetSchedule(scheduleId).Data;
+            var routes = ServiceFactory.RouteManagement.GetRoutes().Data;
+
+            var model = new MergeScheduleVM
+            {
+                Schedule = schedule,
+                Routes = routes,
+            };
+            return PartialView(model);
+        }
+
+        [HttpGet]
+        public IActionResult _ScheduleRouteLocations(int? routeId)
+        {
+            var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(routeId).Data;
+
+            var scheduleRouteLocations = new List<ScheduleRouteLocationVM>(routeLocations.Count());
+            foreach (var routeLocation in routeLocations)
+            {
+                scheduleRouteLocations.Add(new ScheduleRouteLocationVM
+                {
+                   CityName = routeLocation.CurrentCityName,
+                   CountryName = routeLocation.CurrentCountryName,
+                   DistrictName = routeLocation.CurrentDistrictName,
+                   LocationName = routeLocation.CurrentName,
+                   RouteLocationId = routeLocation.RouteLocationId
+                });
+            }
+
+            var model = new ScheduleRouteLocationsVM
+            {
+                ScheduleRouteLocations = scheduleRouteLocations
+            };
+            return PartialView(model);
         }
 
         [HttpPost]
-        public IActionResult MergeSchedule(ScheduleVM scheduleVM)
+        public IActionResult MergeSchedule(VM.ViewModels.ScheduleVM scheduleVM)
         {
             var result = new Result();
             try

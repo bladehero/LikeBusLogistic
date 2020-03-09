@@ -1,11 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace LikeBusLogistic.Web.Models.Schedule
 {
     public class ScheduleVM
     {
+        public IEnumerable<VM.ViewModels.ScheduleVM> Schedules { get; set; }
+
+        public ScheduleVM()
+        {
+            Schedules = new List<VM.ViewModels.ScheduleVM>();
+        }
     }
 }

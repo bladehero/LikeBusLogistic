@@ -19,7 +19,7 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<ScheduleVM>();
             try
             {
-                var schedule = UnitOfWork.StoredProcedureDao.GetSchedule(scheduleId, RoleName == Variables.RoleName.Administrator);
+                var schedule = UnitOfWork.StoredProcedureDao.GetSchedule(scheduleId, RoleName == Variables.RoleName.Administrator).FirstOrDefault();
                 result.Data = Mapper.Map<ScheduleVM>(schedule);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
@@ -50,7 +50,7 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
-        public BaseResult<IEnumerable<ScheduleRouteLocationVM>> GetScheduleRouteLocations(int scheduleId)
+        public BaseResult<IEnumerable<ScheduleRouteLocationVM>> GetScheduleRouteLocations(int? scheduleId)
         {
             var result = new BaseResult<IEnumerable<ScheduleRouteLocationVM>>();
             try

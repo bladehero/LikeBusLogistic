@@ -112,7 +112,7 @@ namespace LikeBusLogistic.DAL.Dao
 
             return Connection.Query<GetSchedule_Result>("dbo.GetSchedule", parameters, commandType: CommandType.StoredProcedure);
         }
-        public IEnumerable<GetScheduleInfo_Result> GetScheduleInfo(int scheduleId)
+        public IEnumerable<GetScheduleInfo_Result> GetScheduleInfo(int? scheduleId)
         {
             var parameters = new
             {

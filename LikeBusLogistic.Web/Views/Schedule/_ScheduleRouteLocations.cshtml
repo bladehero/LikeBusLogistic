@@ -1,0 +1,46 @@
+﻿@model ScheduleRouteLocationsVM
+
+
+    <div class="uk-grid-small" uk-grid>
+        <div class="uk-width-expand">
+            <label class="uk-form-label">Локация</label>
+        </div>
+        <div class="uk-width-1-6">
+            <label class="uk-form-label">Прибытие</label>
+        </div>
+        <div class="uk-width-1-6">
+            <label class="uk-form-label">В пути (мин.)</label>
+        </div>
+        <div class="uk-width-1-6">
+            <label class="uk-form-label">Отправление</label>
+        </div>
+        <div class="uk-width-1-6">
+            <label class="uk-form-label">Остановка (мин.)</label>
+        </div>
+    </div>
+@foreach (var scheduleRouteLocation in Model.ScheduleRouteLocations)
+{
+    <div class="uk-grid-small" uk-grid>
+        <div class="uk-width-expand">
+            <input class="uk-input" type="text" value="@scheduleRouteLocation.RouteLocationFullName" disabled>
+        </div>
+        <div class="uk-width-1-6">
+            <input class="uk-input timepicker" type="text" value="@scheduleRouteLocation.ArrivalTime" placeholder="Прибытие...">
+        </div>
+        <div class="uk-width-1-6">
+            <input class="uk-input" type="text" placeholder="Длительность..." disabled>
+        </div>
+        <div class="uk-width-1-6">
+            <input class="uk-input timepicker" type="text" value="@scheduleRouteLocation.DeparuteTime" placeholder="Отправление...">
+        </div>
+        <div class="uk-width-1-6">
+            <input class="uk-input" type="text" placeholder="Длительность..." disabled>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        $('.timepicker').timepicki({ show_meridian: false });
+    });
+</script>

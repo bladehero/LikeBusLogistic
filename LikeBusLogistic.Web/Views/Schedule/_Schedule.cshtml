@@ -1,0 +1,68 @@
+﻿@model LikeBusLogistic.Web.Models.Schedule.ScheduleVM
+@{
+    RoleName roleName = (RoleName)ViewBag.RoleName;
+}
+<div class="uk-clearfix">
+    <div class="uk-float-left">
+        <h4>Расписания</h4>
+    </div>
+    <div class="uk-float-right">
+        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+        {
+            <button class="uk-button uk-button-small uk-button-primary" id="add-schedule-button">Добавить</button>
+        }
+    </div>
+</div>
+<table class="uk-table uk-table-small uk-table-hover" id="schedule-table">
+    <thead>
+        <tr>
+            <th>Наименование</th>
+            <th>Маршрут</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var schedule in Model.Schedules)
+        {
+            <tr data-schedule-id="@schedule.Id">
+                <td>@schedule.Name</td>
+                <td>@schedule.RouteName</td>
+                <td class="uk-float-right tool-cell-3">
+                    @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-schedule-icon")
+                    @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                    {
+                        @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-schedule-icon")
+                    }
+                    @if (roleName == RoleName.Administrator)
+                    {
+                        @CustomExtensions.HtmlDeleteOrRestoreIcon(schedule.IsDeleted, "delete-schedule-icon")
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    App.footer.setBreadcrumbs([
+        { name: 'Автобусы', url: '@Url.Action("_FullInformation", "Schedule")' },
+        { name: 'Модели', url: '@Url.Action("_Schedule","Schedule")' }
+    ]);
+
+    $(document).ready(function () {
+        $('#schedule-table').dataTable();
+        $('.edit-schedule-icon').click(function () {
+            var id = $(this).parents('tr').data('schedule-id');
+            App.footer.getContent('@Url.Action("_MergeSchedule", "Schedule")', { scheduleId: id });
+        });
+        $('.delete-schedule-icon').click(function () {
+            var id = $(this).parents('tr').data('schedule-id');
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreSchedule", "Schedule")', { scheduleId: id }, function (result) {
+                App.message.showSuccessWithOk('Успешно', result.message || 'Расписание успешно удалено!');
+                App.footer.getContent('@Url.Action("_FullInformation", "Schedule", new { tab = ScheduleTab.Schedule })');
+            });
+        });
+        $('#add-schedule-button').click(function () {
+            App.footer.getContent('@Url.Action("_MergeSchedule", "Schedule")');
+        });
+    });
+</script>
