@@ -30,7 +30,7 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult _Schedule(ScheduleTab tab = ScheduleTab.Schedule)
+        public IActionResult _Schedule()
         {
             var schedules = ServiceFactory.ScheduleManagement.GetSchedules().Data;
 

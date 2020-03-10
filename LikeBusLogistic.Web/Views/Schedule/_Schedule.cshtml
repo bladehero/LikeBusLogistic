@@ -7,6 +7,7 @@
         <h4>Расписания</h4>
     </div>
     <div class="uk-float-right">
+        <button class="uk-button uk-button-small uk-button-danger uk-hidden" id="clean-route-button">Сбросить маршрут</button>
         @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
         {
             <button class="uk-button uk-button-small uk-button-primary" id="add-schedule-button">Добавить</button>
@@ -24,7 +25,7 @@
     <tbody>
         @foreach (var schedule in Model.Schedules)
         {
-            <tr data-schedule-id="@schedule.Id">
+            <tr data-schedule-id="@schedule.Id" data-route-id="@schedule.RouteId">
                 <td>@schedule.Name</td>
                 <td>@schedule.RouteName</td>
                 <td class="uk-float-right tool-cell-3">
@@ -65,6 +66,17 @@
         });
         $('#add-schedule-button').click(function () {
             App.footer.getContent('@Url.Action("_MergeSchedule", "Schedule")');
+        });
+        $('.show-schedule-icon').click(function () {
+            let _this = $(this);
+            let id = _this.parents('tr').first().data('route-id');
+            App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', id);
+            $('#clean-route-button').removeClass('uk-hidden');
+        });
+
+        $('#clean-route-button').click(function () {
+            App.geo.route.clear();
+            $('#clean-route-button').addClass('uk-hidden');
         });
     });
 </script>
