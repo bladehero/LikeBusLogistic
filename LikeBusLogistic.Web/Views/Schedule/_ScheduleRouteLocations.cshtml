@@ -1,40 +1,59 @@
 ﻿@model ScheduleRouteLocationsVM
+@{
+    var first = Model.ScheduleRouteLocations.FirstOrDefault();
+    var last = Model.ScheduleRouteLocations.LastOrDefault();
+}
 
-
-    <div class="uk-grid-small" uk-grid>
-        <div class="uk-width-expand">
-            <label class="uk-form-label">Локация</label>
-        </div>
-        <div class="uk-width-1-6">
-            <label class="uk-form-label">Прибытие</label>
-        </div>
-        <div class="uk-width-1-6">
-            <label class="uk-form-label">В пути (мин.)</label>
-        </div>
-        <div class="uk-width-1-6">
-            <label class="uk-form-label">Отправление</label>
-        </div>
-        <div class="uk-width-1-6">
-            <label class="uk-form-label">Остановка (мин.)</label>
-        </div>
+<div class="uk-grid-small" uk-grid>
+    <div class="uk-width-expand">
+        <label class="uk-form-label">Локация</label>
     </div>
+    <div class="uk-width-1-6">
+        <label class="uk-form-label">Прибытие</label>
+    </div>
+    <div class="uk-width-1-6">
+        <label class="uk-form-label">Остановка (мин.)</label>
+    </div>
+    <div class="uk-width-1-6">
+        <label class="uk-form-label">Отправление</label>
+    </div>
+    <div class="uk-width-1-6">
+        <label class="uk-form-label">Расстояние (км.)</label>
+    </div>
+</div>
 @foreach (var scheduleRouteLocation in Model.ScheduleRouteLocations)
 {
     <div class="uk-grid-small" uk-grid>
         <div class="uk-width-expand">
             <input class="uk-input" type="text" value="@scheduleRouteLocation.RouteLocationFullName" disabled>
         </div>
-        <div class="uk-width-1-6">
-            <input class="uk-input timepicker" type="text" value="@scheduleRouteLocation.ArrivalTime" placeholder="Прибытие...">
+        <div class="uk-width-1-6 uk-flex uk-flex-inline">
+            <input class="uk-input uk-width-expand timepicker"
+                   type="text"
+                   value="@scheduleRouteLocation.ArrivalTime"
+                   placeholder="Прибытие..."
+                   @(scheduleRouteLocation.Equals(first) ? "disabled" : "")>
+            @if (!scheduleRouteLocation.Equals(first))
+            {
+                <a href="#" class="uk-margin-small-left uk-margin-auto-vertical clean-time" uk-icon="close"></a>
+            }
         </div>
         <div class="uk-width-1-6">
             <input class="uk-input" type="text" placeholder="Длительность..." disabled>
         </div>
-        <div class="uk-width-1-6">
-            <input class="uk-input timepicker" type="text" value="@scheduleRouteLocation.DeparuteTime" placeholder="Отправление...">
+        <div class="uk-width-1-6 uk-flex uk-flex-inline">
+            <input class="uk-input timepicker"
+                   type="text"
+                   value="@scheduleRouteLocation.DeparuteTime"
+                   placeholder="Отправление..."
+                   @(scheduleRouteLocation.Equals(last) ? "disabled" : "")>
+            @if (!scheduleRouteLocation.Equals(last))
+            {
+                <a href="#" class="uk-margin-small-left uk-margin-auto-vertical clean-time" uk-icon="close"></a>
+            }
         </div>
         <div class="uk-width-1-6">
-            <input class="uk-input" type="text" placeholder="Длительность..." disabled>
+            <input class="uk-input" type="number" step="1" value="0" placeholder="Расстояние...">
         </div>
     </div>
 }
@@ -42,5 +61,10 @@
 <script>
     $(document).ready(function () {
         $('.timepicker').timepicki({ show_meridian: false });
+        $('div.time_pick').css({ width: '-webkit-fill-available' });
+        $('.clean-time').click(function () {
+            let _this = this;
+            $(_this).siblings('div.time_pick').children('input').val(null);
+        });
     });
 </script>

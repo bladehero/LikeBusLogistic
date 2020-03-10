@@ -302,6 +302,16 @@ if not exists (select 1
   );
 go
 
+if not exists (select 1
+               from sys.columns c
+               where c.object_id = object_id('dbo.RouteLocation')
+               and c.name = 'Distance')
+
+  alter table RouteLocation
+    add Distance float not null default(0);
+
+go
+
 if not exists (select 1 
                from sys.tables t 
                where t.name='Schedule' 

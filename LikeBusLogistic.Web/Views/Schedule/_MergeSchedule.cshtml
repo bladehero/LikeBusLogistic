@@ -37,6 +37,8 @@
         { name: 'Расписания', url: '@Url.Action("_FullInformation", "Schedule", new { tab = ScheduleTab.Schedule })' },
         { name: '@(Model.Schedule == null ? "Добавить" : "Изменить")', url: '@Url.Action("_MergeSchedule", "Schedule")' }
     ]);
+    App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
+    App.geo.route.clear();
 
     $('select[name="routeId"]').change(function () {
         let _this = this;
@@ -46,6 +48,7 @@
             '@Url.Action("_ScheduleRouteLocations", "Schedule")',
             { routeId: routeId },
         );
+        App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', routeId);
     });
 
     $('#save-schedule-btn').click(function () {

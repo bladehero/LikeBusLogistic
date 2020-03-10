@@ -47,6 +47,8 @@
         { name: 'Автобусы', url: '@Url.Action("_FullInformation", "Schedule")' },
         { name: 'Модели', url: '@Url.Action("_Schedule","Schedule")' }
     ]);
+    App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
+    App.geo.route.clear();
 
     $(document).ready(function () {
         $('#schedule-table').dataTable();
