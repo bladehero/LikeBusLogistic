@@ -8,10 +8,10 @@ namespace LikeBusLogistic.DAL.StoredProcedureResults
         public string ScheduleName { get; set; }
         public int RouteId { get; set; }
         public string RouteName { get; set; }
-        public int ScheduleRouteLocationId { get; set; }
-        public string ScheduleRouteLocationName { get; set; }
+        public int RouteLocationId { get; set; }
         public TimeSpan? ArrivalTime { get; set; }
         public TimeSpan? DeparuteTime { get; set; }
+        public double Distance { get; set; }
         public string LocationFullName { get; set; }
         public string LocationLatitude { get; set; }
         public string LocationLongtitude { get; set; }

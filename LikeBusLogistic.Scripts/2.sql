@@ -519,6 +519,7 @@ begin
   with LinkedList (RouteId
                  , RouteLocationId
                  , RouteName
+                 , Distance
                  , CurrentLocationId
                  , PreviousLocationId
                  , [Level])
@@ -527,6 +528,7 @@ begin
     select r1.Id as RouteId
          , rl1.Id as RouteLocationId
          , r1.[Name] as RouteName
+         , rl1.Distance as Distance
          , rl1.CurrentLocationId as CurrentLocationId
          , rl1.PreviousLocationId as PreviousLocationId
          , 0 as [Level]
@@ -544,6 +546,7 @@ begin
     select r2.Id as RouteId
          , rl2.Id as RouteLocationId
          , r2.[Name] as RouteName
+         , rl2.Distance as Distance
          , rl2.CurrentLocationId as CurrentLocationId
          , rl2.PreviousLocationId as PreviousLocationId
          , [Level] + 1 as [Level]
@@ -560,6 +563,7 @@ begin
   select ll.RouteId as RouteId
        , ll.RouteLocationId as RouteLocationId
        , ll.RouteName as RouteName
+       , ll.Distance as Distance
        , ll.CurrentLocationId as CurrentLocationId
        , ll.PreviousLocationId as PreviousLocationId
 
@@ -668,9 +672,9 @@ begin
        , r.Name              as RouteName
 
        , srl.RouteLocationId as RouteLocationId
-       , srl.Name            as RouteLocationName
        , srl.ArrivalTime     as ArrivalTime
        , srl.DeparuteTime    as DeparuteTime
+       , rl.Distance         as Distance
 
        , li.FullName         as LocationFullName    
        , li.Name             as LocationName    

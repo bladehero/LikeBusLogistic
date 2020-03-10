@@ -25,6 +25,16 @@
 <script>
     App.footer.setBreadcrumbs([{ name: 'Маршруты', url: '@Url.Action("_FullInformation", "Route")' }, { name: 'Новый маршрут' }]);
 
+    function getDistanceTitle(first, last) {
+        let hasDifferentCountries = first.countryName !== last.countryName;
+        let distanceName = (first.cityName || first.name || '?') +
+                           (hasDifferentCountries ? ' (' + (first.countryName || '?') + ')' : '') + 
+                           ' - ' + (last.cityName || last.name || '?') +
+                           (hasDifferentCountries ? ' (' + (last.countryName || '?') + ')' : '');
+        let title = distanceName;
+        return title;
+    }
+
     function initPosition() {
         App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
         App.geo.route.clear();
@@ -33,9 +43,34 @@
         for (let location of App.geo.locations) {
             location.marker.off('click');
             if (location.data.id !== @Model.StartLocation.Id) {
-                location.marker.on('click', function () {
-                    addToRoute(location.data);
-                    location.marker.off('click');
+                location.marker.on('click', async function () {
+                    let first = App.geo.route.routeLocations[App.geo.route.routeLocations.length - 1];
+                    let last = location.data;
+                    let title = getDistanceTitle(first, last);
+                    await Swal.fire({
+                        title: title,
+                        input: 'number',
+                        inputPlaceholder: 'Расстояние (км.)'
+                    }).then(result => {
+                        if (result.value != null) {
+                            location.data.distance = result.value;
+                            let first = addToRoute(location.data);
+                            location.marker.off('click').on('click', async function () {
+                                let last = location.data;
+                                let title = getDistanceTitle(first, last);
+                                await Swal.fire({
+                                    title: title,
+                                    input: 'number',
+                                    inputPlaceholder: 'Расстояние (км.)'
+                                }).then(result => {
+                                    if (result.value != null) {
+                                        location.data.distance = result.value;
+                                        resetRouteList();
+                                    }
+                                });
+                            });
+                        }
+                    });
                 });
             }
         }
@@ -55,11 +90,24 @@
         }
     }
 
+    function resetRouteList() {
+        let html = '';
+        for (let location of App.geo.route.routeLocations) {
+            html += '<li><span data-location-id="' + location.id + '"> '
+            if (location.distance != null) {
+                html += '(' + location.distance + 'км.) ';
+            }
+            html += location.fullName + '</span></li>';
+        }
+        $('#route-location-list').html(html);
+    }
+
     function addToRoute(location) {
+        let previous = App.geo.route.routeLocations[App.geo.route.routeLocations.length - 1];
         App.geo.route.routeLocations[App.geo.route.routeLocations.length] = location;
-        var element = '<li><span data-location-id="' + location.id + '">' + location.fullName + '</span></li>';
-        $('#route-location-list').append(element);
-        App.geo.route.setRouteLocations(App.geo.route.routeLocations);
+        resetRouteList();
+        App.geo.route.setRouteLocations(App.geo.route.routeLocations); 
+        return previous;
     }
 
     async function saveRoute() {

@@ -5,6 +5,7 @@
         public int RouteId { get; set; }
         public int RouteLocationId { get; set; }
         public string RouteName { get; set; }
+        public double Distance { get; set; }
         public double EstimatedDurationInHours { get; set; }
         public double StopDurationInHours { get; set; }
 

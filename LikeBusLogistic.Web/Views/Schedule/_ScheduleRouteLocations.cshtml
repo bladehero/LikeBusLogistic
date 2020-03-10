@@ -2,6 +2,7 @@
 @{
     var first = Model.ScheduleRouteLocations.FirstOrDefault();
     var last = Model.ScheduleRouteLocations.LastOrDefault();
+    double totalDistance = 0;
 }
 
 <div class="uk-grid-small" uk-grid>
@@ -23,13 +24,20 @@
 </div>
 @foreach (var scheduleRouteLocation in Model.ScheduleRouteLocations)
 {
-    <div class="uk-grid-small" uk-grid>
+    totalDistance += scheduleRouteLocation.Distance;
+    <div class="uk-grid-small location-table" uk-grid>
         <div class="uk-width-expand">
-            <input class="uk-input" type="text" value="@scheduleRouteLocation.RouteLocationFullName" disabled>
+            <input class="uk-input"
+                   name="routeLocation"
+                   data-route-location-id="@scheduleRouteLocation.RouteLocationId" 
+                   type="text" 
+                   value="@scheduleRouteLocation.RouteLocationFullName" 
+                   disabled>
         </div>
         <div class="uk-width-1-6 uk-flex uk-flex-inline">
             <input class="uk-input uk-width-expand timepicker"
                    type="text"
+                   name="arrivalTime"
                    value="@scheduleRouteLocation.ArrivalTime"
                    placeholder="Прибытие..."
                    @(scheduleRouteLocation.Equals(first) ? "disabled" : "")>
@@ -46,6 +54,7 @@
                    type="text"
                    value="@scheduleRouteLocation.DeparuteTime"
                    placeholder="Отправление..."
+                   name="deparuteTime"
                    @(scheduleRouteLocation.Equals(last) ? "disabled" : "")>
             @if (!scheduleRouteLocation.Equals(last))
             {
@@ -53,18 +62,72 @@
             }
         </div>
         <div class="uk-width-1-6">
-            <input class="uk-input" type="number" step="1" value="0" placeholder="Расстояние...">
+            <input class="uk-input" type="number" step="1" value="@totalDistance" placeholder="Расстояние..." disabled>
         </div>
     </div>
 }
 
+<div class="uk-margin uk-width-1-1">
+    <button class="uk-button uk-button-primary uk-float-right" id="save-schedule-btn">Сохранить</button>
+</div>
+
 <script>
     $(document).ready(function () {
-        $('.timepicker').timepicki({ show_meridian: false });
+        $('.timepicker').timepicki({
+		    show_meridian:false,
+		    min_hour_value:0,
+		    max_hour_value:23,
+		    step_size_minutes:1,
+		    overflow_minutes:true,
+            increase_direction: 'up'
+        });
         $('div.time_pick').css({ width: '-webkit-fill-available' });
         $('.clean-time').click(function () {
             let _this = this;
             $(_this).siblings('div.time_pick').children('input').val(null);
+        });
+
+        function validate() {
+            let flag = true;
+            $('#save-schedule-grid input,select').find(':enabled').each(function (i, e) {
+                if (!$(e).val()) {
+                    flag = false;
+                    $(e).addClass('uk-form-danger').focus(function () {
+                        $(e).removeClass('uk-form-danger');
+                    });
+                }
+            });
+            return flag;
+        }
+
+        $('#save-schedule-btn').click(function () {
+            if (!validate()) {
+                App.message.showError('Ошибка валидации', 'Заполните все поля!');
+                return;
+            }
+
+            let schedule = {};
+            let locations = [];
+            let parent = $('#save-schedule-grid');
+            let tables = $('.location-table');
+
+            debugger;
+
+            schedule.id = parent.find('input[name="id"]').val();
+            schedule.name = parent.find('input[name="name"]').val();
+            schedule.routeId = parent.find('select[name="routeId"]').val();
+            tables.each(function (i, e) {
+                var location = {
+                    scheduleId: schedule.id
+                };
+                location.routeLocationId = $(e).find('input[name="routeLocation"]').data('route-location-id');
+                location.arrivalTime = $(e).find('input[name="arrivalTime"]').val();
+                location.deparuteTime = $(e).find('input[name="deparuteTime"]').val();
+                locations.push(location);
+            });
+
+            let data = { schedule: schedule, locations: locations };
+            App.postDataOnServer('@Url.Action("MergeSchedule", "Schedule")', data);
         });
     });
 </script>
