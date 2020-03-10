@@ -6,7 +6,7 @@
     <div class="uk-margin uk-width-1-2">
         <label class="uk-form-label" for="form-stacked-text">Наименование</label>
         <div class="uk-form-controls">
-            <input class="uk-input" name="producer" type="text" placeholder="Наименование..." value="@Model?.Schedule?.Name">
+            <input class="uk-input" name="name" type="text" placeholder="Наименование..." value="@Model?.Schedule?.Name">
         </div>
     </div>
 
@@ -18,17 +18,14 @@
              x => $"{x.Name} ({x.DepartureLocationName} - {x.ArrivalLocationName})",
              "Выберите маршрут...",
              Model?.Schedule?.RouteId,
-             new { @class = "uk-select", name = "routeId" })
+             new { @class = "uk-select", name = "routeId" },
+             x => new { data_suggested_name = x.Name })
         </div>
     </div>
 
     <div class="uk-margin uk-width-expand"
          id="schedule-route-locations">
 
-    </div>
-
-    <div class="uk-margin uk-margin-remove-top uk-margin-remove-top uk-width-1-1">
-        <button class="uk-button uk-button-primary uk-float-right" id="save-schedule-btn">Сохранить</button>
     </div>
 </div>
 
@@ -42,17 +39,15 @@
 
     $('select[name="routeId"]').change(function () {
         let _this = this;
-        var routeId = $(_this.selectedOptions).first().val();
+        let selected = $(_this.selectedOptions).first();
+        var routeId = selected.val();
         App.loadContent(
             '#schedule-route-locations',
             '@Url.Action("_ScheduleRouteLocations", "Schedule")',
-            { routeId: routeId },
+            { routeId: routeId }
         );
-        App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', routeId);
-    });
 
-    $('#save-schedule-btn').click(function () {
-        var data = App.serializeInputsToObject('#save-schedule-grid input');
-        App.postDataOnServer('@Url.Action("MergeSchedule", "Bus")', data);
+        $('input[name="name"]').val(selected.data('suggested-name'));
+        App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', routeId);
     });
 </script>

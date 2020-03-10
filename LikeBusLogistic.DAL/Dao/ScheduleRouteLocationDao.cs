@@ -14,15 +14,14 @@ namespace LikeBusLogistic.DAL.Dao
         public bool MergeScheduleRouteLocations(IEnumerable<ScheduleRouteLocation> scheduleRouteLocations)
         {
             var sb = new StringBuilder(
-            "merge dbo.ScheduleRouteLocation as trg" +
+            "merge dbo.ScheduleRouteLocation as trg " +
             "using" +
             "(" +
-            "  select s.Id" +
-            "       , s.Name" +
-            "       , s.ScheduleId" +
+            "  select s.ScheduleId" +
             "       , s.RouteLocationId" +
             "       , s.ArrivalTime" +
-            "       , s.DeparuteTime" +
+            "       , s.DeparuteTime " +
+            "       , s.ModifiedBy " +
             "  from" +
             "  (" +
             "    values");
@@ -36,12 +35,6 @@ namespace LikeBusLogistic.DAL.Dao
                     sb.Append(',');
                 }
                 sb.Append('(');
-                sb.Append(item.Id);
-                sb.Append(',');
-                sb.Append('\'');
-                sb.Append(item.Name);
-                sb.Append('\'');
-                sb.Append(',');
                 sb.Append(item.ScheduleId);
                 sb.Append(',');
                 sb.Append(item.RouteLocationId);
@@ -54,7 +47,7 @@ namespace LikeBusLogistic.DAL.Dao
                 }
                 else
                 {
-                    sb.Append("'null'");
+                    sb.Append("null");
                 }
                 sb.Append(',');
                 if (item.DeparuteTime.HasValue)
@@ -65,31 +58,32 @@ namespace LikeBusLogistic.DAL.Dao
                 }
                 else
                 {
-                    sb.Append("'null'");
+                    sb.Append("null");
                 }
+                sb.Append(',');
+                sb.Append(item.ModifiedBy);
                 sb.Append(')');
             }
 
             sb.Append(
-            "   ) as s(Id, Name, ScheduleId, RouteLocationId, ArrivalTime, DeparuteTime)"+
-            ") as src" +
-            "on trg.Id = src.Id" +
-            "  when matched then" +
-            "    update set Id = src.Id" +
-            "             , Name = src.Name" +
-            "             , ScheduleId = src.ScheduleId" +
-            "             , RouteLocationId = src.RouteLocationId" +
-            "             , ArrivalTime = src.ArrivalTime" +
-            "             , DeparuteTime = src.DeparuteTime" +
-            "  when not matched by target then" +
-            "    insert(Name, ScheduleId, RouteLocationId, ArrivalTime, DeparuteTime)" +
-            "    values(src.Name, src.ScheduleId, src.RouteLocationId, src.ArrivalTime, src.DeparuteTime)" +
-            "  when not matched by source then" +
-            "    update set IsDeleted = 0" +
-            "  ;");
+            "   ) as s(ScheduleId, RouteLocationId, ArrivalTime, DeparuteTime, ModifiedBy)" +
+            ") as src " +
+            "on trg.ScheduleId = src.ScheduleId and trg.RouteLocationId = src.RouteLocationId " +
+            "  when matched then " +
+            "    update set ScheduleId = src.ScheduleId " +
+            "             , RouteLocationId = src.RouteLocationId " +
+            "             , ArrivalTime = src.ArrivalTime " +
+            "             , DeparuteTime = src.DeparuteTime " +
+            "             , ModifiedBy = src.ModifiedBy " +
+            "             , DateModified = getdate() " +
+            "  when not matched by target then " +
+            "    insert(ScheduleId, RouteLocationId, ArrivalTime, DeparuteTime, ModifiedBy, CreatedBy) " +
+            "    values(src.ScheduleId, src.RouteLocationId, src.ArrivalTime, src.DeparuteTime, src.ModifiedBy, src.ModifiedBy) " +
+            "  when not matched by source then " +
+            "    update set IsDeleted = 0;");
 
             var sql = sb.ToString();
-            return Connection.Query<int>(sql).First() > 0;
+            return Connection.Execute(sql) > 0;
         }
     }
 }

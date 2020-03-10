@@ -18,6 +18,7 @@ namespace LikeBusLogistic.BLL
                 DriverManagement.AccountId = value;
                 GeolocationManagement.AccountId = value;
                 RouteManagement.AccountId = value;
+                ScheduleManagement.AccountId = value;
             }
         }
         public AccountManagementService AccountManagement { get; set; }

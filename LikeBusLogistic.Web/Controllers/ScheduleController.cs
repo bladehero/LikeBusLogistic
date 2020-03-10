@@ -58,35 +58,43 @@ namespace LikeBusLogistic.Web.Controllers
         [HttpGet]
         public IActionResult _ScheduleRouteLocations(int? routeId)
         {
-            var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(routeId).Data;
-
-            var scheduleRouteLocations = new List<ScheduleRouteLocationVM>(routeLocations.Count());
-            foreach (var routeLocation in routeLocations)
+            if (routeId.HasValue)
             {
-                scheduleRouteLocations.Add(new ScheduleRouteLocationVM
+                var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(routeId).Data;
+
+                var scheduleRouteLocations = new List<ScheduleRouteLocationVM>(routeLocations.Count());
+                foreach (var routeLocation in routeLocations)
                 {
-                   CityName = routeLocation.CurrentCityName,
-                   CountryName = routeLocation.CurrentCountryName,
-                   DistrictName = routeLocation.CurrentDistrictName,
-                   LocationName = routeLocation.CurrentName,
-                   RouteLocationId = routeLocation.RouteLocationId
-                });
-            }
+                    scheduleRouteLocations.Add(new ScheduleRouteLocationVM
+                    {
+                        CityName = routeLocation.CurrentCityName,
+                        CountryName = routeLocation.CurrentCountryName,
+                        DistrictName = routeLocation.CurrentDistrictName,
+                        LocationName = routeLocation.CurrentName,
+                        RouteLocationId = routeLocation.RouteLocationId,
+                        Distance = routeLocation.Distance
+                    });
+                }
 
-            var model = new ScheduleRouteLocationsVM
+                var model = new ScheduleRouteLocationsVM
+                {
+                    ScheduleRouteLocations = scheduleRouteLocations
+                };
+                return PartialView(model);
+            }
+            else
             {
-                ScheduleRouteLocations = scheduleRouteLocations
-            };
-            return PartialView(model);
+                return null;
+            }
         }
 
         [HttpPost]
-        public IActionResult MergeSchedule(VM.ViewModels.ScheduleVM scheduleVM)
+        public IActionResult MergeSchedule(VM.ViewModels.ScheduleVM schedule, IEnumerable<ScheduleRouteLocationVM> locations)
         {
             var result = new Result();
             try
             {
-                var mergeScheduleResult = ServiceFactory.ScheduleManagement.MergeSchedule(scheduleVM);
+                var mergeScheduleResult = ServiceFactory.ScheduleManagement.MergeSchedule(schedule, locations);
                 result.Success = mergeScheduleResult.Success;
                 result.Message = mergeScheduleResult.Message;
             }

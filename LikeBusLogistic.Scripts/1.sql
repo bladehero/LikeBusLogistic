@@ -338,7 +338,6 @@ if not exists (select 1
   create table dbo.ScheduleRouteLocation
   (
     Id int not null primary key identity,
-    Name nvarchar(100) not null,
     ScheduleId int not null,
     RouteLocationId int not null,
     ArrivalTime time null,
@@ -381,11 +380,13 @@ go
  begin 
   if exists 
   (
-    select 1
+    select *
       from RouteLocation rl
       join Schedule s
         on rl.RouteId = s.RouteId
-      where 3 = rl.Id
+      where 1=1
+        and @scheduleId = s.Id
+        and @routeLocationId = rl.Id 
   ) 
   return 1;
   return 0;

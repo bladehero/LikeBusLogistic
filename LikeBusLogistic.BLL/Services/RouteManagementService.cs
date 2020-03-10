@@ -150,6 +150,7 @@ namespace LikeBusLogistic.BLL.Services
                         RouteId = routeId,
                         CurrentLocationId = location.Id,
                         PreviousLocationId = previousLocation?.Id,
+                        Distance = location.Distance,
                         CreatedBy = AccountId,
                         ModifiedBy = AccountId
                     });

@@ -83,9 +83,9 @@ namespace LikeBusLogistic.BLL.Services
                 schedule.ModifiedBy = AccountId;
                 UnitOfWork.ScheduleDao.Merge(schedule);
                 var scheduleRouteLocations = Mapper.Map<IEnumerable<ScheduleRouteLocation>>(scheduleRouteLocationVMs);
-                if (scheduleRouteLocationVMs?.Count() > 0 && isNew)
+                if (scheduleRouteLocationVMs?.Count() == 0 && isNew)
                 {
-                    var routeLocations = _routeManagementService.GetRouteLocations(scheduleVM.Id).Data;
+                    var routeLocations = _routeManagementService.GetRouteLocations(scheduleVM.RouteId).Data;
                     var list = new List<ScheduleRouteLocation>(routeLocations.Count());
                     foreach (var routeLocation in routeLocations)
                     {
@@ -93,12 +93,16 @@ namespace LikeBusLogistic.BLL.Services
                         {
                             CreatedBy = AccountId,
                             ModifiedBy = AccountId,
-                            ScheduleId = schedule.Id,
-                            Name = routeLocation.CurrentFullName,
                             RouteLocationId = routeLocation.RouteLocationId
                         });
                     }
                     scheduleRouteLocations = list;
+                }
+                foreach (var routeLocation in scheduleRouteLocations)
+                {
+                    routeLocation.ScheduleId = schedule.Id;
+                    routeLocation.ModifiedBy = AccountId;
+                    routeLocation.CreatedBy = AccountId;
                 }
                 UnitOfWork.ScheduleRouteLocationDao.MergeScheduleRouteLocations(scheduleRouteLocations);
 
