@@ -645,7 +645,7 @@ begin
      and s.Id  = isnull(@scheduleId, s.Id)  
   
 end;  
-
+go
 
 if object_id(N'dbo.GetScheduleInfo') is null
   exec('create procedure dbo.GetScheduleInfo as set nocount on;');
@@ -673,7 +673,7 @@ begin
 
        , srl.RouteLocationId as RouteLocationId
        , srl.ArrivalTime     as ArrivalTime
-       , srl.DeparuteTime    as DeparuteTime
+       , srl.DepartureTime   as DepartureTime
        , rl.Distance         as Distance
 
        , li.FullName         as LocationFullName    

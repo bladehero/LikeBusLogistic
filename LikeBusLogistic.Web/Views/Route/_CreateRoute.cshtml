@@ -61,7 +61,8 @@
                                 await Swal.fire({
                                     title: title,
                                     input: 'number',
-                                    inputPlaceholder: 'Расстояние (км.)'
+                                    inputPlaceholder: 'Расстояние (км.)',
+                                    inputValue: location.data.distance
                                 }).then(result => {
                                     if (result.value != null) {
                                         location.data.distance = result.value;

@@ -7,10 +7,12 @@ namespace LikeBusLogistic.VM.ViewModels
         public int ScheduleId { get; set; }
         public int RouteLocationId { get; set; }
         public TimeSpan? ArrivalTime { get; set; }
-        public TimeSpan? DeparuteTime { get; set; }
+        public TimeSpan? DepartureTime { get; set; }
 
         public string ScheduleName { get; set; }
         public double Distance { get; set; }
+
+        public string LocationFullName { get; set; }
 
         public string LocationName { get; set; }
         public string CityName { get; set; }
@@ -19,9 +21,9 @@ namespace LikeBusLogistic.VM.ViewModels
         public string RouteLocationFullName =>
             string.Join(", ", new string[] { LocationName, CityName, DistrictName, CountryName });
 
-        public int? DurationInMinutes => 
-            DeparuteTime.HasValue && ArrivalTime.HasValue ?
-            Math.Abs((int)(ArrivalTime.Value.TotalMinutes - DeparuteTime.Value.TotalMinutes))
+        public int? DurationInMinutes =>
+            DepartureTime.HasValue && ArrivalTime.HasValue ?
+            Math.Abs((int)(ArrivalTime.Value.TotalMinutes - DepartureTime.Value.TotalMinutes))
             : 0;
 
         public bool IsDeleted { get; set; }

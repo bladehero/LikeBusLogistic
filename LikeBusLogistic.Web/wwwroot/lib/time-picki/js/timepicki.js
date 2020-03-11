@@ -254,7 +254,7 @@
 			});
 
 			// open or close time picker when clicking
-			$(document).on("click", function(event) {
+			$(document).on("click", function (event) {
 				if (!$(event.target).is(ele_next) && ele_next.css("display")=="block" && !$(event.target).is($('.reset_time'))) {
 					if (!$(event.target).is(ele)) {
 						set_value(event, !is_element_in_timepicki($(event.target)));
@@ -274,15 +274,16 @@
 			ele.on('focus', open_timepicki);
 
 			// select all text in input when user focuses on it
-			inputs.on('focus', function() {
+			inputs.on('focus', function () {
 				var input = $(this);
 				if (!input.is(ele)) {
 					input.select();
 				}
+
 			});
 
 			// allow user to increase and decrease numbers using arrow keys
-			inputs.on('keydown', function(e) {
+			inputs.on('keydown', function (e) {
 				var direction, input = $(this);
 
 				// UP
@@ -308,10 +309,11 @@
 				} else if (input.closest('.timepicker_wrap .meridian').length && settings.show_meridian) {
 					change_meri(null, direction);
 				}
+				$(this).trigger('change');
 			});
 
 			// close the modal when the time picker loses keyboard focus
-			inputs.on('blur', function() {
+			inputs.on('blur', function () {
 				setTimeout(function() {
 					var focused_element = $(document.activeElement);
 					if (focused_element.is(':input') && !is_element_in_timepicki(focused_element)) {
@@ -319,6 +321,7 @@
 						close_timepicki();
 					}
 				}, 0);
+				$(this).trigger('change');
 			});
 
 			function is_element_in_timepicki(jquery_element) {

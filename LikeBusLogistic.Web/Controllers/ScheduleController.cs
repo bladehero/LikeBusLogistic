@@ -56,9 +56,19 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult _ScheduleRouteLocations(int? routeId)
+        public IActionResult _ScheduleRouteLocations(int? scheduleId, int? routeId, bool isModal = false)
         {
-            if (routeId.HasValue)
+            if (scheduleId.HasValue)
+            {
+                var scheduleRouteLocations = ServiceFactory.ScheduleManagement.GetScheduleRouteLocations(scheduleId).Data;
+                var model = new ScheduleRouteLocationsVM
+                {
+                    ScheduleRouteLocations = scheduleRouteLocations,
+                    IsModal = isModal
+                };
+                return PartialView(model);
+            }
+            else if (routeId.HasValue)
             {
                 var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(routeId).Data;
 
@@ -84,7 +94,7 @@ namespace LikeBusLogistic.Web.Controllers
             }
             else
             {
-                return null;
+                return Content("");
             }
         }
 

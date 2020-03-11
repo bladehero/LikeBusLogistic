@@ -26,7 +26,7 @@
         @foreach (var schedule in Model.Schedules)
         {
             <tr data-schedule-id="@schedule.Id" data-route-id="@schedule.RouteId">
-                <td>@schedule.Name</td>
+                <td><a class="schedule-info-link uk-link-text uk-text-warning" href="#modal-full" uk-toggle>@schedule.Name</a></td>
                 <td>@schedule.RouteName</td>
                 <td class="uk-float-right tool-cell-3">
                     @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-schedule-icon")
@@ -43,6 +43,17 @@
         }
     </tbody>
 </table>
+
+<div id="modal-full" class="uk-modal-full" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
+        <div class="uk-grid-collapse uk-child-width-expand uk-flex-middle" uk-grid  uk-height-viewport>
+            <div class="uk-padding-large" id="schedule-modal-content">
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     App.footer.setBreadcrumbs([
         { name: 'Автобусы', url: '@Url.Action("_FullInformation", "Schedule")' },
@@ -72,6 +83,15 @@
             let id = _this.parents('tr').first().data('route-id');
             App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', id);
             $('#clean-route-button').removeClass('uk-hidden');
+        });
+
+        $('.schedule-info-link').click(function () {
+            var scheduleId = $(this).parents('tr').data('schedule-id');
+            App.loadContent(
+                '#schedule-modal-content',
+                '@Url.Action("_ScheduleRouteLocations", "Schedule")',
+                { scheduleId: scheduleId, isModal: true }
+            );
         });
 
         $('#clean-route-button').click(function () {

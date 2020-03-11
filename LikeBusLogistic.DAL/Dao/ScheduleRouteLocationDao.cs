@@ -20,7 +20,7 @@ namespace LikeBusLogistic.DAL.Dao
             "  select s.ScheduleId" +
             "       , s.RouteLocationId" +
             "       , s.ArrivalTime" +
-            "       , s.DeparuteTime " +
+            "       , s.DepartureTime " +
             "       , s.ModifiedBy " +
             "  from" +
             "  (" +
@@ -50,10 +50,10 @@ namespace LikeBusLogistic.DAL.Dao
                     sb.Append("null");
                 }
                 sb.Append(',');
-                if (item.DeparuteTime.HasValue)
+                if (item.DepartureTime.HasValue)
                 {
                     sb.Append('\'');
-                    sb.Append(item.DeparuteTime);
+                    sb.Append(item.DepartureTime);
                     sb.Append('\'');
                 }
                 else
@@ -66,19 +66,19 @@ namespace LikeBusLogistic.DAL.Dao
             }
 
             sb.Append(
-            "   ) as s(ScheduleId, RouteLocationId, ArrivalTime, DeparuteTime, ModifiedBy)" +
+            "   ) as s(ScheduleId, RouteLocationId, ArrivalTime, DepartureTime, ModifiedBy)" +
             ") as src " +
             "on trg.ScheduleId = src.ScheduleId and trg.RouteLocationId = src.RouteLocationId " +
             "  when matched then " +
             "    update set ScheduleId = src.ScheduleId " +
             "             , RouteLocationId = src.RouteLocationId " +
             "             , ArrivalTime = src.ArrivalTime " +
-            "             , DeparuteTime = src.DeparuteTime " +
+            "             , DepartureTime = src.DepartureTime " +
             "             , ModifiedBy = src.ModifiedBy " +
             "             , DateModified = getdate() " +
             "  when not matched by target then " +
-            "    insert(ScheduleId, RouteLocationId, ArrivalTime, DeparuteTime, ModifiedBy, CreatedBy) " +
-            "    values(src.ScheduleId, src.RouteLocationId, src.ArrivalTime, src.DeparuteTime, src.ModifiedBy, src.ModifiedBy) " +
+            "    insert(ScheduleId, RouteLocationId, ArrivalTime, DepartureTime, ModifiedBy, CreatedBy) " +
+            "    values(src.ScheduleId, src.RouteLocationId, src.ArrivalTime, src.DepartureTime, src.ModifiedBy, src.ModifiedBy) " +
             "  when not matched by source then " +
             "    update set IsDeleted = 0;");
 

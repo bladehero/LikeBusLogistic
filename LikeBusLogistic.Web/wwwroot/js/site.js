@@ -282,6 +282,14 @@
             } else {
                 setTimeout(hide, interval);
             }
+        },
+        toggle: function (interval) {
+            var toggle = () => UIkit.offcanvas('#offcanvas-slide').toggle();
+            if (!interval) {
+                toggle();
+            } else {
+                setTimeout(toggle, interval);
+            }
         }
     },
     message: {
@@ -454,7 +462,7 @@ $(document).ready(function () {
 
     $(document).keyup(function (obj) {
         if (!$(document.activeElement).parents().hasClass('uk-offcanvas-container')) {
-            if (obj.keyCode === 27) {
+            if (obj.keyCode === 113) {
                 let isClosedPopup = App.geo.closeAllPopups();
                 if (!isClosedPopup) {
                     if (App.footer.mode === 1) {
@@ -464,7 +472,7 @@ $(document).ready(function () {
                     }
                 }
             }
-            else if (obj.keyCode === 113) {
+            else if (obj.keyCode === 115) {
                 if (App.footer.mode === 1) {
                     App.footer.maximize();
                 } else if (App.footer.mode === 0) {
@@ -473,4 +481,12 @@ $(document).ready(function () {
             }
         }
     });
+
+    window.onkeydown = function (obj) {
+        if (obj.ctrlKey) {
+            if (obj.keyCode === 10) {
+                App.menu.toggle();
+            }
+        }
+    }
 });

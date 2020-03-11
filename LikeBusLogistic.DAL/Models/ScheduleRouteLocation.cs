@@ -6,6 +6,6 @@ namespace LikeBusLogistic.DAL.Models
         public int ScheduleId { get; set; }
         public int RouteLocationId { get; set; }
         public TimeSpan? ArrivalTime { get; set; }
-        public TimeSpan? DeparuteTime { get; set; }
+        public TimeSpan? DepartureTime { get; set; }
     }
 }

@@ -27,49 +27,55 @@
     totalDistance += scheduleRouteLocation.Distance;
     <div class="uk-grid-small location-table" uk-grid>
         <div class="uk-width-expand">
-            <input class="uk-input"
+            <input class="uk-input uk-form-small"
                    name="routeLocation"
-                   data-route-location-id="@scheduleRouteLocation.RouteLocationId" 
-                   type="text" 
-                   value="@scheduleRouteLocation.RouteLocationFullName" 
+                   data-route-location-id="@scheduleRouteLocation.RouteLocationId"
+                   type="text"
+                   value="@(scheduleRouteLocation.LocationFullName ?? scheduleRouteLocation.RouteLocationFullName)"
                    disabled>
         </div>
         <div class="uk-width-1-6 uk-flex uk-flex-inline">
-            <input class="uk-input uk-width-expand timepicker"
+            <input class="uk-input uk-form-small uk-width-expand timepicker @(scheduleRouteLocation.Equals(first) ? "" : "to-validate")"
                    type="text"
                    name="arrivalTime"
-                   value="@scheduleRouteLocation.ArrivalTime"
+                   value="@scheduleRouteLocation.ArrivalTime?.ToString(@"hh\:mm")"
                    placeholder="Прибытие..."
-                   @(scheduleRouteLocation.Equals(first) ? "disabled" : "")>
-            @if (!scheduleRouteLocation.Equals(first))
+                   @(scheduleRouteLocation.Equals(first) || Model.IsModal ? "disabled" : "")>
+            @if (!scheduleRouteLocation.Equals(first) && !Model.IsModal)
             {
                 <a href="#" class="uk-margin-small-left uk-margin-auto-vertical clean-time" uk-icon="close"></a>
             }
         </div>
         <div class="uk-width-1-6">
-            <input class="uk-input" type="text" placeholder="Длительность..." disabled>
+            <input class="uk-input uk-form-small stop-duration" type="text" placeholder="Длительность..." disabled>
         </div>
         <div class="uk-width-1-6 uk-flex uk-flex-inline">
-            <input class="uk-input timepicker"
+            <input class="uk-input uk-form-small timepicker @(scheduleRouteLocation.Equals(last) ? "" : "to-validate")"
                    type="text"
-                   value="@scheduleRouteLocation.DeparuteTime"
+                   value="@scheduleRouteLocation.DepartureTime?.ToString(@"hh\:mm")"
                    placeholder="Отправление..."
-                   name="deparuteTime"
-                   @(scheduleRouteLocation.Equals(last) ? "disabled" : "")>
-            @if (!scheduleRouteLocation.Equals(last))
+                   name="departureTime"
+                   @(scheduleRouteLocation.Equals(last) || Model.IsModal ? "disabled" : "")>
+            @if (!scheduleRouteLocation.Equals(last) && !Model.IsModal)
             {
                 <a href="#" class="uk-margin-small-left uk-margin-auto-vertical clean-time" uk-icon="close"></a>
             }
         </div>
         <div class="uk-width-1-6">
-            <input class="uk-input" type="number" step="1" value="@totalDistance" placeholder="Расстояние..." disabled>
+            <input class="uk-input uk-form-small" type="number" step="1" value="@totalDistance" placeholder="Расстояние..." disabled>
         </div>
     </div>
 }
+@if (Model.IsModal)
+{
 
-<div class="uk-margin uk-width-1-1">
-    <button class="uk-button uk-button-primary uk-float-right" id="save-schedule-btn">Сохранить</button>
-</div>
+}
+else
+{
+    <div class="uk-margin uk-width-1-1">
+        <button class="uk-button uk-button-primary uk-float-right" id="save-schedule-btn">Сохранить</button>
+    </div>
+}
 
 <script>
     $(document).ready(function () {
@@ -87,9 +93,34 @@
             $(_this).siblings('div.time_pick').children('input').val(null);
         });
 
+        function diff(start, end) {
+            start = start.split(":");
+            end = end.split(":");
+            var startDate = new Date(0, 0, 0, start[0], start[1], 0);
+            var endDate = new Date(0, 0, 0, end[0], end[1], 0);
+            var diff = endDate.getTime() - startDate.getTime();
+            var hours = Math.floor(diff / 1000 / 60 / 60);
+            diff -= hours * 1000 * 60 * 60;
+            var minutes = Math.floor(diff / 1000 / 60);
+
+            return minutes;
+        }
+
+        $('input[name="arrivalTime"], input[name="departureTime"], .timepicki-input').on('change input cut paste click', function () {
+            let grid = $(this).parents('.location-table');
+            arrival = grid.find('input[name="arrivalTime"]').val();
+            departure = grid.find('input[name="departureTime"]').val();
+            let minutes = diff(arrival, departure);
+            if (minutes != null && !isNaN(minutes)) {
+                grid.find('input.stop-duration').val(minutes);
+            } else {
+                grid.find('input.stop-duration').val(null);
+            }
+        }).click();
+
         function validate() {
             let flag = true;
-            $('#save-schedule-grid input,select').find(':enabled').each(function (i, e) {
+            $('#save-schedule-grid input.to-validate,select.to-validate').each(function (i, e) {
                 if (!$(e).val()) {
                     flag = false;
                     $(e).addClass('uk-form-danger').focus(function () {
@@ -111,8 +142,6 @@
             let parent = $('#save-schedule-grid');
             let tables = $('.location-table');
 
-            debugger;
-
             schedule.id = parent.find('input[name="id"]').val();
             schedule.name = parent.find('input[name="name"]').val();
             schedule.routeId = parent.find('select[name="routeId"]').val();
@@ -122,7 +151,7 @@
                 };
                 location.routeLocationId = $(e).find('input[name="routeLocation"]').data('route-location-id');
                 location.arrivalTime = $(e).find('input[name="arrivalTime"]').val();
-                location.deparuteTime = $(e).find('input[name="deparuteTime"]').val();
+                location.departureTime = $(e).find('input[name="departureTime"]').val();
                 locations.push(location);
             });
 

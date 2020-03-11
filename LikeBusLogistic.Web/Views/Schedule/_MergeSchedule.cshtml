@@ -6,7 +6,7 @@
     <div class="uk-margin uk-width-1-2">
         <label class="uk-form-label" for="form-stacked-text">Наименование</label>
         <div class="uk-form-controls">
-            <input class="uk-input" name="name" type="text" placeholder="Наименование..." value="@Model?.Schedule?.Name">
+            <input class="uk-input to-validate" name="name" type="text" placeholder="Наименование..." value="@Model?.Schedule?.Name">
         </div>
     </div>
 
@@ -18,7 +18,9 @@
              x => $"{x.Name} ({x.DepartureLocationName} - {x.ArrivalLocationName})",
              "Выберите маршрут...",
              Model?.Schedule?.RouteId,
-             new { @class = "uk-select", name = "routeId" },
+             (Model?.Schedule?.RouteId == null 
+             ? (object)new { @class = "uk-select to-validate", name = "routeId" } 
+             : (object)new { @class = "uk-select", name = "routeId", disabled = "disabled" }),
              x => new { data_suggested_name = x.Name })
         </div>
     </div>
@@ -37,17 +39,33 @@
     App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
     App.geo.route.clear();
 
-    $('select[name="routeId"]').change(function () {
-        let _this = this;
-        let selected = $(_this.selectedOptions).first();
+    $('select[name="routeId"]').change(getSchedule);
+    getSchedule();
+    
+    function getSchedule() {
+        let selectList = $('select[name="routeId"]');
+        let selected = $(selectList).find('option:selected').first();
+
+        var data = {};
+        var scheduleId = $('#save-schedule-grid input[name="id"]').val();
+        if (scheduleId) {
+            data.scheduleId = scheduleId;
+        }
         var routeId = selected.val();
+        data.routeId = routeId;
+
         App.loadContent(
             '#schedule-route-locations',
             '@Url.Action("_ScheduleRouteLocations", "Schedule")',
-            { routeId: routeId }
+            data
         );
 
-        $('input[name="name"]').val(selected.data('suggested-name'));
+        @if (Model?.Schedule?.Id == null)
+        {
+            @:var abbreviation = (selected.data('suggested-name') || '').replace(/[a-zа-я]/g, '').replace(/[^A-ZА-Я]/g, "");
+            @:var suggestedName = abbreviation ? new Date().toLocaleDateString().split('/').reverse().join('') + '-' + abbreviation : '';
+            @:$('input[name="name"]').val(suggestedName);
+        }
         App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', routeId);
-    });
+    }
 </script>

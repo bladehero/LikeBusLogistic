@@ -319,7 +319,7 @@ if not exists (select 1
   create table dbo.Schedule
   (
     Id int not null primary key identity,
-    Name nvarchar(100) not null,
+    Name nvarchar(100) not null unique,
     RouteId int not null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
@@ -330,7 +330,7 @@ if not exists (select 1
     constraint FK_dbo_Schedule_RouteId_dbo_Route_Id foreign key (RouteId) references [Route](Id)
   );
 go
-
+ 
 if not exists (select 1 
                from sys.tables t 
                where t.name='ScheduleRouteLocation' 
@@ -341,7 +341,7 @@ if not exists (select 1
     ScheduleId int not null,
     RouteLocationId int not null,
     ArrivalTime time null,
-    DeparuteTime time null,
+    DepartureTime time null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
     DateCreated datetime not null default(getdate()),
