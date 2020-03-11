@@ -1,35 +1,35 @@
 ﻿@model MergeScheduleVM
 
-<div class="uk-grid-small" uk-grid id="save-schedule-grid">
-    <input type="hidden" name="id" value="@Model?.Schedule?.Id" />
+    <div class="uk-grid-small" uk-grid id="save-schedule-grid">
+        <input type="hidden" name="id" value="@Model?.Schedule?.Id" />
 
-    <div class="uk-margin uk-width-1-2">
-        <label class="uk-form-label" for="form-stacked-text">Наименование</label>
-        <div class="uk-form-controls">
-            <input class="uk-input to-validate" name="name" type="text" placeholder="Наименование..." value="@Model?.Schedule?.Name">
+        <div class="uk-margin uk-width-1-2">
+            <label class="uk-form-label">Маршрут</label>
+            <div class="uk-form-controls">
+                @Model.Routes.SelectListWithEmptyOption(
+                 x => x.Id,
+                 x => $"{x.Name} ({x.DepartureLocationName} - {x.ArrivalLocationName})",
+                 "Выберите маршрут...",
+                 Model?.Schedule?.RouteId,
+                 (Model?.Schedule?.RouteId == null
+                 ? (object)new { @class = "uk-select to-validate", name = "routeId" }
+                 : (object)new { @class = "uk-select", name = "routeId", disabled = "disabled" }),
+                 x => new { data_suggested_name = x.Name })
+            </div>
+        </div>
+
+        <div class="uk-margin uk-width-1-2">
+            <label class="uk-form-label" for="form-stacked-text">Наименование</label>
+            <div class="uk-form-controls">
+                <input class="uk-input to-validate" name="name" type="text" placeholder="Наименование..." value="@Model?.Schedule?.Name">
+            </div>
+        </div>
+
+        <div class="uk-margin uk-width-expand"
+             id="schedule-route-locations">
+
         </div>
     </div>
-
-    <div class="uk-margin uk-width-1-2">
-        <label class="uk-form-label">Маршрут</label>
-        <div class="uk-form-controls">
-            @Model.Routes.SelectListWithEmptyOption(
-             x => x.Id,
-             x => $"{x.Name} ({x.DepartureLocationName} - {x.ArrivalLocationName})",
-             "Выберите маршрут...",
-             Model?.Schedule?.RouteId,
-             (Model?.Schedule?.RouteId == null 
-             ? (object)new { @class = "uk-select to-validate", name = "routeId" } 
-             : (object)new { @class = "uk-select", name = "routeId", disabled = "disabled" }),
-             x => new { data_suggested_name = x.Name })
-        </div>
-    </div>
-
-    <div class="uk-margin uk-width-expand"
-         id="schedule-route-locations">
-
-    </div>
-</div>
 
 <script>
     App.footer.setBreadcrumbs([

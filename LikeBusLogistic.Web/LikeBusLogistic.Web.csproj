@@ -53,6 +53,9 @@
     <Content Update="Views\Schedule\_MergeSchedule.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Schedule\_ScheduleInfo.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Schedule\_ScheduleRouteLocations.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

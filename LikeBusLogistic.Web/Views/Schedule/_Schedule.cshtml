@@ -89,7 +89,7 @@
             var scheduleId = $(this).parents('tr').data('schedule-id');
             App.loadContent(
                 '#schedule-modal-content',
-                '@Url.Action("_ScheduleRouteLocations", "Schedule")',
+                '@Url.Action("_ScheduleInfo", "Schedule")',
                 { scheduleId: scheduleId, isModal: true }
             );
         });

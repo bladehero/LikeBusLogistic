@@ -380,13 +380,12 @@ go
  begin 
   if exists 
   (
-    select *
-      from RouteLocation rl
-      join Schedule s
-        on rl.RouteId = s.RouteId
+    select 1
+      from ScheduleRouteLocation srl
+      join Schedule s on srl.ScheduleId = s.Id
       where 1=1
         and @scheduleId = s.Id
-        and @routeLocationId = rl.Id 
+        and @routeLocationId = srl.RouteLocationId 
   ) 
   return 1;
   return 0;

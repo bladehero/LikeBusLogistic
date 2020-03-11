@@ -365,7 +365,7 @@ begin
 
   insert @result
   select l.Id
-       , concat(l.Name, ' ('+concat( ctr.Name, ', '+d.Name, ', '+c.Name)+')') as FullName
+       , concat(l.Name, ' ('+concat( c.Name, ', '+d.Name, ', '+ctr.Name)+')') as FullName
        , l.Name
        , l.Latitude
        , l.Longtitude
@@ -652,7 +652,7 @@ if object_id(N'dbo.GetScheduleInfo') is null
 go
 
 -- ============================================================================  
--- Example    : exec dbo.GetScheduleInfo  
+-- Example    : exec dbo.GetScheduleInfo  5
 -- Author     : Nikita Dermenzhi  
 -- Date       : 01/03/2020  
 -- Description: —  

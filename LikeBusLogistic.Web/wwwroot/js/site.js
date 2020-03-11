@@ -110,7 +110,7 @@
                 let latlngs = [];
                 for (var i = 0; i < routeLocations.length; i++) {
                     latlngs.push([routeLocations[i].latitude || routeLocations[i].routeLocation.currentLatitude,
-                        routeLocations[i].longtitude || routeLocations[i].routeLocation.currentLongtitude]);
+                    routeLocations[i].longtitude || routeLocations[i].routeLocation.currentLongtitude]);
                 }
                 let options = { use: L.polyline, delay: 800, dashArray: [10, 10], weight: 6, color: "#C3C3FF", pulseColor: "#0059FF" };
                 let path = new L.Polyline.AntPath(latlngs, options);
@@ -128,6 +128,7 @@
                 for (let routeLocation of App.geo.route.routeLocations) {
                     let l = App.geo.getLocationById(routeLocation.routeLocation.currentLocationId);
                     if (l && l.data) {
+                        l.data.distance = routeLocation.routeLocation.distance;
                         locations.push(l.data);
                     }
                 }
@@ -463,13 +464,10 @@ $(document).ready(function () {
     $(document).keyup(function (obj) {
         if (!$(document.activeElement).parents().hasClass('uk-offcanvas-container')) {
             if (obj.keyCode === 113) {
-                let isClosedPopup = App.geo.closeAllPopups();
-                if (!isClosedPopup) {
-                    if (App.footer.mode === 1) {
-                        App.footer.hide();
-                    } else if (App.footer.mode === -1) {
-                        App.footer.show();
-                    }
+                if (App.footer.mode === 1) {
+                    App.footer.hide();
+                } else if (App.footer.mode === -1) {
+                    App.footer.show();
                 }
             }
             else if (obj.keyCode === 115) {
@@ -478,6 +476,9 @@ $(document).ready(function () {
                 } else if (App.footer.mode === 0) {
                     App.footer.show();
                 }
+            }
+            else if (obj.keyCode === 27) {
+                let isClosedPopup = App.geo.closeAllPopups();
             }
         }
     });

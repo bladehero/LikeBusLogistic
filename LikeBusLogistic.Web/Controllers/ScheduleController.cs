@@ -55,8 +55,50 @@ namespace LikeBusLogistic.Web.Controllers
             return PartialView(model);
         }
 
+        public IActionResult _ScheduleInfo(int? scheduleId, bool isPrint = false)
+        {
+            var schedule = ServiceFactory.ScheduleManagement.GetSchedule(scheduleId).Data;
+            var scheduleRouteLocations = ServiceFactory.ScheduleManagement.GetScheduleRouteLocations(scheduleId).Data;
+
+
+            double totalDistance = Math.Round(scheduleRouteLocations.Sum(x => x.Distance), 1);
+            int totalTime = 0;
+            ScheduleRouteLocationVM previousLocation = null;
+            foreach (var currentLocation in scheduleRouteLocations)
+            {
+                if (previousLocation != null)
+                {
+                    var minutes = (currentLocation.ArrivalTime - previousLocation.DepartureTime).Value.TotalMinutes;
+                    var duration = (int)(minutes < 0 ? minutes + new TimeSpan(1, 0, 0, 0).TotalMinutes : minutes);
+                    totalTime += duration; 
+                }
+                previousLocation = currentLocation;
+            }
+            var first = scheduleRouteLocations.First();
+            var last = scheduleRouteLocations.Last();
+
+            var model = new ScheduleInfoVM
+            {
+                Schedule = schedule,
+                ScheduleRouteLocations = scheduleRouteLocations,
+                First = first,
+                Last = last,
+                TotalDistance = totalDistance,
+                TotalTime = new TimeSpan(0, totalTime, 0),
+                IsPrint = isPrint
+            };
+            if (isPrint)
+            {
+                return View(model);
+            }
+            else
+            {
+                return PartialView(model);
+            }
+        }
+
         [HttpGet]
-        public IActionResult _ScheduleRouteLocations(int? scheduleId, int? routeId, bool isModal = false)
+        public IActionResult _ScheduleRouteLocations(int? scheduleId, int? routeId)
         {
             if (scheduleId.HasValue)
             {
@@ -64,7 +106,6 @@ namespace LikeBusLogistic.Web.Controllers
                 var model = new ScheduleRouteLocationsVM
                 {
                     ScheduleRouteLocations = scheduleRouteLocations,
-                    IsModal = isModal
                 };
                 return PartialView(model);
             }
