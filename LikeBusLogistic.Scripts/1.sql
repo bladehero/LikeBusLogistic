@@ -59,47 +59,6 @@ go
 
 if not exists (select 1 
                from sys.tables t 
-               where t.name='Vehicle' 
-               and t.schema_id = schema_id('dbo'))
-  create table dbo.Vehicle
-  (
-    Id int not null primary key identity,
-    Producer nvarchar(100) not null,
-    Model nvarchar(100) not null,
-    PassengerCapacity int not null,
-    Description nvarchar(1000) null,
-    CreatedBy int null foreign key references Account(Id),
-    ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
-    IsDeleted bit not null default(0)
-  );
-go
-
-if not exists (select 1 
-               from sys.tables t 
-               where t.name='Bus' 
-               and t.schema_id = schema_id('dbo'))
-  create table dbo.Bus
-  (
-    Id int not null primary key identity,
-    VehicleId int null,
-    Number nvarchar(10) not null,
-    CrewCapacity int not null constraint DF_dbo_Bus_CrewCapacity default 2,
-    CreatedBy int null foreign key references Account(Id),
-    ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
-    IsDeleted bit not null default(0)
-
-    constraint FK_dbo_Bus_VehicleId_dbo_Vehicle_Id foreign key (VehicleId) references Vehicle(Id),
-    constraint UQ_dbo_Bus_Number unique (Number),
-    constraint CK_dbo_Bus_CrewCapacity check (CrewCapacity > 0)
-  );
-go
-
-if not exists (select 1 
-               from sys.tables t 
                where t.name='Driver' 
                and t.schema_id = schema_id('dbo'))
   create table dbo.Driver
@@ -133,26 +92,6 @@ if not exists (select 1
 
     constraint FK_dbo_DriverContact_DriverId_dbo_Driver_Id foreign key (DriverId) references Driver(Id),
     constraint UQ_dbo_DriverContact_Contact unique (Contact)
-  );
-go
-
-if not exists (select 1 
-               from sys.tables t 
-               where t.name='BusDriver' 
-               and t.schema_id = schema_id('dbo'))
-  create table dbo.BusDriver
-  (
-    Id int not null primary key identity,
-    BusId int not null,
-    DriverId int not null,
-    CreatedBy int null foreign key references Account(Id),
-    ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
-    IsDeleted bit not null default(0)
-
-    constraint FK_dbo_BusDriver_BusId_dbo_Bus_Id foreign key (BusId) references Bus(Id),
-    constraint FK_dbo_BusDriver_DriverId_dbo_Driver_Id foreign key (DriverId) references Driver(Id)
   );
 go
 
@@ -234,6 +173,69 @@ if not exists (select 1
     constraint FK_dbo_Location_CountryId_dbo_Country_Id foreign key (CountryId) references Country(Id),
     constraint FK_dbo_Location_DistrictId_dbo_District_Id foreign key (DistrictId) references District(Id),
     constraint FK_dbo_Location_CityId_dbo_City_Id foreign key (CityId) references City(Id)
+  );
+go
+
+if not exists (select 1 
+               from sys.tables t 
+               where t.name='Vehicle' 
+               and t.schema_id = schema_id('dbo'))
+  create table dbo.Vehicle
+  (
+    Id int not null primary key identity,
+    Producer nvarchar(100) not null,
+    Model nvarchar(100) not null,
+    PassengerCapacity int not null,
+    Description nvarchar(1000) null,
+    CreatedBy int null foreign key references Account(Id),
+    ModifiedBy int null foreign key references Account(Id),
+    DateCreated datetime not null default(getdate()),
+    DateModified datetime not null default(getdate()),
+    IsDeleted bit not null default(0)
+  );
+go
+
+if not exists (select 1 
+               from sys.tables t 
+               where t.name='Bus' 
+               and t.schema_id = schema_id('dbo'))
+  create table dbo.Bus
+  (
+    Id int not null primary key identity,
+    VehicleId int null,
+    Number nvarchar(10) not null,
+    CrewCapacity int not null constraint DF_dbo_Bus_CrewCapacity default 2,
+    CurrentLocationId int null,
+    CreatedBy int null foreign key references Account(Id),
+    ModifiedBy int null foreign key references Account(Id),
+    DateCreated datetime not null default(getdate()),
+    DateModified datetime not null default(getdate()),
+    IsDeleted bit not null default(0)
+
+    constraint FK_dbo_Bus_VehicleId_dbo_Vehicle_Id foreign key (VehicleId) references Vehicle(Id),
+    constraint UQ_dbo_Bus_Number unique (Number),
+    constraint CK_dbo_Bus_CrewCapacity check (CrewCapacity > 0),
+    constraint FK_dbo_BusLocation_LocationId_dbo_Location_Id foreign key (CurrentLocationId) references [Location](Id)
+  );
+go
+
+if not exists (select 1 
+               from sys.tables t 
+               where t.name='BusDriver' 
+               and t.schema_id = schema_id('dbo'))
+  create table dbo.BusDriver
+  (
+    Id int not null primary key identity,
+    BusId int not null,
+    DriverId int not null,
+    CreatedBy int null foreign key references Account(Id),
+    ModifiedBy int null foreign key references Account(Id),
+    DateCreated datetime not null default(getdate()),
+    DateModified datetime not null default(getdate()),
+    IsDeleted bit not null default(0)
+
+    constraint FK_dbo_BusDriver_BusId_dbo_Bus_Id foreign key (BusId) references Bus(Id),
+    constraint FK_dbo_BusDriver_DriverId_dbo_Driver_Id foreign key (DriverId) references Driver(Id)
   );
 go
 
@@ -406,8 +408,8 @@ if not exists (select 1
     Id int not null primary key identity,
     BusId int not null,
     ScheduleId int not null,
-    Departure datetime not null,
-    Arrival datetime not null,
+    Departure date not null,
+    Arrival date not null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
     DateCreated datetime not null default(getdate()),
@@ -441,5 +443,25 @@ if not exists (select 1
     constraint FK_dbo_TripDriver_DriverId_dbo_Driver_Id foreign key (DriverId) references Driver(Id),
     constraint FK_dbo_TripDriver_TripId_dbo_Trip_Id foreign key (TripId) references Trip(Id),
     constraint FK_dbo_TripDriver_LocationId_dbo_Location_Id foreign key (LocationId) references [Location](Id)
+  );
+go
+
+
+if not exists (select 1 
+               from sys.tables t 
+               where t.name='BusCoordinate' 
+               and t.schema_id = schema_id('dbo'))
+  create table dbo.BusCoordinate
+  (
+    Id int not null primary key,
+    Latitude float null,
+    Longtitude float null,
+    CreatedBy int null foreign key references Account(Id),
+    ModifiedBy int null foreign key references Account(Id),
+    DateCreated datetime not null default(getdate()),
+    DateModified datetime not null default(getdate()),
+    IsDeleted bit not null default(0)
+    
+    constraint FK_dbo_BusLocation_Id_dbo_Bus_Id foreign key (Id) references Bus(Id),
   );
 go
