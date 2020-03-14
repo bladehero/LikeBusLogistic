@@ -205,7 +205,6 @@ if not exists (select 1
     VehicleId int null,
     Number nvarchar(10) not null,
     CrewCapacity int not null constraint DF_dbo_Bus_CrewCapacity default 2,
-    CurrentLocationId int null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
     DateCreated datetime not null default(getdate()),
@@ -214,8 +213,7 @@ if not exists (select 1
 
     constraint FK_dbo_Bus_VehicleId_dbo_Vehicle_Id foreign key (VehicleId) references Vehicle(Id),
     constraint UQ_dbo_Bus_Number unique (Number),
-    constraint CK_dbo_Bus_CrewCapacity check (CrewCapacity > 0),
-    constraint FK_dbo_BusLocation_LocationId_dbo_Location_Id foreign key (CurrentLocationId) references [Location](Id)
+    constraint CK_dbo_Bus_CrewCapacity check (CrewCapacity > 0)
   );
 go
 
@@ -453,7 +451,9 @@ if not exists (select 1
                and t.schema_id = schema_id('dbo'))
   create table dbo.BusCoordinate
   (
-    Id int not null primary key,
+    Id int not null primary key identity,
+    BusId int not null,
+    LocationId int null,
     Latitude float null,
     Longtitude float null,
     CreatedBy int null foreign key references Account(Id),
@@ -462,6 +462,7 @@ if not exists (select 1
     DateModified datetime not null default(getdate()),
     IsDeleted bit not null default(0)
     
-    constraint FK_dbo_BusLocation_Id_dbo_Bus_Id foreign key (Id) references Bus(Id),
+    constraint FK_dbo_BusLocation_BusId_dbo_Bus_Id foreign key (BusId) references Bus(Id),
+    constraint FK_dbo_BusLocation_LocationId_dbo_Bus_Id foreign key (LocationId) references Location(Id),
   );
 go

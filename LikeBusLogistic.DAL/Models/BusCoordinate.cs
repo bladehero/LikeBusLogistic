@@ -2,7 +2,9 @@
 {
     public class BusCoordinate
     {
-        public double Latitude { get; set; }
-        public double Longtitude { get; set; }
+        public int BusId { get; set; }
+        public int? LocationId { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longtitude { get; set; }
     }
 }

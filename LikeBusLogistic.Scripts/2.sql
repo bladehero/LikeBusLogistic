@@ -726,3 +726,33 @@ begin
 
 end;
 go
+
+if object_id(N'dbo.GetTripInfo') is null
+  exec('create procedure dbo.GetTripInfo as set nocount on;');
+go
+
+-- ============================================================================
+-- Example    : exec dbo.GetTripInfo
+-- Author     : Nikita Dermenzhi
+-- Date       : 13/03/2020
+-- Description: —
+-- ============================================================================
+
+alter procedure dbo.GetTripInfo
+(  
+   @tripId as int = null,  
+   @withDeleted as bit = 0   
+)  
+as  
+begin  
+  
+  select *
+    from Trip t
+    join Bus b on t.BusId = b.Id
+    join BusCoordinate bc on bc.BusId
+    join Vehicle v on b.VehicleId = v.Id
+    join Schedule s on t.ScheduleId = s.Id
+    join Route r on r.Id = s.RouteId
+
+end;
+go
