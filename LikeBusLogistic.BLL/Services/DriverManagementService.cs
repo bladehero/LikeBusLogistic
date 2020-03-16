@@ -71,6 +71,33 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
+        public BaseResult<IEnumerable<DriverInfoVM>> GetDriversOrderByBus(int? busId)
+        {
+            var result = new BaseResult<IEnumerable<DriverInfoVM>>();
+            try
+            {
+                var drivers = UnitOfWork.StoredProcedureDao.GetDriverInfo(busId: busId, withDeleted: RoleName == Variables.RoleName.Administrator);
+                var driverInfoVMs = Mapper.Map<IEnumerable<DriverInfoVM>>(drivers);
+                if (busId.HasValue)
+                {
+                    foreach (var item in driverInfoVMs)
+                    {
+                        item.AttachedOnBus = item.BusId == busId.Value;
+                    }
+                    driverInfoVMs = driverInfoVMs.OrderBy(x => x.AttachedOnBus);
+                }
+                result.Data = driverInfoVMs;
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
         public BaseResult<IEnumerable<DriverContactVM>> GetDriverContacts()
         {
             var result = new BaseResult<IEnumerable<DriverContactVM>>();

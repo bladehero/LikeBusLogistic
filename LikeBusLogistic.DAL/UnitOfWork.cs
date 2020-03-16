@@ -22,6 +22,7 @@ namespace LikeBusLogistic.DAL
         public RouteDao RouteDao { get; set; }
         public RouteLocationDao RouteLocationDao { get; set; }
         public TripDao TripDao { get; set; }
+        public TripBusDao TripBusDao { get; set; }
         public TripBusDriverDao TripBusDriverDao { get; set; }
         public UserDao UserDao { get; set; }
         public VehicleDao VehicleDao { get; set; }
@@ -48,6 +49,7 @@ namespace LikeBusLogistic.DAL
             RouteDao = new RouteDao(connection);
             RouteLocationDao = new RouteLocationDao(connection);
             TripDao = new TripDao(connection);
+            TripBusDao = new TripBusDao(connection);
             TripBusDriverDao = new TripBusDriverDao(connection);
             UserDao = new UserDao(connection);
             VehicleDao = new VehicleDao(connection);

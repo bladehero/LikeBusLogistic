@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace LikeBusLogistic.VM.ViewModels
+namespace LikeBusLogistic.DAL.StoredProcedureResults
 {
-    public class TripVM
+    public class GetTrips_Result
     {
         public int Id { get; set; }
         public DateTime Departure { get; set; }
@@ -19,6 +21,5 @@ namespace LikeBusLogistic.VM.ViewModels
         public int VehiclePassengerCapacity { get; set; }
         public string VehicleProducer { get; set; }
         public double TotalDistance { get; set; }
-        public bool IsDeleted { get; set; }
     }
 }

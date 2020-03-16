@@ -404,19 +404,39 @@ if not exists (select 1
   create table dbo.Trip
   (
     Id int not null primary key identity,
-    BusId int not null,
     ScheduleId int not null,
     Departure date not null,
-    Arrival date not null,
+    Status char(1) not null default('P'),
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
     DateCreated datetime not null default(getdate()),
     DateModified datetime not null default(getdate()),
     IsDeleted bit not null default(0)
 
-    constraint FK_dbo_Trip_BusId_dbo_Bus_Id foreign key (BusId) references Bus(Id),
     constraint FK_dbo_Trip_ScheduleId_dbo_Schedule_Id foreign key (ScheduleId) references Schedule(Id),
-    constraint CK_dbo_Trip_Departure_Arrival check (Arrival > Departure)
+    constraint CK_dbo_Trip_Status check(Status in ('P','S','D','F')) -- P(pending), S(started), D(delayed), F(finished)
+  );
+go
+
+if not exists (select 1 
+               from sys.tables t 
+               where t.name='TripBus' 
+               and t.schema_id = schema_id('dbo'))
+  create table dbo.TripBus
+  (
+    Id int not null primary key identity,
+    BusId int not null,
+    TripId int not null,
+    LocationId int not null,
+    CreatedBy int null foreign key references Account(Id),
+    ModifiedBy int null foreign key references Account(Id),
+    DateCreated datetime not null default(getdate()),
+    DateModified datetime not null default(getdate()),
+    IsDeleted bit not null default(0)
+    
+    constraint FK_dbo_TripBus_BusId_dbo_Bus_Id foreign key (BusId) references Bus(Id),
+    constraint FK_dbo_TripBus_TripId_dbo_Trip_Id foreign key (TripId) references Trip(Id),
+    constraint FK_dbo_TripBus_LocationId_dbo_Location_Id foreign key (LocationId) references [Location](Id)
   );
 go
 
@@ -427,23 +447,18 @@ if not exists (select 1
   create table dbo.TripBusDriver
   (
     Id int not null primary key identity,
-    BusId int null,
-    DriverId int null,
-    TripId int not null,
-    LocationId int not null,
+    TripBusId int not null,
+    DriverId int not null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
     DateCreated datetime not null default(getdate()),
     DateModified datetime not null default(getdate()),
     IsDeleted bit not null default(0)
     
-    constraint FK_dbo_TripDriver_BusId_dbo_Bus_Id foreign key (BusId) references Bus(Id),
-    constraint FK_dbo_TripDriver_DriverId_dbo_Driver_Id foreign key (DriverId) references Driver(Id),
-    constraint FK_dbo_TripDriver_TripId_dbo_Trip_Id foreign key (TripId) references Trip(Id),
-    constraint FK_dbo_TripDriver_LocationId_dbo_Location_Id foreign key (LocationId) references [Location](Id)
+    constraint FK_dbo_TripBusDriver_DriverId_dbo_Driver_Id foreign key (DriverId) references Driver(Id),
+    constraint FK_dbo_TripBusDriver_TripBusId_dbo_TripBus_Id foreign key (TripBusId) references TripBus(Id),
   );
 go
-
 
 if not exists (select 1 
                from sys.tables t 

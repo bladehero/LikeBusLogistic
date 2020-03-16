@@ -1,0 +1,51 @@
+﻿@model MergeTripVM
+
+<div class="uk-grid-small" uk-grid id="save-trip-grid">
+    <input type="hidden" name="id" value="@Model?.Id" />
+
+    <div class="uk-margin uk-width-1-2">
+        <label class="uk-form-label" for="form-stacked-text">Отправление</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="departure" type="date" placeholder="Отправление..."
+                   value="@Model?.Departure">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-width-1-2">
+        <label class="uk-form-label">Маршрут</label>
+        <div class="uk-form-controls">
+            @Model.Schedules.SelectListWithEmptyOption(
+             x => x.Id,
+             x => $"{x.Name} ({x.RouteName})",
+             "Выберите расписание...",
+             Model?.SelectedSchedule?.Id,
+             new { @class = "uk-select", name = "scheduleId" })
+        </div>
+    </div>
+
+    <div class="uk-margin uk-width-1-2">
+        <label class="uk-form-label">Автобус</label>
+        <div class="uk-form-controls">
+            @Model.Buses.SelectListWithEmptyOption(
+             x => x.BusId,
+             x => $"{x.Fullname} ({x.Number})",
+             "Выберите автобус...",
+             Model?.SelectedBus?.BusId,
+             new { @class = "uk-select", name = "busId" })
+        </div>
+    </div>
+</div>
+
+<script>
+    App.footer.setBreadcrumbs([
+        { name: 'Расписания', url: '@Url.Action("_FullInformation", "Trip")' },
+        { name: '@(Model.Id == null ? "Добавить" : "Изменить")', url: '@Url.Action("_MergeTrip", "Trip")' }
+    ]);
+    App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
+    App.geo.route.clear();
+
+    $('input[name="departure"]').datetimepicker({
+      timepicker:false,
+      lang:'ru'
+    });
+</script>

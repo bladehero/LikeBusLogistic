@@ -29,11 +29,12 @@ namespace LikeBusLogistic.DAL.Dao
 
             return Connection.Query<GetUserAccountByCredentials_Result>("dbo.GetUserAccountByCredentials", parameters, commandType: CommandType.StoredProcedure).FirstOrDefault();
         }
-        public IEnumerable<GetDriverInfo_Result> GetDriverInfo(int? driverId = null, bool withDeleted = false)
+        public IEnumerable<GetDriverInfo_Result> GetDriverInfo(int? driverId = null, int? busId = null, bool withDeleted = false)
         {
             var parameters = new
             {
                 @driverId = driverId,
+                @busId = busId,
                 @withDeleted = withDeleted
             };
 
@@ -120,6 +121,17 @@ namespace LikeBusLogistic.DAL.Dao
             };
 
             return Connection.Query<GetScheduleInfo_Result>("dbo.GetScheduleInfo", parameters, commandType: CommandType.StoredProcedure);
+        }
+        public IEnumerable<GetScheduleInfo_Result> GetTrips(int? tripId = null, string status = null, bool withDeleted = false)
+        {
+            var parameters = new
+            {
+                @tripId = tripId,
+                @status = status,
+                @withDeleted = withDeleted
+            };
+
+            return Connection.Query<GetScheduleInfo_Result>("dbo.GetTrips", parameters, commandType: CommandType.StoredProcedure);
         }
     }
 }

@@ -1,0 +1,16 @@
+﻿@model TripDriversVM
+
+@for (int i = 0; i < Model.DriversAmount; i++)
+{
+    <div class="uk-margin uk-width-1-2">
+        <label class="uk-form-label"></label>
+        <div class="uk-form-controls">
+            @Model.Drivers.SelectListWithEmptyOption(
+             x => x.DriverId,
+             x => $"{x.LastName} {x.FirstName} {x.LastName} {(x.AttachedOnBus.GetValueOrDefault() ? "☆" : "")}",
+             "Выберите водителя...",
+             null,
+             new { @class = "uk-select", name = "driverId" })
+        </div>
+    </div>
+}

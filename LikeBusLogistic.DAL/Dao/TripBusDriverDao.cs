@@ -2,8 +2,8 @@
 using System.Data;
 namespace LikeBusLogistic.DAL.Dao
 {
-    public class TripBusDriverDao : BaseDao<TripBusDriver>
+    public class TripBusDao : BaseDao<TripBus>
     {
-        public TripBusDriverDao(IDbConnection connection) : base("dbo.TripBusDriver", connection) { }
+        public TripBusDao(IDbConnection connection) : base("dbo.TripBus", connection) { }
     }
 }

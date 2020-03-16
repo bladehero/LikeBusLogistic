@@ -1,0 +1,85 @@
+﻿@model LikeBusLogistic.Web.Models.Trips.TripsVM
+@{
+    RoleName roleName = (RoleName)ViewBag.RoleName;
+    Func<string, string> statusMapping = (string status) =>
+    {
+        var result = string.Empty;
+        foreach (var tripStatus in Enum.GetValues(typeof(TripStatus)).Cast<TripStatus>())
+        {
+            if(tripStatus.ToString() == status)
+            {
+                result = tripStatus.GetDescription();
+            }
+        }
+        return result;
+    };
+}
+<div class="uk-clearfix">
+    <div class="uk-float-right">
+        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+        {
+            <button class="uk-button uk-button-small uk-button-primary" id="add-trip-button">Добавить</button>
+        }
+    </div>
+</div>
+<table class="uk-table uk-table-small uk-table-hover trips-table">
+    <thead>
+        <tr>
+            <th>Расписание</th>
+            <th>Маршрут</th>
+            <th>Отправление</th>
+            <th>Статус</th>
+            <th>Номер</th>
+            <th>Спецификация</th>
+            <th>Расстояние</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var trip in Model.Trips)
+        {
+        <tr data-trip-id="@trip.Id">
+            <td>@trip.ScheduleName</td>
+            <td>@trip.RouteName</td>
+            <td>@trip.Departure</td>
+            <td>@statusMapping(trip.Status)</td>
+            <td>@trip.BusNumber</td>
+            <td>@($"{trip.VehicleProducer} {trip.VehicleModel} ({trip.VehiclePassengerCapacity})")</td>
+            <td>@trip.TotalDistance</td>
+            <td class="uk-float-right tool-cell-3">
+                @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-trip-icon")
+                @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                {
+                    @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-trip-icon")
+                }
+                @if (roleName == RoleName.Administrator)
+                {
+                    @CustomExtensions.HtmlDeleteOrRestoreIcon(trip.IsDeleted, "delete-trip-icon")
+                }
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    App.footer.setBreadcrumbs([{ name: 'Рейсы', url: '@Url.Action("_FullInformation", "Trip", new { tab = Model.Tab })' }]);
+    App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
+    App.geo.route.clear();
+    $(document).ready(function () {
+        setTimeout(function () { $('.trips-table').dataTable(); }, 150);
+        $('.edit-trip-icon').click(function () {
+            var id = $(this).parents('tr').data('trip-id');
+            App.footer.getContent('@Url.Action("_MergeTrip", "Trip")', { tripId: id });
+        });
+        $('.delete-trip-icon').click(function () {
+            var id = $(this).parents('tr').data('trip-id');
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreTrip", "Trip")', { tripId: id }, function (result) {
+                App.message.showSuccessWithOk('Успешно', result.message || 'Рейс успешно удален!');
+                App.footer.getContent('@Url.Action("_FullInformation", "Trip", new { tab = Model.Tab })');
+            });
+        });
+        $('#add-trip-button').click(function () {
+            App.footer.getContent('@Url.Action("_MergeTrip", "Trip")');
+        });
+    });
+</script>

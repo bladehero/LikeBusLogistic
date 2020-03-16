@@ -56,8 +56,8 @@
 
 <script>
     App.footer.setBreadcrumbs([
-        { name: 'Автобусы', url: '@Url.Action("_FullInformation", "Schedule")' },
-        { name: 'Модели', url: '@Url.Action("_Schedule","Schedule")' }
+        { name: 'Расписания', url: '@Url.Action("_FullInformation", "Schedule")' },
+        { name: 'Все', url: '@Url.Action("_Schedule","Schedule")' }
     ]);
     App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
     App.geo.route.clear();

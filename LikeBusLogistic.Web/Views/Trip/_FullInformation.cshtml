@@ -1,0 +1,55 @@
+﻿@model LikeBusLogistic.Web.Models.Trips.FullInformationVM
+
+<ul uk-tab id="tabs">
+    <li class="trip-tab @(Model.Tab == TripTab.AllTrips ? "uk-active" : "")"
+        data-url="@Url.Action("_FullInformation", "Trip", new { tab = TripTab.AllTrips })"
+        data-tab-url="@Url.Action("_Trip", "Trip", new { tab = TripTab.AllTrips })"
+        data-status="all">
+        <a href="#">Все</a>
+    </li>
+    <li class="trip-tab @(Model.Tab == TripTab.StartedTrips ? "uk-active" : "")"
+        data-url="@Url.Action("_FullInformation", "Trip", new { tab = TripTab.StartedTrips })"
+        data-tab-url="@Url.Action("_Trip", "Trip", new { tab = TripTab.StartedTrips })"
+        data-status="started">
+        <a href="#">Текущие</a>
+    </li>
+    <li class="trip-tab @(Model.Tab == TripTab.DelayedTrips ? "uk-active" : "")"
+        data-url="@Url.Action("_FullInformation", "Trip", new { tab = TripTab.DelayedTrips })"
+        data-tab-url="@Url.Action("_Trip", "Trip", new { tab = TripTab.DelayedTrips })"
+        data-status="delayed">
+        <a href="#">Задержанные</a>
+    </li>
+    <li class="trip-tab @(Model.Tab == TripTab.PendingTrips ? "uk-active" : "")"
+        data-url="@Url.Action("_FullInformation", "Trip", new { tab = TripTab.PendingTrips })"
+        data-tab-url="@Url.Action("_Trip", "Trip", new { tab = TripTab.PendingTrips })"
+        data-status="pending">
+        <a href="#">Будущие</a>
+    </li>
+    <li class="trip-tab @(Model.Tab == TripTab.FinishedTrips ? "uk-active" : "")"
+        data-url="@Url.Action("_FullInformation", "Trip", new { tab = TripTab.FinishedTrips })"
+        data-tab-url="@Url.Action("_Trip", "Trip", new { tab = TripTab.FinishedTrips })"
+        data-status="finished">
+        <a href="#">Завершенные</a>
+    </li>
+</ul>
+<ul class="uk-switcher uk-margin" id="tabs-content">
+    <li class="trip-tab-content" data-status="all"></li>
+    <li class="trip-tab-content" data-status="started"></li>
+    <li class="trip-tab-content" data-status="delayed"></li>
+    <li class="trip-tab-content" data-status="pending"></li>
+    <li class="trip-tab-content" data-status="finished"></li>
+</ul>
+
+<script>
+    App.footer.setBreadcrumbs([{ name: 'Рейсы', url: '@Url.Action("_FullInformation", "Trip", new { tab = Model.Tab })' }]);
+    App.tab.name = 'trips';
+    $(document).ready(function () {
+        $('.trip-tab').click(function () {
+            let _this = $(this);
+            var status = _this.data('status');
+            var element = $('#tabs-content').find('.trip-tab-content[data-status="' + status + '"]');
+            App.loadContent(element, _this.data('tab-url'));
+        });
+        $('.trip-tab.uk-active').click();
+    });
+</script>

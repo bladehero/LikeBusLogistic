@@ -8,6 +8,7 @@
     <link href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
     <link rel="stylesheet" type="text/css" href="~/lib/time-picki/css/timepicki.css" />
+    <link href="~/lib/jquery-datetimepicker/jquery.datetimepicker.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
@@ -68,7 +69,7 @@
                 </li>
                 <li class="uk-nav-divider"></li>
                 <li class="uk-parent">
-                    <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Logistic")">
+                    <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Trip")">
                         <span class="uk-margin-small-right" uk-icon="icon: world; ratio: 0.8;"></span>
                         Рейсы
                     </a>
@@ -119,6 +120,7 @@
     <script src="https://unpkg.com/leaflet-ant-path" type="text/javascript"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
     <script src="~/lib/time-picki/js/timepicki.js"></script>
+    <script src="~/lib/jquery-datetimepicker/jquery.datetimepicker.full.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>
