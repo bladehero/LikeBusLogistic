@@ -43,6 +43,7 @@
 <script>
     App.footer.setBreadcrumbs([{ name: 'Рейсы', url: '@Url.Action("_FullInformation", "Trip", new { tab = Model.Tab })' }]);
     App.tab.name = 'trips';
+
     $(document).ready(function () {
         $('.trip-tab').click(function () {
             let _this = $(this);

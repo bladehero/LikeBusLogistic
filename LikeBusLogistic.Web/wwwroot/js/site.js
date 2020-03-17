@@ -1,4 +1,24 @@
 ﻿var App = {
+    colorShade: function (color, percent) {
+
+        var R = parseInt(color.substring(1, 3), 16);
+        var G = parseInt(color.substring(3, 5), 16);
+        var B = parseInt(color.substring(5, 7), 16);
+
+        R = parseInt(R * (100 + percent) / 100);
+        G = parseInt(G * (100 + percent) / 100);
+        B = parseInt(B * (100 + percent) / 100);
+
+        R = (R < 255) ? R : 255;
+        G = (G < 255) ? G : 255;
+        B = (B < 255) ? B : 255;
+
+        var RR = ((R.toString(16).length == 1) ? "0" + R.toString(16) : R.toString(16));
+        var GG = ((G.toString(16).length == 1) ? "0" + G.toString(16) : G.toString(16));
+        var BB = ((B.toString(16).length == 1) ? "0" + B.toString(16) : B.toString(16));
+
+        return "#" + RR + GG + BB;
+    },
     map: null,
     tab: {
         name: null,
@@ -101,18 +121,21 @@
                 return -1;
             },
             routeLocations: [],
-            resetRouteLocations: function (url, id) {
+            color: '#C3C3FF',
+            resetRouteLocations: function (url, id, color) {
                 App.geo.route.clear();
                 let routeLocations = App.geo.route.getRouteLocations(url, id);
-                App.geo.route.setRouteLocations(routeLocations, id);
+                App.geo.route.setRouteLocations(routeLocations, id, color);
             },
-            setRouteLocations: function (routeLocations, id) {
+            setRouteLocations: function (routeLocations, id, color) {
+                color = color || '#C3C3FF';
                 let latlngs = [];
                 for (var i = 0; i < routeLocations.length; i++) {
                     latlngs.push([routeLocations[i].latitude || routeLocations[i].routeLocation.currentLatitude,
                     routeLocations[i].longtitude || routeLocations[i].routeLocation.currentLongtitude]);
                 }
-                let options = { use: L.polyline, delay: 800, dashArray: [10, 10], weight: 6, color: "#C3C3FF", pulseColor: "#0059FF" };
+                let shade = App.colorShade(color, 50);
+                let options = { use: L.polyline, delay: 800, dashArray: [10, 10], weight: 6, color: shade, pulseColor: color };
                 let path = new L.Polyline.AntPath(latlngs, options);
                 path.addTo(App.map);
                 App.geo.route.routeLocations = routeLocations;

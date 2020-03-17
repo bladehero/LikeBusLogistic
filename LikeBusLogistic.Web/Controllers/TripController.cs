@@ -1,8 +1,10 @@
 ﻿using LikeBusLogistic.BLL;
 using LikeBusLogistic.VM.ViewModels;
+using LikeBusLogistic.Web.Models;
 using LikeBusLogistic.Web.Models.Trips;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,7 +14,6 @@ namespace LikeBusLogistic.Web.Controllers
     public class TripController : BaseController
     {
         public TripController(ServiceFactory serviceFactory) : base(serviceFactory) { }
-
 
         [HttpGet]
         public IActionResult _FullInformation(TripTab tab = TripTab.StartedTrips)
@@ -52,6 +53,10 @@ namespace LikeBusLogistic.Web.Controllers
             {
                 Id = trip?.Id,
                 Departure = (trip?.Departure).GetValueOrDefault(),
+                Color = trip?.Color,
+                Status = trip?.Status ?? TripStatus.P.ToString(),
+                IsEditable = trip?.Status != TripStatus.S.ToString()
+                && trip?.Status != TripStatus.D.ToString(),
 
                 Buses = buses,
                 Schedules = schedules,
@@ -65,6 +70,11 @@ namespace LikeBusLogistic.Web.Controllers
         [HttpGet]
         public IActionResult _TripDrivers(int? tripId, int? busId)
         {
+            if (!tripId.HasValue && !busId.HasValue)
+            {
+                return Content("");
+            }
+
             IEnumerable<DriverInfoVM> drivers;
             if (busId.HasValue)
             {
@@ -75,6 +85,7 @@ namespace LikeBusLogistic.Web.Controllers
                 drivers = ServiceFactory.DriverManagement.GetDrivers(false).Data;
             }
 
+            var trip = ServiceFactory.TripManagement.GetTrip(tripId).Data;
             var selectedDrivers = ServiceFactory.TripManagement.GetLastDriverInfoForTrip(tripId).Data;
             var driversAmount = selectedDrivers?.Count() ?? 0;
             if (busId.HasValue && driversAmount == 0)
@@ -88,8 +99,30 @@ namespace LikeBusLogistic.Web.Controllers
                 DriversAmount = driversAmount,
                 Drivers = drivers,
                 SelectedDrivers = selectedDrivers,
+                IsEditable = trip?.Status != TripStatus.S.ToString()
+                && trip?.Status != TripStatus.D.ToString()
             };
             return PartialView(model);
+        }
+
+        [HttpPost]
+        public IActionResult MergeTrip(TripVM trip, IEnumerable<int> drivers)
+        {
+            var result = new Result();
+            try
+            {
+                var oldTrip = ServiceFactory.TripManagement.GetTrip(trip?.Id).Data;
+                trip.Status = oldTrip?.Status ?? TripStatus.P.ToString();
+                var mergeTripResult = ServiceFactory.TripManagement.MergeTrip(trip,
+                    drivers.Select(x => new DriverInfoVM { DriverId = x }));
+                result.Success = mergeTripResult.Success;
+                result.Message = mergeTripResult.Message;
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+            }
+            return Json(result);
         }
 
         private TripStatus? GetTripStatus(TripTab tab)

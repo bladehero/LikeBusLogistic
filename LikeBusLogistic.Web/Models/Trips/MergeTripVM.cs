@@ -8,6 +8,9 @@ namespace LikeBusLogistic.Web.Models.Trips
     {
         public int? Id { get; set; }
         public DateTime Departure { get; set; }
+        public string Color { get; set; }
+        public string Status { get; set; }
+        public bool IsEditable { get; set; }
 
         public int? ScheduleId { get; set; }
         public ScheduleVM SelectedSchedule { get; set; }

@@ -1,16 +1,90 @@
 ﻿@model TripDriversVM
-
-@for (int i = 0; i < Model.DriversAmount; i++)
-{
-    <div class="uk-margin uk-width-1-2">
-        <label class="uk-form-label"></label>
-        <div class="uk-form-controls">
-            @Model.Drivers.SelectListWithEmptyOption(
-             x => x.DriverId,
-             x => $"{x.LastName} {x.FirstName} {x.MiddleName} {(x.AttachedOnBus.GetValueOrDefault() ? " ☆" : "")}",
-             "Выберите водителя...",
-             Model.SelectedDrivers.Skip(i).FirstOrDefault()?.DriverId,
-             new { @class = "uk-select", name = "driverId" })
-        </div>
-    </div>
+@{ 
+    var lastAttached = Model.Drivers.LastOrDefault(x => x.AttachedOnBus.GetValueOrDefault());
+    bool isEditable = Model.IsEditable;
 }
+<label class="uk-form-label">Водители</label>
+<div class="uk-form-controls">
+    <button name="driverIds" class="uk-button uk-button-default uk-text-capitalize uk-width-expand" type="button">Выберите водителей...</button>
+    <div style="max-height: 150px; overflow-y: scroll;" uk-dropdown="pos: bottom-justify; mode: click;">
+        <ul class="uk-nav uk-dropdown-nav">
+            @foreach (var driver in Model.Drivers)
+            {
+                var driverName = $"{driver.LastName} {driver.FirstName} {driver.MiddleName}";
+                <li class="uk-active uk-responsive-height">
+                    <label>
+                        <input data-driver-id="@driver.DriverId"
+                               data-driver-name="@driverName"
+                               class="uk-checkbox driver-checkbox @(driver.AttachedOnBus.GetValueOrDefault() ? "uk-nav-header" : "")"
+                               type="checkbox"
+                               @(isEditable ? "" : "disabled")
+                               @(Model.SelectedDrivers?.Any(x => x.DriverId == driver.DriverId) == true ? "checked" : "") />
+                        @($"{driverName} {(driver.AttachedOnBus.GetValueOrDefault() ? " ☆" : "")}");
+                    </label>
+                </li>
+                @if (driver.Equals(lastAttached))
+                {
+                    <li class="uk-nav-divider"></li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+
+<div class="uk-margin uk-width-1-1">
+    <button class="uk-button uk-button-primary uk-float-right" id="save-trip-btn">Сохранить</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        let driverIds = [];
+        let driversAmount = @Model.DriversAmount;
+        let button = $('button[name="driverIds"]');
+        let checkboxes = $('input.driver-checkbox');
+        function changeNameDrivers() {
+            let name = '';
+            let hasName = false;
+            checkboxes.each(function (i, e) {
+                let _this = $(e);
+                if (_this.is(':checked')) {
+                    name += _this.data('driver-name');
+                    name += ', ';
+                    hasName = true;
+                }
+            });
+            if (hasName) {
+                name = name.trim().replace(/,\s*$/, "");
+            } else {
+                name = 'Выберите водителей...';
+            }
+            button.text(name);
+        }
+        checkboxes.change(function () {
+            let _this = $(this);
+                var id = _this.data('driver-id');
+            if (_this.is(':checked')) {
+                driverIds.push(id);
+            } else {
+                let template = [];
+                driverIds.forEach(function (value) {
+                    if (id != value) {
+                        template.push(value);
+                    }
+                });
+                driverIds = template;
+            }
+            button.data('driverIds', driverIds);
+            changeNameDrivers();
+        });
+        checkboxes.change();
+        $('#save-trip-btn').click(function () {
+                let trip = App.serializeInputsToObject('#save-trip-grid input,select');
+                let drivers = $('button[name="driverIds"]').data('driverIds');
+                if (false) {
+                    // Validate data...
+                }
+                let data = { trip: trip, drivers: drivers };
+            App.postDataOnServer('@Url.Action("MergeTrip","Trip")', data);
+        });
+    });
+</script>

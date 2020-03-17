@@ -1,6 +1,6 @@
 ﻿namespace LikeBusLogistic.DAL.Models
 {
-    public class TripBusDriver : BaseEntity
+    public class TripBusDriver : UserTrackedEntity
     {
         public int DriverId { get; set; }
         public int TripBusId { get; set; }

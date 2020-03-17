@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LikeBusLogistic.Scripts", "
 		LikeBusLogistic.Scripts\0.sql = LikeBusLogistic.Scripts\0.sql
 		LikeBusLogistic.Scripts\1.sql = LikeBusLogistic.Scripts\1.sql
 		LikeBusLogistic.Scripts\2.sql = LikeBusLogistic.Scripts\2.sql
+		LikeBusLogistic.Scripts\3.1.sql = LikeBusLogistic.Scripts\3.1.sql
 		LikeBusLogistic.Scripts\3.sql = LikeBusLogistic.Scripts\3.sql
 		LikeBusLogistic.Scripts\4.sql = LikeBusLogistic.Scripts\4.sql
 	EndProjectSection
@@ -24,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalServices", "Externa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JwtAuthenticationHelper", "JwtAuthenticationHelper\JwtAuthenticationHelper.csproj", "{5D026F1F-BD26-45A4-A319-E3D97356CFB2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoDataLayerGenerator", "AutoDataLayerGenerator\AutoDataLayerGenerator.csproj", "{D4097494-84E3-43EC-93AC-78731CA10F8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoDataLayerGenerator", "AutoDataLayerGenerator\AutoDataLayerGenerator.csproj", "{D4097494-84E3-43EC-93AC-78731CA10F8D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

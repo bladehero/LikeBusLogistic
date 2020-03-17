@@ -139,7 +139,7 @@ if not exists (select 1
   (
     Id int not null primary key identity,
     Name nvarchar(200) not null,
-    DistrictId int not null,
+    DistrictId int null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
     DateCreated datetime not null default(getdate()),
@@ -407,6 +407,7 @@ if not exists (select 1
     ScheduleId int not null,
     Departure date not null,
     Status char(1) not null default('P'),
+    Color char(7) null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
     DateCreated datetime not null default(getdate()),

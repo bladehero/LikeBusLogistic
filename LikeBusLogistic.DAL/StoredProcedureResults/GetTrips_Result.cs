@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LikeBusLogistic.DAL.StoredProcedureResults
 {
@@ -9,6 +7,7 @@ namespace LikeBusLogistic.DAL.StoredProcedureResults
         public int Id { get; set; }
         public DateTime Departure { get; set; }
         public string Status { get; set; }
+        public string Color { get; set; }
         public int ScheduleId { get; set; }
         public string ScheduleName { get; set; }
         public int RouteId { get; set; }

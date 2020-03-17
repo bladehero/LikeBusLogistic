@@ -91,6 +91,8 @@ namespace LikeBusLogistic.VM.MapperExtensions
                 #endregion
 
                 #region Trip Management Service
+                cfg.CreateMap<TripVM, Trip>();
+                cfg.CreateMap<Trip, TripVM>();
                 cfg.CreateMap<TripVM, GetTrips_Result>();
                 cfg.CreateMap<GetTrips_Result, TripVM>();
                 #endregion

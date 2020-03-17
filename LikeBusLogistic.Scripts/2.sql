@@ -173,7 +173,7 @@ begin
        , d.MiddleName
        , d.IsDeleted
     from Driver d
-    cross apply
+    outer apply
     (
       select top 1 bs.BusId
                  --, b.Number as BusInfo
@@ -852,12 +852,10 @@ as
 begin  
 
   select t.Id                       as Id
-       , dateadd(minute, 
-                 datediff(minute, 
-                          0, 
-                          dti.DepartureTime), 
-                 t.Departure)       as Departure
+       , cast(t.Departure as datetime) + 
+         cast(dti.DepartureTime as datetime) as Departure
        , t.Status                   as Status
+       , t.Color                    as Color
        , s.Id                       as ScheduleId
        , s.Name                     as ScheduleName
        , r.Id                       as RouteId

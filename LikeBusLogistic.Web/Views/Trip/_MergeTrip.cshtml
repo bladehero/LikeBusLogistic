@@ -1,20 +1,32 @@
 ﻿@model MergeTripVM
-
+@{
+    bool isEditable = Model.IsEditable;
+}
 <div class="uk-grid-small" uk-grid id="save-trip-grid">
     <input type="hidden" name="id" value="@Model?.Id" />
+    <input type="hidden" name="status" value="@Model?.Status" />
 
-    <div class="uk-margin uk-width-1-2">
-        <label class="uk-form-label" for="form-stacked-text">Отправление</label>
-        <div class="uk-form-controls">
-            <input class="uk-input" 
-                   name="departure" 
-                   type="text" 
-                   placeholder="Отправление..."
-                   value="@Model?.Departure">
+    <div class="uk-margin uk-width-auto">
+        <label class="uk-form-label">Цвет</label>
+        <div class="uk-form-controls custom-picker">
+            <input type="hidden" name="color" value="@Model.Color"/>
+            <div id="color-picker" class=""></div>
         </div>
     </div>
 
-    <div class="uk-margin uk-width-1-2">
+    <div class="uk-margin uk-width-1-4">
+        <label class="uk-form-label" for="form-stacked-text">Отправление</label>
+        <div class="uk-form-controls">
+            <input class="uk-input"
+                   name="departure"
+                   type="text"
+                   placeholder="Отправление..."
+                   value="@Model?.Departure"
+                   @(isEditable ? "" : "disabled")>
+        </div>
+    </div>
+
+    <div class="uk-margin uk-width-1-4">
         <label class="uk-form-label">Маршрут</label>
         <div class="uk-form-controls">
             @Model.Schedules.SelectListWithEmptyOption(
@@ -22,11 +34,13 @@
              x => $"{x.Name} ({x.RouteName})",
              "Выберите расписание...",
              Model?.SelectedSchedule?.Id,
-             new { @class = "uk-select", name = "scheduleId" })
+             isEditable ? (object)new { @class = "uk-select", name = "scheduleId" } 
+             : (object)new { @class = "uk-select", name = "scheduleId", disabled = "disabled" },
+             x => new { data_route_id = x.RouteId })
         </div>
     </div>
 
-    <div class="uk-margin uk-width-1-2">
+    <div class="uk-margin uk-width-expand">
         <label class="uk-form-label">Автобус</label>
         <div class="uk-form-controls">
             @Model.Buses.SelectListWithEmptyOption(
@@ -34,11 +48,12 @@
              x => $"{x.Fullname} ({x.Number})",
              "Выберите автобус...",
              Model?.SelectedBus?.BusId,
-             new { @class = "uk-select", name = "busId", id = "bus-select" })
+             isEditable ? (object)new { @class = "uk-select", name = "busId", id = "bus-select" } 
+             : (object)new { @class = "uk-select", name = "busId", id = "bus-select", disabled = "disabled" })
         </div>
     </div>
 
-    <div id="trip-drivers"></div>
+    <div class="uk-margin uk-width-1-1" id="trip-drivers"> </div>
 </div>
 
 <script>
@@ -49,25 +64,65 @@
     App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
     App.geo.route.clear();
 
-    function loadDrivers() {
+    $(document).ready(function () {
+        let parentGrid = $('#save-trip-grid');
+        let tripId = parentGrid.find('input[name="id"]').val();
+        
+        let colorInput = $('input[name="color"]');
+        $('select[name="scheduleId"]').change(function () {
+            let selected = $(this).find('option:selected').first();
+            let routeId = selected.data('route-id');
+            let color = colorInput.val();
+            App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', routeId, color);
+        });
 
-    }
+        if (!!tripId) {
+            App.loadContent('div#trip-drivers', '@Url.Action("_TripDrivers", "Trip")', { tripId: tripId });
+        } else {
+            $('#bus-select').change(function () {
+                let selected = $(this).find('option:selected').first();
+                let busId = selected.val();
+                App.loadContent('div#trip-drivers', '@Url.Action("_TripDrivers", "Trip")', { busId: busId });
+            });
+        }
 
-    @if ((Model?.Id).HasValue)
-    {
-        @:loadDrivers();
-    }
-
-    $('#bus-select').change(function () {
-
-    });
-
-    $('input[name="departure"]').datetimepicker({
-        mask: true,
-        timepicker: false,
-        format: 'd/m/Y',
-        value:new Date(),
-        minDate: new Date(),
-        lang:'ru'
+        $('input[name="departure"]').datetimepicker({
+            mask: true,
+            timepicker: false,
+            format: 'Y/m/d',
+            value:new Date(),
+            minDate: new Date(),
+            lang:'ru'
+        });
+        let tripColor = colorInput.val();
+        const pickr = Pickr.create({
+            el: '#color-picker',
+            theme: 'nano',
+            default: tripColor || App.geo.route.color,
+            components: {
+                preview: true,
+                hue: true,
+                interaction: {
+                    hex: true,
+                    input: true,
+                    save: true,
+                    cancel: true
+                }
+            },
+            strings: {
+               save: 'Сохранить',
+               cancel: 'Отмена'
+            }
+        });
+        pickr.on('init', (color) => {
+            var color = color._color.toHEXA().toString();
+            colorInput.val(color);
+        }).on('save', (color) => {
+            let value = App.geo.route.color;
+            if (color) {
+                value = color.toHEXA().toString();
+            }
+            colorInput.val(value);
+        });
     });
 </script>

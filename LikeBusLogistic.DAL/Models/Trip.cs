@@ -6,5 +6,6 @@ namespace LikeBusLogistic.DAL.Models
         public int ScheduleId { get; set; }
         public DateTime Departure { get; set; }
         public string Status { get; set; }
+        public string Color { get; set; }
     }
 }

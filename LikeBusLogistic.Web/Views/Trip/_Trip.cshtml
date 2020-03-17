@@ -16,6 +16,7 @@
 }
 <div class="uk-clearfix">
     <div class="uk-float-right">
+        <button class="uk-button uk-button-small uk-button-danger uk-hidden" id="clean-route-button">Сбросить маршрут</button>
         @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
         {
             <button class="uk-button uk-button-small uk-button-primary" id="add-trip-button">Добавить</button>
@@ -25,6 +26,7 @@
 <table class="uk-table uk-table-small uk-table-hover trips-table">
     <thead>
         <tr>
+            <th></th>  
             <th>Расписание</th>
             <th>Маршрут</th>
             <th>Отправление</th>
@@ -32,16 +34,18 @@
             <th>Номер</th>
             <th>Спецификация</th>
             <th>Расстояние</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var trip in Model.Trips)
         {
-        <tr data-trip-id="@trip.Id">
+        <tr data-trip-id="@trip.Id" data-trip-color="@trip.Color" data-route-id="@trip.RouteId">
+            <td><div style="width: 25px; height: 25px; background-color: @trip.Color;"></div></td>
             <td>@trip.ScheduleName</td>
             <td>@trip.RouteName</td>
             <td>@trip.Departure</td>
-            <td>@statusMapping(trip.Status)</td>
+            <td>@Html.Raw(statusMapping(trip.Status))</td>
             <td>@trip.BusNumber</td>
             <td>@($"{trip.VehicleProducer} {trip.VehicleModel} ({trip.VehiclePassengerCapacity})")</td>
             <td>@trip.TotalDistance</td>
@@ -67,6 +71,18 @@
     App.geo.route.clear();
     $(document).ready(function () {
         setTimeout(function () { $('.trips-table').dataTable(); }, 150);
+        $('.show-trip-icon').click(function () {
+            let _this = $(this);
+            let first = _this.parents('tr').first();
+            let id = first.data('route-id');
+            let color = first.data('trip-color');
+            App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', id, color);
+            $('#clean-route-button').removeClass('uk-hidden');
+        });
+        $('#clean-route-button').click(function () {
+            App.geo.route.clear();
+            $('#clean-route-button').addClass('uk-hidden');
+        });
         $('.edit-trip-icon').click(function () {
             var id = $(this).parents('tr').data('trip-id');
             App.footer.getContent('@Url.Action("_MergeTrip", "Trip")', { tripId: id });
@@ -82,4 +98,47 @@
             App.footer.getContent('@Url.Action("_MergeTrip", "Trip")');
         });
     });
+
+    App.geo.onClickLocation(function (obj, location) {
+        let selector = "marker_" + location.marker._leaflet_id;
+        let popup = location.marker.getPopup();
+        let width = window.innerWidth * 0.75;
+        width = width > 400 ? 400 : width;
+        if (!popup) {
+            location.marker.bindPopup('<div style="width: ' + width + 'px; min-height: 72px;" id="' + selector + '"></div>', { maxWidth: width }).openPopup();
+            popup = location.marker.getPopup();
+        }
+        selector = '#' + selector;
+        App.loadContent(selector, '@Url.Action("_LocationPopup" , "Home")', { id: location.data.id },
+            function (html) {
+                $(selector).html(html);
+        });
+    });
+    function editLocationFunction() {
+        var id = $(this).parents('tr,div').first().data('location-id');
+        App.loadContent('#current-location-card', '@Url.Action("_Location", "Geolocation")', { id: id });
+        App.map.off('mousemove');
+        App.map.off('click');
+    }
+    function deleteLocationFunction() {
+        var id = $(this).parents('tr,div').first().data('location-id');
+        Swal.fire({
+            title: 'Удаление',
+            text: 'Вы уверены, что хотите удалить?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Да',
+            cancelButtonText: 'Отмена'
+        }).then((result) => {
+            if (result.value) {
+                App.postDataOnServer('@Url.Action("DeleteOrRestoreLocation", "Geolocation")', { id: id }, function (result) {
+                    App.message.showSuccessWithOk('Успешно', result.message || 'Локация успешно удалена!');
+                    App.footer.getContent('@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Locations })');
+                });
+            }
+        });
+    }
+
+    $(document).off('click', '.edit-location-icon').on('click', '.edit-location-icon', editLocationFunction);
+    $(document).off('click', '.delete-location-icon').on('click', '.delete-location-icon', deleteLocationFunction);
 </script>

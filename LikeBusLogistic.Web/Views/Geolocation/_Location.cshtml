@@ -88,6 +88,23 @@
                 }
             }
         });
+        $.ajax({
+            url: '@Url.Action("GetCitiesByCountry", "Geolocation")',
+            data: { id: id },
+            success: function (result) {
+                var cities = $('select[name="cityId"]');
+                var first = cities.find('option').first();
+                cities.html(first);
+                if (result.success) {
+                    var list = '';
+                    for (var i = 0; i < result.data.length; i++) {
+                        list += '<option value="' + result.data[i].id + '">' + result.data[i].name + '</option>';
+                    }
+                    cities.append(list);
+                    cities.change();
+                }
+            }
+        });
     });
     $('select[name="districtId"]').change(function () {
         var _this = $(this);

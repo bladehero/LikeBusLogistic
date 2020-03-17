@@ -104,3 +104,10 @@ table {
 .uk-modal-dialog {
     width: auto !important;
 }
+
+.custom-picker div.pickr > button {
+    height: 34px;
+    width: 34px;
+    margin-left: 1px;
+    margin-top: 3px;
+}

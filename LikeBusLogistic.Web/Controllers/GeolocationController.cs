@@ -22,6 +22,14 @@ namespace LikeBusLogistic.Web.Controllers
             return Json(result);
         }
         [HttpGet]
+        public IActionResult GetCitiesByCountry(int? id)
+        {
+            var result = ServiceFactory.GeolocationManagement.GetCitiesByCountry(id);
+
+            return Json(result);
+        }
+        
+        [HttpGet]
         public IActionResult GetCitiesByDistricts(int? id)
         {
             var result = ServiceFactory.GeolocationManagement.GetCitiesByDistrict(id);

@@ -102,7 +102,7 @@ namespace LikeBusLogistic.BLL.Services
             return result;
         }
 
-        public BaseResult MergeTrip(TripVM tripVM)
+        public BaseResult MergeTrip(TripVM tripVM, IEnumerable<DriverInfoVM> drivers)
         {
             var result = new BaseResult();
             try
@@ -113,7 +113,33 @@ namespace LikeBusLogistic.BLL.Services
                     trip.CreatedBy = AccountId;
                 }
                 trip.ModifiedBy = AccountId;
-                result.Success = UnitOfWork.TripDao.Merge(trip);
+                var schedule = UnitOfWork.ScheduleDao.FindById(trip.ScheduleId);
+                var firstRouteLocation = UnitOfWork.StoredProcedureDao.GetRouteLocation(schedule.RouteId).FirstOrDefault();
+                UnitOfWork.TripDao.Merge(trip);
+
+                var tripBus = new TripBus
+                {
+                    BusId = tripVM.BusId,
+                    TripId = trip.Id,
+                    LocationId = firstRouteLocation.CurrentLocationId.Value,
+                    CreatedBy = AccountId,
+                    ModifiedBy = AccountId
+                };
+                UnitOfWork.TripBusDao.Merge(tripBus);
+
+                foreach (var driver in drivers)
+                {
+                    var tripBusDriver = new TripBusDriver
+                    {
+                        DriverId = driver.DriverId.Value,
+                        TripBusId = tripBus.Id,
+                        CreatedBy = AccountId,
+                        ModifiedBy = AccountId
+                    };
+                    UnitOfWork.TripBusDriverDao.Merge(tripBusDriver);
+                }
+
+                result.Success = true;
                 result.Message = GeneralSuccessMessage;
             }
             catch (Exception ex)

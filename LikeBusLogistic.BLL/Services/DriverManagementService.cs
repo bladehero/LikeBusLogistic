@@ -76,7 +76,7 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<IEnumerable<DriverInfoVM>>();
             try
             {
-                var drivers = UnitOfWork.StoredProcedureDao.GetDriverInfo(busId: busId, withDeleted: RoleName == Variables.RoleName.Administrator && withDeleted);
+                var drivers = UnitOfWork.StoredProcedureDao.GetDriverInfo(withDeleted: RoleName == Variables.RoleName.Administrator && withDeleted);
                 var driverInfoVMs = Mapper.Map<IEnumerable<DriverInfoVM>>(drivers);
                 if (busId.HasValue)
                 {
@@ -84,7 +84,7 @@ namespace LikeBusLogistic.BLL.Services
                     {
                         item.AttachedOnBus = item.BusId == busId.Value;
                     }
-                    driverInfoVMs = driverInfoVMs.OrderBy(x => x.AttachedOnBus);
+                    driverInfoVMs = driverInfoVMs.OrderByDescending(x => x.AttachedOnBus);
                 }
                 result.Data = driverInfoVMs;
                 result.Success = true;
