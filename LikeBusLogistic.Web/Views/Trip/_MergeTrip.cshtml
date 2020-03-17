@@ -6,7 +6,10 @@
     <div class="uk-margin uk-width-1-2">
         <label class="uk-form-label" for="form-stacked-text">Отправление</label>
         <div class="uk-form-controls">
-            <input class="uk-input" name="departure" type="date" placeholder="Отправление..."
+            <input class="uk-input" 
+                   name="departure" 
+                   type="text" 
+                   placeholder="Отправление..."
                    value="@Model?.Departure">
         </div>
     </div>
@@ -31,9 +34,11 @@
              x => $"{x.Fullname} ({x.Number})",
              "Выберите автобус...",
              Model?.SelectedBus?.BusId,
-             new { @class = "uk-select", name = "busId" })
+             new { @class = "uk-select", name = "busId", id = "bus-select" })
         </div>
     </div>
+
+    <div id="trip-drivers"></div>
 </div>
 
 <script>
@@ -44,8 +49,25 @@
     App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
     App.geo.route.clear();
 
+    function loadDrivers() {
+
+    }
+
+    @if ((Model?.Id).HasValue)
+    {
+        @:loadDrivers();
+    }
+
+    $('#bus-select').change(function () {
+
+    });
+
     $('input[name="departure"]').datetimepicker({
-      timepicker:false,
-      lang:'ru'
+        mask: true,
+        timepicker: false,
+        format: 'd/m/Y',
+        value:new Date(),
+        minDate: new Date(),
+        lang:'ru'
     });
 </script>

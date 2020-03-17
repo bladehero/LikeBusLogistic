@@ -32,12 +32,12 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
-        public BaseResult<IEnumerable<ScheduleVM>> GetSchedules()
+        public BaseResult<IEnumerable<ScheduleVM>> GetSchedules(bool withDeleted = true)
         {
             var result = new BaseResult<IEnumerable<ScheduleVM>>();
             try
             {
-                var schedule = UnitOfWork.StoredProcedureDao.GetSchedule(withDeleted: RoleName == Variables.RoleName.Administrator);
+                var schedule = UnitOfWork.StoredProcedureDao.GetSchedule(withDeleted: RoleName == Variables.RoleName.Administrator && withDeleted);
                 result.Data = Mapper.Map<IEnumerable<ScheduleVM>>(schedule);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;

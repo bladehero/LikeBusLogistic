@@ -52,12 +52,12 @@ namespace LikeBusLogistic.BLL.Services
             return result;
         }
 
-        public BaseResult<IEnumerable<DriverInfoVM>> GetDrivers()
+        public BaseResult<IEnumerable<DriverInfoVM>> GetDrivers(bool withDeleted = true)
         {
             var result = new BaseResult<IEnumerable<DriverInfoVM>>();
             try
             {
-                var drivers = UnitOfWork.StoredProcedureDao.GetDriverInfo(withDeleted: RoleName == Variables.RoleName.Administrator);
+                var drivers = UnitOfWork.StoredProcedureDao.GetDriverInfo(withDeleted: RoleName == Variables.RoleName.Administrator && withDeleted);
                 var driverInfoVMs = Mapper.Map<IEnumerable<DriverInfoVM>>(drivers);
                 result.Data = driverInfoVMs;
                 result.Success = true;
@@ -71,12 +71,12 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
-        public BaseResult<IEnumerable<DriverInfoVM>> GetDriversOrderByBus(int? busId)
+        public BaseResult<IEnumerable<DriverInfoVM>> GetDriversOrderByBus(int? busId, bool withDeleted = true)
         {
             var result = new BaseResult<IEnumerable<DriverInfoVM>>();
             try
             {
-                var drivers = UnitOfWork.StoredProcedureDao.GetDriverInfo(busId: busId, withDeleted: RoleName == Variables.RoleName.Administrator);
+                var drivers = UnitOfWork.StoredProcedureDao.GetDriverInfo(busId: busId, withDeleted: RoleName == Variables.RoleName.Administrator && withDeleted);
                 var driverInfoVMs = Mapper.Map<IEnumerable<DriverInfoVM>>(drivers);
                 if (busId.HasValue)
                 {

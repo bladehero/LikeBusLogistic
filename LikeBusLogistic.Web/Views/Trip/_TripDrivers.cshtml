@@ -7,9 +7,9 @@
         <div class="uk-form-controls">
             @Model.Drivers.SelectListWithEmptyOption(
              x => x.DriverId,
-             x => $"{x.LastName} {x.FirstName} {x.LastName} {(x.AttachedOnBus.GetValueOrDefault() ? "☆" : "")}",
+             x => $"{x.LastName} {x.FirstName} {x.MiddleName} {(x.AttachedOnBus.GetValueOrDefault() ? " ☆" : "")}",
              "Выберите водителя...",
-             null,
+             Model.SelectedDrivers.Skip(i).FirstOrDefault()?.DriverId,
              new { @class = "uk-select", name = "driverId" })
         </div>
     </div>

@@ -32,13 +32,33 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
+
+        public BaseResult<BusVM> GetLastBusForTrip(int? tripId)
+        {
+            var result = new BaseResult<BusVM>();
+            try
+            {
+                var tripBus = UnitOfWork.TripBusDao.LastOrDefault(x => x.TripId == tripId.Value);
+                var bus = UnitOfWork.BusDao.FindById(tripBus?.BusId);
+                result.Data = Mapper.Map<BusVM>(bus);
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
         public BaseResult<IEnumerable<DriverInfoVM>> GetLastDriverInfoForTrip(int? tripId)
         {
             var result = new BaseResult<IEnumerable<DriverInfoVM>>();
             try
             {
                 var tripBus = UnitOfWork.TripBusDao.LastOrDefault(x => x.TripId == tripId.Value);
-                var tripDrivers = UnitOfWork.TripBusDriverDao.Find(x=>x.TripBusId == tripBus.Id);
+                var tripDrivers = UnitOfWork.TripBusDriverDao.Find(x => x.TripBusId == tripBus.Id);
                 var driverList = new List<DriverInfoVM>();
                 foreach (var item in tripDrivers)
                 {

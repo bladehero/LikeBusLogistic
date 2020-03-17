@@ -1,7 +1,10 @@
 ﻿using LikeBusLogistic.BLL;
+using LikeBusLogistic.VM.ViewModels;
 using LikeBusLogistic.Web.Models.Trips;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LikeBusLogistic.Web.Controllers
 {
@@ -39,14 +42,52 @@ namespace LikeBusLogistic.Web.Controllers
         public IActionResult _MergeTrip(int? tripId)
         {
             var trip = ServiceFactory.TripManagement.GetTrip(tripId).Data;
-            var schedule = ServiceFactory.ScheduleManagement.GetSchedule(trip?.ScheduleId);
-            var bus = ServiceFactory.BusManagement.GetBus(trip?.BusId);
-            var drivers = ServiceFactory.TripManagement.GetLastDriverInfoForTrip(tripId);
+            var selectedSchedule = ServiceFactory.ScheduleManagement.GetSchedule(trip?.ScheduleId).Data;
+            var selectedBus = ServiceFactory.TripManagement.GetLastBusForTrip(trip?.BusId).Data;
 
+            var schedules = ServiceFactory.ScheduleManagement.GetSchedules(false).Data;
+            var buses = ServiceFactory.BusManagement.GetBuses(false).Data;
 
             var model = new MergeTripVM
             {
+                Id = trip?.Id,
+                Departure = (trip?.Departure).GetValueOrDefault(),
 
+                Buses = buses,
+                Schedules = schedules,
+
+                SelectedBus = selectedBus,
+                SelectedSchedule = selectedSchedule
+            };
+            return PartialView(model);
+        }
+
+        [HttpGet]
+        public IActionResult _TripDrivers(int? tripId, int? busId)
+        {
+            IEnumerable<DriverInfoVM> drivers;
+            if (busId.HasValue)
+            {
+                drivers = ServiceFactory.DriverManagement.GetDriversOrderByBus(busId, false).Data;
+            }
+            else
+            {
+                drivers = ServiceFactory.DriverManagement.GetDrivers(false).Data;
+            }
+
+            var selectedDrivers = ServiceFactory.TripManagement.GetLastDriverInfoForTrip(tripId).Data;
+            var driversAmount = selectedDrivers?.Count() ?? 0;
+            if (busId.HasValue && driversAmount == 0)
+            {
+                var bus = ServiceFactory.BusManagement.GetBus(busId.Value).Data;
+                driversAmount = bus.CrewCapacity;
+            }
+
+            var model = new TripDriversVM
+            {
+                DriversAmount = driversAmount,
+                Drivers = drivers,
+                SelectedDrivers = selectedDrivers,
             };
             return PartialView(model);
         }

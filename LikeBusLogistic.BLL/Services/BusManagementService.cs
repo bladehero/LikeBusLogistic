@@ -76,13 +76,13 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
-        public BaseResult<IEnumerable<BusVM>> GetBuses()
+        public BaseResult<IEnumerable<BusVM>> GetBuses(bool withDeleted = true)
         {
             var result = new BaseResult<IEnumerable<BusVM>>();
             try
             {
-                var buses = from bus in UnitOfWork.BusDao.FindAll(RoleName == Variables.RoleName.Administrator)
-                            join vehicle in UnitOfWork.VehicleDao.FindAll(RoleName == Variables.RoleName.Administrator)
+                var buses = from bus in UnitOfWork.BusDao.FindAll(RoleName == Variables.RoleName.Administrator && withDeleted)
+                            join vehicle in UnitOfWork.VehicleDao.FindAll(RoleName == Variables.RoleName.Administrator && withDeleted)
                             on bus.VehicleId equals vehicle.Id
                             select new BusVM
                             {
