@@ -121,14 +121,14 @@
                 return -1;
             },
             routeLocations: [],
-            color: '#C3C3FF',
+            color: '#1e87f0',
             resetRouteLocations: function (url, id, color) {
                 App.geo.route.clear();
                 let routeLocations = App.geo.route.getRouteLocations(url, id);
                 App.geo.route.setRouteLocations(routeLocations, id, color);
             },
             setRouteLocations: function (routeLocations, id, color) {
-                color = color || '#C3C3FF';
+                color = color || '#1e87f0';
                 let latlngs = [];
                 for (var i = 0; i < routeLocations.length; i++) {
                     latlngs.push([routeLocations[i].latitude || routeLocations[i].routeLocation.currentLatitude,
