@@ -28,7 +28,7 @@
                 data-district-id="@location.DistrictId"
                 data-country-id="@location.CountryId">
                 <td class="uk-link uk-text-bolder uk-text-secondary go-to-location">@location.Name</td>
-                <td class="uk-text-truncate">@location.Longtitude</td>
+                <td class="uk-text-truncate">@location.Longitude</td>
                 <td class="uk-text-truncate">@location.Latitude</td>
                 <td>@location.CityName</td>
                 <td>@location.DistrictName</td>
@@ -62,7 +62,7 @@
                     if (!location.marker.isPopupOpen()) {
                         location.marker.fire('click');
                     }
-                    App.map.setView([location.data.latitude, location.data.longtitude], App.geo.getZoomToView());
+                    App.map.setView([location.data.latitude, location.data.longitude], App.geo.getZoomToView());
                     App.footer.show();
             		break;
                 }

@@ -94,7 +94,7 @@
                     if (result.success) {
                         if (result.data.length) {
                             for (var i = 0; i < result.data.length; i++) {
-                                var marker = L.marker([result.data[i].latitude, result.data[i].longtitude]);
+                                var marker = L.marker([result.data[i].latitude, result.data[i].longitude]);
                                 locations.push({
                                     marker: marker,
                                     data: result.data[i]
@@ -132,7 +132,7 @@
                 let latlngs = [];
                 for (var i = 0; i < routeLocations.length; i++) {
                     latlngs.push([routeLocations[i].latitude || routeLocations[i].routeLocation.currentLatitude,
-                    routeLocations[i].longtitude || routeLocations[i].routeLocation.currentLongtitude]);
+                    routeLocations[i].longitude || routeLocations[i].routeLocation.currentLongitude]);
                 }
                 let shade = App.colorShade(color, 50);
                 let options = { use: L.polyline, delay: 800, dashArray: [10, 10], weight: 6, color: shade, pulseColor: color };

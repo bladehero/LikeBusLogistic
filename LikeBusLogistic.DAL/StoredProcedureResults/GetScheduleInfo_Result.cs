@@ -14,7 +14,7 @@ namespace LikeBusLogistic.DAL.StoredProcedureResults
         public double Distance { get; set; }
         public string LocationFullName { get; set; }
         public string LocationLatitude { get; set; }
-        public string LocationLongtitude { get; set; }
+        public string LocationLongitude { get; set; }
         public string LocationIsCarRepair { get; set; }
         public string LocationIsParking { get; set; }
         public string LocationCityId { get; set; }

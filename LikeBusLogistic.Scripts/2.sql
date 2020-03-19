@@ -349,7 +349,7 @@ returns @result table
   FullName     nvarchar(max) null,
   Name         nvarchar(500) null,
   Latitude     float null,
-  Longtitude   float null,
+  Longitude   float null,
   IsCarRepair  bit null,
   IsParking    bit null,
   CityId       int null,
@@ -368,7 +368,7 @@ begin
        , concat(l.Name, ' ('+concat( c.Name, ', '+d.Name, ', '+ctr.Name)+')') as FullName
        , l.Name
        , l.Latitude
-       , l.Longtitude
+       , l.Longitude
        , case
            when exists
            (
@@ -422,7 +422,7 @@ begin
       , concat(l.Name, ' ('+concat(ctr.Name, ', '+d.Name, ', '+c.Name)+')') as FullName
       , l.Name as Name
       , l.Latitude as Latitude
-      , l.Longtitude as Longtitude
+      , l.Longitude as Longitude
       , case
           when exists
           (
@@ -579,7 +579,7 @@ begin
        , c.IsCarRepair as CurrentIsCarRepair
        , c.IsParking as CurrentIsParking
        , c.Latitude as CurrentLatitude
-       , c.Longtitude as CurrentLongtitude
+       , c.Longitude as CurrentLongitude
 
        -- Previous Location
        , p.FullName as PreviousFullName
@@ -593,7 +593,7 @@ begin
        , p.IsCarRepair as PreviousIsCarRepair
        , p.IsParking as PreviousIsParking
        , p.Latitude as PreviousLatitude
-       , p.Longtitude as PreviousLongtitude
+       , p.Longitude as PreviousLongitude
     from LinkedList ll
     -- Current location
     cross apply
@@ -679,7 +679,7 @@ begin
        , li.FullName         as LocationFullName    
        , li.Name             as LocationName    
        , li.Latitude         as LocationLatitude    
-       , li.Longtitude       as LocationLongtitude  
+       , li.Longitude       as LocationLongitude  
        , li.IsCarRepair      as LocationIsCarRepair 
        , li.IsParking        as LocationIsParking   
        , li.CityId           as LocationCityId      
@@ -701,7 +701,7 @@ begin
                  , FullName    
                  , Name        
                  , Latitude    
-                 , Longtitude  
+                 , Longitude  
                  , IsCarRepair 
                  , IsParking   
                  , CityId      
@@ -753,7 +753,7 @@ returns @result table
   LocationFullName     nvarchar(500) null,
   LocationName         nvarchar(500) null,
   LocationLatitude     float not null,
-  LocationLongtitude   float not null,
+  LocationLongitude   float not null,
   LocationIsCarRepair  bit not null,
   LocationIsParking    bit not null,
   LocationCityId       int null,
@@ -782,7 +782,7 @@ begin
        , li.FullName         as LocationFullName    
        , li.Name             as LocationName    
        , li.Latitude         as LocationLatitude    
-       , li.Longtitude       as LocationLongtitude  
+       , li.Longitude       as LocationLongitude  
        , li.IsCarRepair      as LocationIsCarRepair 
        , li.IsParking        as LocationIsParking   
        , li.CityId           as LocationCityId      
@@ -804,7 +804,7 @@ begin
                  , FullName    
                  , Name        
                  , Latitude    
-                 , Longtitude  
+                 , Longitude  
                  , IsCarRepair 
                  , IsParking   
                  , CityId      

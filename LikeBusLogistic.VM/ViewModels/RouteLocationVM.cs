@@ -19,7 +19,7 @@
         public bool CurrentIsCarRepair { get; set; }
         public bool CurrentIsParking { get; set; }
         public double CurrentLatitude { get; set; }
-        public double CurrentLongtitude { get; set; }
+        public double CurrentLongitude { get; set; }
 
         public int? PreviousLocationId { get; set; }
         public string PreviousFullName { get; set; }
@@ -33,6 +33,6 @@
         public bool? PreviousIsCarRepair { get; set; }
         public bool? PreviousIsParking { get; set; }
         public double? PreviousLatitude { get; set; }
-        public double? PreviousLongtitude { get; set; }
+        public double? PreviousLongitude { get; set; }
     }
 }

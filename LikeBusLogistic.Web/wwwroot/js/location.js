@@ -4,11 +4,11 @@
         App.map.on('click', clickLocation);
     }
     else {
-        App.map.setView([Number($('input[name="latitude"]').val()), Number($('input[name="longtitude"]').val())], App.geo.getZoomToView());
+        App.map.setView([Number($('input[name="latitude"]').val()), Number($('input[name="longitude"]').val())], App.geo.getZoomToView());
     }
 
     function setLatLng(obj) {
-        $('input[name="longtitude"]').val(obj.latlng.lng);
+        $('input[name="longitude"]').val(obj.latlng.lng);
         $('input[name="latitude"]').val(obj.latlng.lat);
     }
     function clickLocation(obj) {

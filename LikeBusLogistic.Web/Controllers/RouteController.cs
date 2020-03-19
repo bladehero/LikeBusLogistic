@@ -32,6 +32,7 @@ namespace LikeBusLogistic.Web.Controllers
         public IActionResult GetRouteLocations(int id)
         {
             var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(id);
+            var points = routeLocations.Data.Select(x => new BLL.Services.TomTom.LocationPoint { Latitude = x.CurrentLatitude, Longitude = x.CurrentLongitude });
             return Json(routeLocations);
         }
 

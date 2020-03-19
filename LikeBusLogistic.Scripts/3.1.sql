@@ -1,6 +1,68 @@
 ﻿use LikeBusLogisticDatabase;
 go
 
+merge dbo.[Role] as trg
+using
+(
+  select r.Name
+  from
+  (
+    values ('Administrator')
+         , ('Moderator')
+         , ('Operator')
+  ) as r(Name)
+) as src
+on trg.Name = src.Name
+  when not matched then
+    insert (Name)
+    values (src.Name)
+  ;
+go
+
+merge dbo.[User] as trg
+using
+(
+  select u.FirstName
+       , u.Phone
+  from
+  (
+    values ('Administrator', '+380949466705')
+  ) as u(FirstName, Phone)
+) as src
+on trg.FirstName = src.FirstName and trg.Phone = src.Phone
+  when not matched then
+    insert (FirstName, Phone)
+    values (src.FirstName, src.Phone)
+  ;
+go
+
+merge dbo.Account as trg
+using
+(
+  select r.Id as RoleId
+       , u.Id as UserId
+       , a.Login as Login
+       , dbo.MD5HashPassword(a.Password) as Password
+  from
+  (
+    values ('admin', 'p@ssw0rd321')
+  ) as a(Login, Password)
+  cross apply
+  (
+    select Id from [Role] where Name = 'Administrator'
+  ) as r
+  cross apply
+  (
+    select top 1 Id from [User] where FirstName = N'Administrator' and Phone = '+380949466705'
+  ) as u
+) as src
+on trg.Login = src.Login
+  when not matched then
+    insert (RoleId, UserId, Login, Password)
+    values (src.RoleId, src.UserId, src.Login, src.Password)
+  ;
+go
+
 create table #driverInfo
 (
   FirstName	 nvarchar (200),
@@ -158,7 +220,7 @@ create table #locationInfo
   Country nvarchar(100),
   ShortCountryName char(2),
   Latitude float,
-  Longtitude float
+  Longitude float
 );
 go    
       
@@ -168,7 +230,7 @@ select rtrim(ltrim(s.City)) as City
      , rtrim(ltrim(s.Country)) as County
      , s.ShortCountryName as ShortCountryName
      , s.Latitude as Latitude
-     , s.Longtitude as Longtitude
+     , s.Longitude as Longitude
   from
   (
     values  ('LV', N'Латвия', N'Рига      ', 57.143620, 24.099277)
@@ -308,7 +370,7 @@ select rtrim(ltrim(s.City)) as City
           , ('BG', N'Болгария', 'Варна         ', 43.229478, 27.879831)
           , ('BG', N'Болгария', 'Пловдив       ', 42.122961, 24.715769)
           , ('BG', N'Болгария', 'Велико-Тырново', 43.077197, 25.594675)
-  ) as s(ShortCountryName, Country, City, Latitude, Longtitude)
+  ) as s(ShortCountryName, Country, City, Latitude, Longitude)
 ;      
 go
 
@@ -318,7 +380,7 @@ select rtrim(ltrim(s.City)) as City
      , rtrim(ltrim(s.Country)) as County
      , 'UA' as ShortCountryName
      , s.Latitude as Latitude
-     , s.Longtitude as Longtitude
+     , s.Longitude as Longitude
   from
   (
     values (N'Украина',N'Автономная Республика Крым',N'Алупка',44.4197222,34.0430556)
@@ -728,7 +790,7 @@ select rtrim(ltrim(s.City)) as City
          --, (N'Украина',N'Черновицкая область',N'Сторожинец',48.1666667,25.7166667)
          , (N'Украина',N'Черновицкая область',N'Хотин',48.5,26.5)
          , (N'Украина',N'Черновицкая область',N'Черновцы',48.3,25.9333333)
-  ) as s(Country, District, City, Latitude, Longtitude)
+  ) as s(Country, District, City, Latitude, Longitude)
 ;      
 go
 
@@ -787,7 +849,7 @@ using
        , ci.Id as CityId
        , concat(N'Локация (', li.City, ')') as Name
        , li.Latitude as Latitude
-       , li.Longtitude as Longtitude
+       , li.Longitude as Longitude
        , crypt_gen_random(1) % 2 as IsParking -- random value 
     from #locationInfo li
     left join Country c 
@@ -799,8 +861,8 @@ using
 ) src
 on src.CountryId = trg.CountryId and src.DistrictId = trg.DistrictId and src.CityId = trg.CityId and src.Name = trg.Name 
   when not matched then
-    insert (CountryId, DistrictId, CityId, Name, Latitude, Longtitude, IsParking)
-    values (src.CountryId, src.DistrictId, src.CityId, src.Name, src.Latitude, src.Longtitude, src.IsParking)
+    insert (CountryId, DistrictId, CityId, Name, Latitude, Longitude, IsParking)
+    values (src.CountryId, src.DistrictId, src.CityId, src.Name, src.Latitude, src.Longitude, src.IsParking)
 ;
 go
 
