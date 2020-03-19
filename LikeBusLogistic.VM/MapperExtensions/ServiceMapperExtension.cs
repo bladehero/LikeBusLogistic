@@ -76,6 +76,11 @@ namespace LikeBusLogistic.VM.MapperExtensions
                 cfg.CreateMap<RouteVM, GetRoute_Result>();
                 cfg.CreateMap<GetRouteLocation_Result, RouteLocationVM>();
                 cfg.CreateMap<RouteLocationVM, GetRouteLocation_Result>();
+
+                cfg.CreateMap<GetDistance_Result, DistanceVM>();
+                cfg.CreateMap<DistanceVM, GetDistance_Result>();
+                cfg.CreateMap<Distance, DistanceVM>();
+                cfg.CreateMap<DistanceVM, Distance>();
                 #endregion
 
                 #region Schedule Management Service
@@ -95,6 +100,10 @@ namespace LikeBusLogistic.VM.MapperExtensions
                 cfg.CreateMap<Trip, TripVM>();
                 cfg.CreateMap<TripVM, GetTrips_Result>();
                 cfg.CreateMap<GetTrips_Result, TripVM>();
+                #endregion
+
+                #region Lookup Management Service
+
                 #endregion
             });
         }

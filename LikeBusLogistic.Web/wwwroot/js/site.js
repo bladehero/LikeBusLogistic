@@ -131,8 +131,14 @@
                 color = color || '#1e87f0';
                 let latlngs = [];
                 for (var i = 0; i < routeLocations.length; i++) {
-                    latlngs.push([routeLocations[i].latitude || routeLocations[i].routeLocation.currentLatitude,
-                    routeLocations[i].longitude || routeLocations[i].routeLocation.currentLongitude]);
+                    if (routeLocations[i].tomTomLeg) {
+                        for (let point of routeLocations[i].tomTomLeg.points) {
+                            latlngs.push([point.latitude, point.longitude]);
+                        }
+                    } else {
+                        latlngs.push([routeLocations[i].latitude || routeLocations[i].routeLocation.currentLatitude,
+                            routeLocations[i].longitude || routeLocations[i].routeLocation.currentLongitude]);
+                    }
                 }
                 let shade = App.colorShade(color, 50);
                 let options = { use: L.polyline, delay: 800, dashArray: [10, 10], weight: 6, color: shade, pulseColor: color };

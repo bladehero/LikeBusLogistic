@@ -1,4 +1,5 @@
 ﻿using LikeBusLogistic.BLL.Services;
+using LikeBusLogistic.BLL.Services.TomTom;
 using System;
 
 namespace LikeBusLogistic.BLL
@@ -20,6 +21,7 @@ namespace LikeBusLogistic.BLL
                 RouteManagement.AccountId = value;
                 ScheduleManagement.AccountId = value;
                 TripManagement.AccountId = value;
+                TomTom.AccountId = value;
             }
         }
         public AccountManagementService AccountManagement { get; set; }
@@ -29,6 +31,7 @@ namespace LikeBusLogistic.BLL
         public RouteManagementService RouteManagement { get; set; }
         public ScheduleManagementService ScheduleManagement { get; set; }
         public TripManagementService TripManagement { get; set; }
+        public TomTomService TomTom { get; set; }
 
         public ServiceFactory(string connection)
         {
@@ -39,6 +42,7 @@ namespace LikeBusLogistic.BLL
             RouteManagement = new RouteManagementService(connection);
             ScheduleManagement = new ScheduleManagementService(connection, RouteManagement);
             TripManagement = new TripManagementService(connection);
+            TomTom = new TomTomService(connection);
         }
 
         public void Dispose()
@@ -50,6 +54,7 @@ namespace LikeBusLogistic.BLL
             RouteManagement.Dispose();
             ScheduleManagement.Dispose();
             TripManagement.Dispose();
+            TomTom.Dispose();
         }
     }
 }

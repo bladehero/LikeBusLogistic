@@ -495,7 +495,7 @@ if not exists (select 1
   (
     Id int not null primary key identity,
     Location1 int not null,
-    Location2 int null,
+    Location2 int not null,
     TomTomInfo nvarchar(max) null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),

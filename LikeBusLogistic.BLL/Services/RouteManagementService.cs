@@ -127,6 +127,45 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
+
+        public BaseResult<DistanceVM> GetDistance(int location1Id, int location2Id)
+        {
+            var result = new BaseResult<DistanceVM>();
+            try
+            {
+                var distance = UnitOfWork.StoredProcedureDao.GetDistance(location1Id, location2Id).FirstOrDefault();
+                var data = Mapper.Map<DistanceVM>(distance);
+                result.Data = data;
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+        public BaseResult MergeDistance(DistanceVM distanceVM)
+        {
+            var result = new BaseResult();
+            try
+            {
+                var distance = Mapper.Map<Distance>(distanceVM);
+                UnitOfWork.DistanceDao.Merge(distance);
+
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+
         public BaseResult CreateRoute(IEnumerable<LocationVM> locations, string name, float? estimatedDurationInHours = null)
         {
             var result = new BaseResult();

@@ -41,19 +41,39 @@
         App.geo.route.routeLocations[0] = @Html.Raw(Json.Serialize(Model.StartLocation));
         $('#route-location-list li:not(:first)').remove();
         for (let location of App.geo.locations) {
-            location.marker.off('click');
+            setLogicForMarker(location);
+        }
+    }
+    function setLogicForMarker(location) {
+        location.marker.off('click');
             if (location.data.id !== @Model.StartLocation.Id) {
                 location.marker.on('click', async function () {
                     let first = App.geo.route.routeLocations[App.geo.route.routeLocations.length - 1];
                     let last = location.data;
+                    let leg = null;
+                    App.postDataOnServer('@Url.Action("GetDistanceInfo", "Route")',
+                        { locationId1: first.id || first.currentLocationId, locationId2: last.id || last.currentLocationId },
+                        function (result) {
+                            if (result.success) {
+                                leg = result.data;
+                            }
+                        },
+                        null,
+                        'GET',
+                        false
+                    );
+
                     let title = getDistanceTitle(first, last);
+                    let inputValue = Math.round(leg.tomTomLeg.summary.lengthInMeters / 1000);
                     await Swal.fire({
                         title: title,
                         input: 'number',
+                        inputValue: inputValue,
                         inputPlaceholder: 'Расстояние (км.)'
                     }).then(result => {
                         if (result.value != null) {
                             location.data.distance = result.value;
+                            location.data.tomTomLeg = leg.tomTomLeg;
                             let first = addToRoute(location.data);
                             location.marker.off('click').on('click', async function () {
                                 let last = location.data;
@@ -74,18 +94,14 @@
                     });
                 });
             }
-        }
     }
     initPosition();
 
     function cancelLastAction() {
         if (App.geo.route.routeLocations.length > 1) {
-            let location = App.geo.route.routeLocations.pop();
-            App.geo.getLocationById(location.id).marker.on('click',
-            function () {
-                addToRoute(location);
-                location.marker.off('click');
-            });
+            let id = App.geo.route.routeLocations.pop().id;
+            let location = App.geo.getLocationById(id);
+            setLogicForMarker(location);
             $('#route-location-list li:last').remove();
             App.geo.route.setRouteLocations(App.geo.route.routeLocations);
         }
@@ -116,6 +132,7 @@
             App.message.showError('Ошибка', 'Маршрут должен включать в себя минимум две локации!');
             return;
         }
+        debugger;
         let locations = App.geo.route.routeLocations;
         App.message.showMessage('info', 'Проверка', 'Идет сопоставление текущих маршрутных листов...', 0, false);
         App.postDataOnServer(
@@ -183,7 +200,7 @@
         );
     }
 
-    $(document).keydown(function (e) {
+    $(window).keydown(function (e) {
         if (e.ctrlKey) {
             if (e.key == 'z') {
                 cancelLastAction();

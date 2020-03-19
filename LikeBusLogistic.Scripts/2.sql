@@ -916,3 +916,71 @@ begin
 
 end;
 go
+
+if object_id(N'dbo.GetDistance') is null
+  exec('create procedure dbo.GetDistance as set nocount on;');
+go
+
+-- ============================================================================
+-- Example    : exec dbo.GetDistance 1, 2
+-- Author     : Nikita Dermenzhi
+-- Date       : 25/07/2019
+-- Description: —
+-- ============================================================================
+
+alter procedure dbo.GetDistance
+(  
+    @location1 as int 
+  , @location2 as int
+)  
+as  
+begin  
+  
+  select d.Id           as Id
+       , d.TomTomInfo   as TomTomInfo
+       , IsDeleted      as IsDeleted
+       , l1.Id          as Location1         
+       , l1.FullName    as FirstLocationFullName   
+       , l1.Name        as FirstLocationName       
+       , l1.Latitude    as FirstLocationLatitude   
+       , l1.Longitude   as FirstLocationLongitude  
+       , l1.IsCarRepair as FirstLocationIsCarRepair
+       , l1.IsParking   as FirstLocationIsParking
+       , l2.Id          as Location2         
+       , l2.FullName    as SecondLocationFullName   
+       , l2.Name        as SecondLocationName       
+       , l2.Latitude    as SecondLocationLatitude   
+       , l2.Longitude   as SecondLocationLongitude  
+       , l2.IsCarRepair as SecondLocationIsCarRepair
+       , l2.IsParking   as SecondLocationIsParking
+    from Distance d
+    cross apply
+    (
+      select Id          
+           , FullName    
+           , Name        
+           , Latitude    
+           , Longitude   
+           , IsCarRepair 
+           , IsParking
+        from dbo.GetLocationInfo(d.Location1)
+    ) l1
+    cross apply
+    (
+      select Id          
+           , FullName    
+           , Name        
+           , Latitude    
+           , Longitude   
+           , IsCarRepair 
+           , IsParking  
+        from dbo.GetLocationInfo(d.Location2)
+    ) l2
+    where 1=1
+      and d.IsDeleted = 0
+      and d.Location1 = @location1
+      and d.Location2 = @location2
+    order by d.DateModified, d.DateCreated, d.Id
+
+end;
+go

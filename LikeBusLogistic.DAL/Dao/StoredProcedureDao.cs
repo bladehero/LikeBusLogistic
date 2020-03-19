@@ -132,5 +132,15 @@ namespace LikeBusLogistic.DAL.Dao
 
             return Connection.Query<GetTrips_Result>("dbo.GetTrips", parameters, commandType: CommandType.StoredProcedure);
         }
+        public IEnumerable<GetDistance_Result> GetDistance(int location1, int location2)
+        {
+            var parameters = new
+            {
+                @location1 = location1,
+                @location2 = location2
+            };
+
+            return Connection.Query<GetDistance_Result>("dbo.GetDistance", parameters, commandType: CommandType.StoredProcedure);
+        }
     }
 }
