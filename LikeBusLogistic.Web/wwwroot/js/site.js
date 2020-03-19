@@ -1,4 +1,17 @@
 ﻿var App = {
+    hasProperty: function (obj, key) {
+        return key.split(".").every(function (x) {
+            if (typeof obj != "object" || obj === null || !x in obj)
+                return false;
+            obj = obj[x];
+            return true;
+        });
+    },
+    getPropertyOrDefault: function (obj, key, def) {
+        return key.split(".").reduce(function (o, x) {
+            return (typeof o == "undefined" || o === null) ? o : o[x] || def;
+        }, obj);
+    },
     colorShade: function (color, percent) {
 
         var R = parseInt(color.substring(1, 3), 16);
@@ -126,6 +139,28 @@
                 App.geo.route.clear();
                 let routeLocations = App.geo.route.getRouteLocations(url, id);
                 App.geo.route.setRouteLocations(routeLocations, id, color);
+            },
+            getLocations: function () {
+                let locations = [];
+                for (let routeLocation of App.geo.route.routeLocations) {
+                    let location = {};
+                    location.id = routeLocation.id;
+                    location.fullName = routeLocation.fullName;
+                    location.name = routeLocation.name;
+                    location.latitude = routeLocation.latitude;
+                    location.longitude = routeLocation.longitude;
+                    location.distance = routeLocation.distance;
+                    location.cityI = routeLocation.cityI;
+                    location.cityName = routeLocation.cityName;
+                    location.districtId = routeLocation.districtId;
+                    location.districtName = routeLocation.districtName;
+                    location.countryId = routeLocation.countryId;
+                    location.countryName = routeLocation.countryName;
+                    location.isParking = routeLocation.isParking;
+                    location.isDeleted = routeLocation.isDeleted;
+                    locations.push(location);
+                }
+                return locations;
             },
             setRouteLocations: function (routeLocations, id, color) {
                 color = color || '#1e87f0';
@@ -331,6 +366,15 @@
                 text: text,
                 timer: timer,
                 showConfirmButton: showConfirmButton
+            });
+        },
+        loading: function () {
+            Swal.fire({
+                icon: 'info',
+                title: 'Обработка',
+                text: 'Пожалуйста, подождите...',
+                showConfirmButton: false,
+                timer: 0
             });
         },
         showError: function (title, text) {

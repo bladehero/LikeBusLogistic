@@ -45,9 +45,10 @@
         }
     }
     function setLogicForMarker(location) {
-        location.marker.off('click');
+            location.marker.off('click');
             if (location.data.id !== @Model.StartLocation.Id) {
                 location.marker.on('click', async function () {
+                    App.message.loading();
                     let first = App.geo.route.routeLocations[App.geo.route.routeLocations.length - 1];
                     let last = location.data;
                     let leg = null;
@@ -65,33 +66,62 @@
 
                     let title = getDistanceTitle(first, last);
                     let inputValue = Math.round(leg.tomTomLeg.summary.lengthInMeters / 1000);
-                    await Swal.fire({
-                        title: title,
-                        input: 'number',
-                        inputValue: inputValue,
-                        inputPlaceholder: 'Расстояние (км.)'
-                    }).then(result => {
-                        if (result.value != null) {
-                            location.data.distance = result.value;
-                            location.data.tomTomLeg = leg.tomTomLeg;
-                            let first = addToRoute(location.data);
-                            location.marker.off('click').on('click', async function () {
-                                let last = location.data;
-                                let title = getDistanceTitle(first, last);
-                                await Swal.fire({
-                                    title: title,
-                                    input: 'number',
-                                    inputPlaceholder: 'Расстояние (км.)',
-                                    inputValue: location.data.distance
-                                }).then(result => {
-                                    if (result.value != null) {
-                                        location.data.distance = result.value;
-                                        resetRouteList();
-                                    }
+                    if (!inputValue) {
+                        await Swal.fire({
+                            title: title,
+                            input: 'number',
+                            //inputValue: inputValue,
+                            inputPlaceholder: 'Расстояние (км.)'
+                        }).then(result => {
+                            if (result.value != null) {
+                                location.data.distance = parseFloat(result.value);
+                                location.data.tomTomLeg = leg.tomTomLeg;
+                                let first = addToRoute(location.data);
+                                location.marker.off('click').on('click', async function () {
+                                    let last = location.data;
+                                    let title = getDistanceTitle(first, last);
+                                    await Swal.fire({
+                                        title: title,
+                                        input: 'number',
+                                        inputPlaceholder: 'Расстояние (км.)',
+                                        inputValue: location.data.distance
+                                    }).then(result => {
+                                        if (result.value != null) {
+                                            location.data.distance = parseFloat(result.value);
+                                            resetRouteList();
+                                        }
+                                    });
                                 });
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Добавлено',
+                            timer: 1500,
+                            html: '<b>' + title + '</b><br/>Расстояние: ' + inputValue + 'км.',
+                            showConfirmButton: false
+                        });
+                        location.data.distance = parseFloat(inputValue);
+                        location.data.tomTomLeg = leg.tomTomLeg;
+                        let first = addToRoute(location.data);
+                        location.marker.off('click').on('click', async function () {
+                            let last = location.data;
+                            let title = getDistanceTitle(first, last);
+                            await Swal.fire({
+                                title: title,
+                                input: 'number',
+                                inputPlaceholder: 'Расстояние (км.)',
+                                inputValue: location.data.distance
+                            }).then(result => {
+                                if (result.value != null) {
+                                    location.data.distance = parseFloat(result.value);
+                                    resetRouteList();
+                                }
                             });
-                        }
-                    });
+                        });
+                    }
+                    
                 });
             }
     }
@@ -132,8 +162,7 @@
             App.message.showError('Ошибка', 'Маршрут должен включать в себя минимум две локации!');
             return;
         }
-        debugger;
-        let locations = App.geo.route.routeLocations;
+        let locations = App.geo.route.getLocations();
         App.message.showMessage('info', 'Проверка', 'Идет сопоставление текущих маршрутных листов...', 0, false);
         App.postDataOnServer(
             '@Url.Action("IsRouteMatch", "Route")',
@@ -163,7 +192,12 @@
                                 (hasDifferentCountries ? ' (' + (first.countryName || '?') + ')' : '') + 
                                 ' - ' + (last.cityName || last.name || '?') +
                                 (hasDifferentCountries ? ' (' + (last.countryName || '?') + ')' : '');
-
+                let hours = 0;
+                App.geo.route.routeLocations.forEach(function (el){
+                    let prop = 'tomTomLeg.summary.travelTimeInSeconds';
+                    let seconds = App.getPropertyOrDefault(el, prop, 0) / 3600;
+                    hours += Math.round((seconds + Number.EPSILON) * 10) / 10;
+                });
                 let formValues = await Swal.fire({
                     title: 'Создание нового маршрута',
                     html: '<div class="uk-margin uk-text-left">'+
@@ -173,9 +207,9 @@
                           '    </div>'+
                           '</div>'+
                           '<div class="uk-margin uk-text-left">'+
-                          '    <label class="uk-form-label" for="form-stacked-text">Ожидаемая продолжительность</label>'+
+                          '    <label class="uk-form-label" for="form-stacked-text">Ожидаемая продолжительность(ч.)</label>'+
                           '    <div class="uk-form-controls">'+
-                          '        <input class="uk-input" id="route-duration" type="number" step="0.5" placeholder="Введите продолжительность маршрута...">'+
+                          '        <input class="uk-input" id="route-duration" type="number" value="' + hours + '" step="0.5" placeholder="Введите продолжительность маршрута...">'+
                           '    </div>'+
                           '</div>',
                     focusConfirm: false,
@@ -188,30 +222,33 @@
                         ]
                     }
                 });
-                if (formValues) {
+                if (formValues && !formValues.dismiss) {
                     let name = formValues.value[0];
                     let duration = formValues.value[1];
                     App.postDataOnServer(
                         '@Url.Action("CreateRoute", "Route")',
-                        { locations: App.geo.route.routeLocations, name: name, estimatedDurationInHours: duration }
+                        { locations: App.geo.route.getLocations(), name: name, estimatedDurationInHours: duration }
                     );
                 }
             }
         );
     }
-
-    $(window).keydown(function (e) {
-        if (e.ctrlKey) {
-            if (e.key == 'z') {
-                cancelLastAction();
-            }
-            if (e.key == 'x') {
-                initPosition();
-            }
-            if (e.key == 'c') {
-                saveRoute();
-            }
-        }
+    $(document).ready(function () {
+        setTimeout(function () {
+            $(document).keydown(function (e) {
+                if (e.ctrlKey) {
+                    if (e.key == 'z') {
+                        cancelLastAction();
+                    }
+                    if (e.key == 'x') {
+                        initPosition();
+                    }
+                    if (e.key == 'c') {
+                        saveRoute();
+                    }
+                }
+            });
+        }, 500);
     });
     $('#cancel-action').click(cancelLastAction);
     $('#reset').click(initPosition);
