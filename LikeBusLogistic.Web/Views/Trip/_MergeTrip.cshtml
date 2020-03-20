@@ -105,13 +105,11 @@
                 interaction: {
                     hex: true,
                     input: true,
-                    save: true,
-                    cancel: true
+                    save: true
                 }
             },
             strings: {
-               save: 'Сохранить',
-               cancel: 'Отмена'
+                save: 'Сохранить'
             }
         });
         pickr.on('init', (color) => {
@@ -123,6 +121,7 @@
                 value = color.toHEXA().toString();
             }
             colorInput.val(value);
+            App.geo.route.setPathOptions({ pulseColor: value });
         });
     });
 </script>

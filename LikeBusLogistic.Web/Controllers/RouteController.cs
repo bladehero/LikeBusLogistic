@@ -30,9 +30,17 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetRouteLocations(int id)
+        public async Task<IActionResult> GetRouteLocations(int id, bool reverse = false)
         {
-            var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(id);
+            var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(id, reverse);
+            foreach (var routeLocation in routeLocations.Data)
+            {
+                if (routeLocation.PreviousLocationId.HasValue && routeLocation.TomTomLeg == null)
+                {
+                    var distance = await GetOrGenerateDistance(routeLocation.PreviousLocationId.Value, routeLocation.CurrentLocationId);
+                    routeLocation.TomTomInfo = distance.TomTomInfo;
+                }
+            }
             return Json(routeLocations);
         }
 
@@ -52,51 +60,7 @@ namespace LikeBusLogistic.Web.Controllers
 
                 if (distanceResult.Data == null)
                 {
-                    var location1 = ServiceFactory.GeolocationManagement.GetLocation(locationId1);
-                    var location2 = ServiceFactory.GeolocationManagement.GetLocation(locationId2);
-
-                    if (!location1.Success)
-                    {
-                        throw new ArgumentException($"An error occured with location1 `{location1}`. Message: {location1.Message}");
-                    }
-                    if (!location2.Success)
-                    {
-                        throw new ArgumentException($"An error occured with location2 `{location2}`. Message: {location2.Message}");
-                    }
-                    var point1 = new LocationPoint
-                    {
-                        Latitude = location1.Data.Latitude,
-                        Longitude = location1.Data.Longitude
-                    };
-                    var point2 = new LocationPoint
-                    {
-                        Latitude = location2.Data.Latitude,
-                        Longitude = location2.Data.Longitude
-                    };
-
-                    var calculateRouteResult = await ServiceFactory.TomTom.CalculateRoute(point1, point2);
-                    if (!calculateRouteResult.Success)
-                    {
-                        throw new ArgumentException($"An error occured with calculateRouteResult " +
-                            $"`{calculateRouteResult}`. Message: {calculateRouteResult.Message}");
-                    }
-
-                    var leg = calculateRouteResult.Data.Routes.FirstOrDefault()?.Legs.FirstOrDefault();
-                    var distance = new DistanceVM
-                    {
-                        TomTomInfo = leg == null ? string.Empty : Newtonsoft.Json.JsonConvert.SerializeObject(leg),
-                        Location1 = location1.Data.Id,
-                        Location2 = location2.Data.Id
-                    };
-
-                    ServiceFactory.RouteManagement.MergeDistance(distance);
-                    distanceResult = ServiceFactory.RouteManagement.GetDistance(distance.Location1, distance.Location2);
-                    if (!distanceResult.Success)
-                    {
-                        throw new ArgumentException($"An error occured with distanceResult" +
-                            $"`{distanceResult}` after merging data in database. Message: {distanceResult.Message}");
-                    }
-
+                    distanceResult.Data = await GetOrGenerateDistance(locationId1, locationId2);
                 }
 
                 result.Data = distanceResult.Data;
@@ -266,5 +230,75 @@ namespace LikeBusLogistic.Web.Controllers
             }
             return Json(result);
         }
+
+        [HttpPost]
+        public IActionResult DeleteOrRestoreRoute(int id)
+        {
+            var result = new Result();
+            try
+            {
+                var deleteOrRestoreRouteResult = ServiceFactory.RouteManagement.DeleteOrRestoreRoute(id);
+                result.Success = deleteOrRestoreRouteResult.Success;
+                result.Message = deleteOrRestoreRouteResult.Message;
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
+
+        #region Helpers
+
+        private async Task<DistanceVM> GetOrGenerateDistance(int locationId1, int locationId2)
+        {
+            var location1 = ServiceFactory.GeolocationManagement.GetLocation(locationId1);
+            var location2 = ServiceFactory.GeolocationManagement.GetLocation(locationId2);
+
+            if (!location1.Success)
+            {
+                throw new ArgumentException($"An error occured with location1 `{location1}`. Message: {location1.Message}");
+            }
+            if (!location2.Success)
+            {
+                throw new ArgumentException($"An error occured with location2 `{location2}`. Message: {location2.Message}");
+            }
+            var point1 = new LocationPoint
+            {
+                Latitude = location1.Data.Latitude,
+                Longitude = location1.Data.Longitude
+            };
+            var point2 = new LocationPoint
+            {
+                Latitude = location2.Data.Latitude,
+                Longitude = location2.Data.Longitude
+            };
+
+            var calculateRouteResult = await ServiceFactory.TomTom.CalculateRoute(point1, point2);
+            if (!calculateRouteResult.Success)
+            {
+                throw new ArgumentException($"An error occured with calculateRouteResult " +
+                    $"`{calculateRouteResult}`. Message: {calculateRouteResult.Message}");
+            }
+
+            var leg = calculateRouteResult.Data.Routes.FirstOrDefault()?.Legs.FirstOrDefault();
+            var distance = new DistanceVM
+            {
+                TomTomInfo = leg == null ? string.Empty : Newtonsoft.Json.JsonConvert.SerializeObject(leg),
+                Location1 = location1.Data.Id,
+                Location2 = location2.Data.Id
+            };
+
+            ServiceFactory.RouteManagement.MergeDistance(distance);
+            var distanceResult = ServiceFactory.RouteManagement.GetDistance(distance.Location1, distance.Location2);
+            if (!distanceResult.Success)
+            {
+                throw new ArgumentException($"An error occured with distanceResult" +
+                    $"`{distanceResult}` after merging data in database. Message: {distanceResult.Message}");
+            }
+            return distanceResult.Data;
+        }
+
+        #endregion
     }
 }

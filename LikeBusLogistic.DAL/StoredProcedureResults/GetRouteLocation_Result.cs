@@ -6,8 +6,6 @@
         public int RouteLocationId { get; set; }
         public string RouteName { get; set; }
         public double Distance { get; set; }
-        public double EstimatedDurationInHours { get; set; }
-        public double StopDurationInHours { get; set; }
 
         public int? CurrentLocationId { get; set; }
         public string CurrentFullName { get; set; }
@@ -36,5 +34,7 @@
         public bool? PreviousIsParking { get; set; }
         public double? PreviousLatitude { get; set; }
         public double? PreviousLongitude { get; set; }
+
+        public string TomTomInfo { get; set; }
     }
 }

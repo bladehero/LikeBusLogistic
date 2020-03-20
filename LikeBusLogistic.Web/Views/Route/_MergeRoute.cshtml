@@ -39,7 +39,8 @@
 
     $('#reverse-route-btn').click(async function () {
         App.message.showMessage('info', 'Проверка', 'Идет сопоставление текущих маршрутных листов...', 0, false);
-        let locations = App.geo.route.routeLocationsAsLocations().reverse();
+        App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', @Model.RouteId, null, true);
+        let locations = App.geo.route.getLocations();
         App.postDataOnServer(
             '@Url.Action("IsRouteMatch", "Route")',
             { locations: locations },
@@ -67,7 +68,14 @@
                 let routeName = (first.cityName || first.name || '?') +
                                 (hasDifferentCountries ? ' (' + (first.countryName || '?') + ')' : '') + 
                                 ' - ' + (last.cityName || last.name || '?') +
-                                (hasDifferentCountries ? ' (' + (last.countryName || '?') + ')' : '');
+                    (hasDifferentCountries ? ' (' + (last.countryName || '?') + ')' : '');
+
+                let hours = 0;
+                App.geo.route.routeLocations.forEach(function (el){
+                    let prop = 'routeLocation.tomTomLeg.summary.travelTimeInSeconds';
+                    let seconds = App.getPropertyOrDefault(el, prop, 0) / 3600;
+                    hours += Math.round((seconds + Number.EPSILON) * 10) / 10;
+                });
 
                 let formValues = await Swal.fire({
                     title: 'Создание нового маршрута',
@@ -80,7 +88,7 @@
                           '<div class="uk-margin uk-text-left">'+
                           '    <label class="uk-form-label" for="form-stacked-text">Ожидаемая продолжительность</label>'+
                           '    <div class="uk-form-controls">'+
-                          '        <input class="uk-input" id="route-duration" type="number" step="0.5" placeholder="Введите продолжительность маршрута...">'+
+                          '        <input class="uk-input" id="route-duration"  value="' + hours + '"  type="number" step="0.5" placeholder="Введите продолжительность маршрута...">'+
                           '    </div>'+
                           '</div>',
                     focusConfirm: false,
@@ -94,7 +102,7 @@
                     }
                 });
 
-                if (formValues) {
+                if (formValues && !formValues.dismiss) {
                     let name = formValues.value[0];
                     let duration = formValues.value[1];
                     App.postDataOnServer(

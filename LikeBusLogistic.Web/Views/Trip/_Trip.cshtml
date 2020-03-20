@@ -32,7 +32,7 @@
             <th>Отправление</th>
             <th>Статус</th>
             <th>Номер</th>
-            <th>Спецификация</th>
+            <th>Модель</th>
             <th>Расстояние</th>
             <th></th>
         </tr>
@@ -41,7 +41,7 @@
         @foreach (var trip in Model.Trips)
         {
         <tr data-trip-id="@trip.Id" data-trip-color="@trip.Color" data-route-id="@trip.RouteId">
-            <td><div style="width: 25px; height: 25px; background-color: @trip.Color;"></div></td>
+            <td><div class="show-trip-icon" style="width: 25px; height: 25px; background-color: @trip.Color;"></div></td>
             <td>@trip.ScheduleName</td>
             <td>@trip.RouteName</td>
             <td>@trip.Departure</td>

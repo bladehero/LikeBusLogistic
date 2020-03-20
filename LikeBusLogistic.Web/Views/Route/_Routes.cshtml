@@ -33,8 +33,11 @@
                     @route.ArrivalLocationName
                 </td>
                 <td class="uk-text-right">@route.EstimatedDurationInHours ч.</td>
-                <td class="uk-float-right tool-cell-3">
-                    @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-route-icon")
+                <td class="uk-float-right uk-text-right tool-cell-3">
+                    @if (!route.IsDeleted)
+                    {
+                        @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-route-icon")
+                    }
                     @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
                     {
                         @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-route-icon")
@@ -57,6 +60,7 @@
             App.footer.getContent('@Url.Action("_MergeRoute", "Route")', { id: id });
         });
         $('.delete-route-icon').click(function () {
+            debugger;
             var id = $(this).parents('tr').data('route-id');
             App.postDataOnServer('@Url.Action("DeleteOrRestoreRoute", "Route")', { id: id }, function (result) {
                 App.message.showSuccessWithOk('Успешно', result.message || 'Маршрут успешно удален!');

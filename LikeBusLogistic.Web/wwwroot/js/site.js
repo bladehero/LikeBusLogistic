@@ -135,39 +135,65 @@
             },
             routeLocations: [],
             color: '#1e87f0',
-            resetRouteLocations: function (url, id, color) {
+            resetRouteLocations: function (url, id, color, reverse = false) {
                 App.geo.route.clear();
-                let routeLocations = App.geo.route.getRouteLocations(url, id);
+                let routeLocations = App.geo.route.getRouteLocations(url, id, reverse);
                 App.geo.route.setRouteLocations(routeLocations, id, color);
             },
             getLocations: function () {
                 let locations = [];
                 for (let routeLocation of App.geo.route.routeLocations) {
                     let location = {};
-                    location.id = routeLocation.id;
-                    location.fullName = routeLocation.fullName;
-                    location.name = routeLocation.name;
-                    location.latitude = routeLocation.latitude;
-                    location.longitude = routeLocation.longitude;
+                    if (routeLocation.routeLocation) {
+                        routeLocation = routeLocation.routeLocation;
+                    }
+                    location.id = routeLocation.id || routeLocation.currentLocationId;
+                    location.fullName = routeLocation.fullName || routeLocation.currentFullName;
+                    location.name = routeLocation.name || routeLocation.currentName;
+                    location.latitude = routeLocation.latitude || routeLocation.currentLatitude;
+                    location.longitude = routeLocation.longitude || routeLocation.currentLongitude;
                     location.distance = routeLocation.distance;
-                    location.cityI = routeLocation.cityI;
-                    location.cityName = routeLocation.cityName;
-                    location.districtId = routeLocation.districtId;
-                    location.districtName = routeLocation.districtName;
-                    location.countryId = routeLocation.countryId;
-                    location.countryName = routeLocation.countryName;
-                    location.isParking = routeLocation.isParking;
+                    location.cityId = routeLocation.cityId || routeLocation.currentCityId;
+                    location.cityName = routeLocation.cityName || routeLocation.currentCityName;
+                    location.districtId = routeLocation.districtId || routeLocation.currentDistrictId;
+                    location.districtName = routeLocation.districtName || routeLocation.currentDistrictName;
+                    location.countryId = routeLocation.countryId || routeLocation.currentCountryId;
+                    location.countryName = routeLocation.countryName || routeLocation.currentCountryName;
+                    location.isParking = routeLocation.isParking || routeLocation.currentIsParking;
                     location.isDeleted = routeLocation.isDeleted;
                     locations.push(location);
                 }
                 return locations;
             },
+            setPathOptions: function (options) {
+                let pulseColor = options.pulseColor || App.geo.route.color;
+                let shade = App.colorShade(pulseColor, 50);
+                let _default = { use: L.polyline, delay: 800, dashArray: [10, 10], weight: 6, color: shade, pulseColor: pulseColor };
+                if (!options) {
+                    options = _default;
+                } else {
+                    for (let key in _default) {
+                        if (!options[key]) {
+                            options[key] = _default[key];
+                        }
+                    }
+                }
+                if (options && App.geo.route.path.options) {
+                    for (let key in options) {
+                        if (App.geo.route.path.options[key])
+                            App.geo.route.path.options[key] = options[key];
+                    }
+                    App.map.removeControl(App.geo.route.path);
+                    App.map.addControl(App.geo.route.path);
+                }
+            },
             setRouteLocations: function (routeLocations, id, color) {
                 color = color || '#1e87f0';
                 let latlngs = [];
                 for (var i = 0; i < routeLocations.length; i++) {
-                    if (routeLocations[i].tomTomLeg) {
-                        for (let point of routeLocations[i].tomTomLeg.points) {
+                    let leg = routeLocations[i].tomTomLeg || routeLocations[i].routeLocation.tomTomLeg;
+                    if (leg) {
+                        for (let point of leg.points) {
                             latlngs.push([point.latitude, point.longitude]);
                         }
                     } else {
@@ -198,9 +224,9 @@
                 }
                 return locations;
             },
-            getRouteLocations: function (url, id) {
+            getRouteLocations: function (url, id, reverse) {
                 var routeLocations = [];
-                App.postDataOnServer(url, { id: id },
+                App.postDataOnServer(url, { id: id, reverse: reverse },
                     function (result) {
                         if (result.success) {
                             if (result.data.length) {

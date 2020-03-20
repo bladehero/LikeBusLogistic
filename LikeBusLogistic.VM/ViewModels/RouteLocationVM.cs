@@ -1,4 +1,6 @@
-﻿namespace LikeBusLogistic.VM.ViewModels
+﻿using LikeBusLogistic.VM.ViewModels.TomTom;
+
+namespace LikeBusLogistic.VM.ViewModels
 {
     public class RouteLocationVM
     {
@@ -34,5 +36,10 @@
         public bool? PreviousIsParking { get; set; }
         public double? PreviousLatitude { get; set; }
         public double? PreviousLongitude { get; set; }
+
+        public string TomTomInfo { get; set; }
+
+        private Leg _leg;
+        public Leg TomTomLeg => _leg ?? (_leg = TomTomInfo == null ? null : Newtonsoft.Json.JsonConvert.DeserializeObject<Leg>(TomTomInfo));
     }
 }

@@ -1,5 +1,6 @@
 ﻿using LikeBusLogistic.BLL.Results;
 using LikeBusLogistic.DAL.Models;
+using LikeBusLogistic.DAL.StoredProcedureResults;
 using LikeBusLogistic.VM.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -65,12 +66,63 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
-        public BaseResult<IEnumerable<RouteLocationVM>> GetRouteLocations(int? routeId)
+        public BaseResult<IEnumerable<RouteLocationVM>> GetRouteLocations(int? routeId, bool reverse = false)
         {
             var result = new BaseResult<IEnumerable<RouteLocationVM>>();
             try
             {
                 var routeLocations = UnitOfWork.StoredProcedureDao.GetRouteLocation(routeId);
+                if (reverse)
+                {
+                    var temporary = new List<GetRouteLocation_Result>();
+                    var previous = (GetRouteLocation_Result)null;
+                    foreach (var item in routeLocations.Reverse())
+                    {
+                        var distance = (DistanceVM)null;
+                        if (previous == null)
+                        {
+                            item.PreviousLocationId = null;
+                            item.PreviousFullName = null;
+                            item.PreviousName = null;
+                            item.PreviousCityId = null;
+                            item.PreviousCityName = null;
+                            item.PreviousCountryId = null;
+                            item.PreviousCountryName = null;
+                            item.PreviousDistrictId = null;
+                            item.PreviousDistrictName = null;
+                            item.PreviousIsCarRepair = null;
+                            item.PreviousIsParking = null;
+                            item.PreviousLatitude = null;
+                            item.PreviousLongitude = null;
+                        }
+                        else
+                        {
+                            item.PreviousLocationId = previous.CurrentLocationId;
+                            item.PreviousFullName = previous.CurrentFullName;
+                            item.PreviousName = previous.CurrentName;
+                            item.PreviousCityId = previous.CurrentCityId;
+                            item.PreviousCityName = previous.CurrentCityName;
+                            item.PreviousCountryId = previous.CurrentCountryId;
+                            item.PreviousCountryName = previous.CurrentCountryName;
+                            item.PreviousDistrictId = previous.CurrentDistrictId;
+                            item.PreviousDistrictName = previous.CurrentDistrictName;
+                            item.PreviousIsCarRepair = previous.CurrentIsCarRepair;
+                            item.PreviousIsParking = previous.CurrentIsParking;
+                            item.PreviousLatitude = previous.CurrentLatitude;
+                            item.PreviousLongitude = previous.CurrentLongitude;
+                            var distanceResult = GetDistance(item.PreviousLocationId.Value, item.CurrentLocationId.Value);
+                            if (!distanceResult.Success)
+                            {
+                                throw new ArgumentException(distanceResult.Message);
+                            }
+                            distance = distanceResult.Data;
+                        }
+                        item.TomTomInfo = distance?.TomTomInfo;
+                        temporary.Add(item);
+                        previous = item;
+                    }
+                    routeLocations = temporary;
+                }
                 result.Data = Mapper.Map<IEnumerable<RouteLocationVM>>(routeLocations);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
@@ -269,6 +321,22 @@ namespace LikeBusLogistic.BLL.Services
 
                 result.Success = UnitOfWork.RouteLocationDao.HardDelete(routeLocation.RouteLocationId);
                 result.Message = result.Success ? GeneralSuccessMessage : GeneralErrorMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+
+        public BaseResult DeleteOrRestoreRoute(int routeId)
+        {
+            var result = new BaseResult();
+            try
+            {
+                result.Success = UnitOfWork.RouteDao.DeleteOrRestore(routeId);
+                result.Message = GeneralSuccessMessage;
             }
             catch (Exception ex)
             {
