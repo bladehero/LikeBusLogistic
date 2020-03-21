@@ -45,7 +45,7 @@
 <script>
     App.footer.setBreadcrumbs([{ name: 'Водители', url: '@Url.Action("_FullInformation", "Driver")' }, { name: 'Контакты', url: '@Url.Action("_Contacts","Driver")' }]);
     $(document).ready(function () {
-        $('#contact-table').dataTable();
+        App.customDataTable('#contact-table');
         $('.edit-contact-icon').click(function () {
             var id = $(this).parents('tr').data('contact-id');
             App.footer.getContent('@Url.Action("_MergeContact", "Driver")', { contactId: id });

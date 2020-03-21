@@ -70,7 +70,7 @@
     App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
     App.geo.route.clear();
     $(document).ready(function () {
-        setTimeout(function () { $('.trips-table').dataTable(); }, 150);
+        App.customDataTable('.trips-table');
         $('.show-trip-icon').click(function () {
             let _this = $(this);
             let first = _this.parents('tr').first();

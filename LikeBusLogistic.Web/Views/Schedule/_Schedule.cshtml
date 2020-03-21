@@ -63,7 +63,7 @@
     App.geo.route.clear();
 
     $(document).ready(function () {
-        $('#schedule-table').dataTable();
+        App.customDataTable('#schedule-table');
         $('.edit-schedule-icon').click(function () {
             var id = $(this).parents('tr').data('schedule-id');
             App.footer.getContent('@Url.Action("_MergeSchedule", "Schedule")', { scheduleId: id });

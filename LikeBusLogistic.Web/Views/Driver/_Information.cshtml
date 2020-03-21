@@ -49,7 +49,7 @@
 <script>
     App.footer.setBreadcrumbs([{ name: 'Водители', url: '@Url.Action("_FullInformation", "Driver")' }, { name: 'Информация', url: '@Url.Action("_Information","Driver")' }]);
     $(document).ready(function () {
-        $('#driver-table').dataTable();
+        App.customDataTable('#driver-table');
         $('.edit-driver-icon').click(function () {
             var id = $(this).parents('tr').data('driver-id');
             App.footer.getContent('@Url.Action("_MergeDriver", "Driver")', { driverId: id });

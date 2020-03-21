@@ -44,7 +44,7 @@
 
 <script>
     $(document).ready(function () {
-        $('#countries-table').dataTable();
+        App.customDataTable('#countries-table');
         $('.edit-country-icon').click(function () {
             var id = $(this).parents('tr').data('country-id');
             App.footer.getContent('@Url.Action("_MergeCountry", "Geolocation")', { id: id });

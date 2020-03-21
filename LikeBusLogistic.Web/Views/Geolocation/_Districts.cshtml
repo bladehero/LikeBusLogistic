@@ -44,7 +44,7 @@
 
 <script>
     $(document).ready(function () {
-        $('#districts-table').dataTable();
+        App.customDataTable('#districts-table');
         $('.edit-district-icon').click(function () {
             var id = $(this).parents('tr').data('district-id');
             App.footer.getContent('@Url.Action("_MergeDistrict", "Geolocation")', { id: id });

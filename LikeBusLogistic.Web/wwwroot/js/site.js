@@ -1,4 +1,43 @@
 ﻿var App = {
+    customDataTable: function (selector) {
+        setTimeout(function () {
+            $(selector).dataTable({
+                'rowReorder': {
+                    'selector': 'td:nth-child(2)'
+                },
+                'responsive': true,
+                'language': {
+                    "processing": "Подождите...",
+                    "search": "Поиск:",
+                    "lengthMenu": "Показать _MENU_ записей",
+                    "info": "Записи с _START_ до _END_ из _TOTAL_ записей",
+                    "infoEmpty": "Записи с 0 до 0 из 0 записей",
+                    "infoFiltered": "(отфильтровано из _MAX_ записей)",
+                    "infoPostFix": "",
+                    "loadingRecords": "Загрузка записей...",
+                    "zeroRecords": "Записи отсутствуют.",
+                    "emptyTable": "В таблице отсутствуют данные",
+                    "paginate": {
+                        "first": '<span uk-icon="icon: chevron-double-left; ratio: 1;"></span>',
+                        'previous': '<span uk-icon="icon: chevron-left; ratio: 1;"></span>',
+                        'next': '<span uk-icon="icon: chevron-right; ratio: 1;"></span>',
+                        "last": '<span uk-icon="icon: chevron-double-right; ratio: 1;"></span>'
+                    },
+                    "aria": {
+                        "sortAscending": ": активировать для сортировки столбца по возрастанию",
+                        "sortDescending": ": активировать для сортировки столбца по убыванию"
+                    },
+                    "select": {
+                        "rows": {
+                            "_": "Выбрано записей: %d",
+                            "0": "Кликните по записи для выбора",
+                            "1": "Выбрана одна запись"
+                        }
+                    }
+                }
+            });
+        }, 100);
+    },
     hasProperty: function (obj, key) {
         return key.split(".").every(function (x) {
             if (typeof obj != "object" || obj === null || !x in obj)
@@ -191,14 +230,17 @@
                 color = color || '#1e87f0';
                 let latlngs = [];
                 for (var i = 0; i < routeLocations.length; i++) {
-                    let leg = routeLocations[i].tomTomLeg || routeLocations[i].routeLocation.tomTomLeg;
+                    let leg = routeLocations[i].tomTomLeg;
+                    if (routeLocations[i].routeLocation) {
+                        leg = routeLocations[i].routeLocation.tomTomLeg;
+                    }
                     if (leg) {
                         for (let point of leg.points) {
                             latlngs.push([point.latitude, point.longitude]);
                         }
                     } else {
                         latlngs.push([routeLocations[i].latitude || routeLocations[i].routeLocation.currentLatitude,
-                            routeLocations[i].longitude || routeLocations[i].routeLocation.currentLongitude]);
+                        routeLocations[i].longitude || routeLocations[i].routeLocation.currentLongitude]);
                     }
                 }
                 let shade = App.colorShade(color, 50);

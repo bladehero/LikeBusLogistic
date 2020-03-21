@@ -49,7 +49,7 @@
 <script>
     App.footer.setBreadcrumbs([{ name: 'Автобусы', url: '@Url.Action("_FullInformation", "Bus")' }, { name: 'Машины', url: '@Url.Action("_Buses","Bus")' }]);
     $(document).ready(function () {
-        $('#buses-table').dataTable();
+        App.customDataTable('#buses-table');
         $('.edit-bus-icon').click(function () {
             var id = $(this).parents('tr').data('bus-id');
             App.footer.getContent('@Url.Action("_MergeBus", "Bus")', { busId: id });

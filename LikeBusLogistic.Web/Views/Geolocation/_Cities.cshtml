@@ -46,7 +46,7 @@
 
 <script>
     $(document).ready(function () {
-        $('#cities-table').dataTable();
+        App.customDataTable('#cities-table');
         $('.edit-city-icon').click(function () {
             var id = $(this).parents('tr').data('city-id');
             App.footer.getContent('@Url.Action("_MergeCity", "Geolocation")', { id: id });

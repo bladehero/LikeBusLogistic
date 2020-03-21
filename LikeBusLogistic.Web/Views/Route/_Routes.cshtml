@@ -54,7 +54,7 @@
 
 <script>
     $(document).ready(function () {
-        $('#routes-table').dataTable();
+        App.customDataTable('#routes-table');
         $('.edit-route-icon').click(function () {
             var id = $(this).parents('tr').data('route-id');
             App.footer.getContent('@Url.Action("_MergeRoute", "Route")', { id: id });

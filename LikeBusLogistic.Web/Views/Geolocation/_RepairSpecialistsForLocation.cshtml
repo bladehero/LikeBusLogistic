@@ -73,7 +73,7 @@
 
 <script>
     $(document).ready(function () {
-        setTimeout(function () { $('#specialists-table').dataTable(); }, 250);
+        App.customDataTable('#specialists-table');
     });
     $('#add-specialist-button').click(function () {
         let locationId = $(this).data('location-id');

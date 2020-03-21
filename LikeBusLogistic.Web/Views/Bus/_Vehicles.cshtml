@@ -48,7 +48,7 @@
 <script>
     App.footer.setBreadcrumbs([{ name: 'Автобусы', url: '@Url.Action("_FullInformation", "Bus")' }, { name: 'Модели', url: '@Url.Action("_Vehicles","Bus")' }]);
     $(document).ready(function () {
-        $('#vehicles-table').dataTable();
+        App.customDataTable('#vehicles-table');
         $('.edit-vehicle-icon').click(function () {
             var id = $(this).parents('tr').data('vehicle-id');
             App.footer.getContent('@Url.Action("_MergeVehicle", "Bus")', {vehicleId: id });

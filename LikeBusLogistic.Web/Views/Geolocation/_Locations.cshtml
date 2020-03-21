@@ -51,7 +51,7 @@
 
 <script>
     $(document).ready(function () {
-        $('#locations-table').dataTable();
+        App.customDataTable('#locations-table');
         $('#locations-table').on('click', '.go-to-location', function () {
             var id = $(this).parents('tr').data('location-id');
             for	(var i = 0; i < App.geo.locations.length; i++)
