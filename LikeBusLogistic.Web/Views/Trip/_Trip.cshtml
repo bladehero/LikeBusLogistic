@@ -23,7 +23,7 @@
         }
     </div>
 </div>
-<table class="uk-table uk-table-small uk-table-hover trips-table">
+<table class="uk-table uk-table-small uk-table-hover trips-table @Model.Tab.ToString().ToLower()">
     <thead>
         <tr>
             <th></th>  
@@ -32,8 +32,8 @@
             <th>Отправление</th>
             <th>Статус</th>
             <th>Номер</th>
-            <th>Модель</th>
-            <th>Расстояние</th>
+            <th class="uk-visible@m">Модель</th>
+            <th class="uk-visible@m">Расстояние</th>
             <th></th>
         </tr>
     </thead>
@@ -44,13 +44,13 @@
             <td><div class="show-trip-icon" style="width: 25px; height: 25px; background-color: @trip.Color;"></div></td>
             <td>@trip.ScheduleName</td>
             <td>@trip.RouteName</td>
-            <td>@trip.Departure</td>
+            <td>@trip.Departure.ToString("dd/MM/yyyy HH:mm")</td>
             <td>@Html.Raw(statusMapping(trip.Status))</td>
             <td>@trip.BusNumber</td>
-            <td>@($"{trip.VehicleProducer} {trip.VehicleModel} ({trip.VehiclePassengerCapacity})")</td>
-            <td>@trip.TotalDistance</td>
+            <td class="uk-visible@m">@($"{trip.VehicleProducer} {trip.VehicleModel} ({trip.VehiclePassengerCapacity})")</td>
+            <td class="uk-visible@m">@trip.TotalDistance</td>
             <td class="uk-float-right tool-cell-3">
-                @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-trip-icon")
+                @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-trip-icon uk-visible@m")
                 @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
                 {
                     @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-trip-icon")
@@ -70,7 +70,7 @@
     App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
     App.geo.route.clear();
     $(document).ready(function () {
-        App.customDataTable('.trips-table');
+        App.customDataTable('.trips-table.@Model.Tab.ToString().ToLower()');
         $('.show-trip-icon').click(function () {
             let _this = $(this);
             let first = _this.parents('tr').first();

@@ -1,15 +1,12 @@
 ﻿var App = {
     customDataTable: function (selector) {
         setTimeout(function () {
-            $(selector).dataTable({
-                'rowReorder': {
-                    'selector': 'td:nth-child(2)'
-                },
-                'responsive': true,
+            let table = $(selector).dataTable({
+                responsive: true,
                 'language': {
                     "processing": "Подождите...",
-                    "search": "Поиск:",
-                    "lengthMenu": "Показать _MENU_ записей",
+                    "search": "",
+                    "lengthMenu": "_MENU_",
                     "info": "Записи с _START_ до _END_ из _TOTAL_ записей",
                     "infoEmpty": "Записи с 0 до 0 из 0 записей",
                     "infoFiltered": "(отфильтровано из _MAX_ записей)",
@@ -18,10 +15,10 @@
                     "zeroRecords": "Записи отсутствуют.",
                     "emptyTable": "В таблице отсутствуют данные",
                     "paginate": {
-                        "first": '<span uk-icon="icon: chevron-double-left; ratio: 1;"></span>',
-                        'previous': '<span uk-icon="icon: chevron-left; ratio: 1;"></span>',
-                        'next': '<span uk-icon="icon: chevron-right; ratio: 1;"></span>',
-                        "last": '<span uk-icon="icon: chevron-double-right; ratio: 1;"></span>'
+                        "first": '<span uk-icon="icon: chevron-double-left; ratio: 0.9;"></span>',
+                        'previous': '<span uk-icon="icon: chevron-left; ratio: 0.9;"></span>',
+                        'next': '<span uk-icon="icon: chevron-right; ratio: 0.9;"></span>',
+                        "last": '<span uk-icon="icon: chevron-double-right; ratio: 0.9;"></span>'
                     },
                     "aria": {
                         "sortAscending": ": активировать для сортировки столбца по возрастанию",
@@ -36,7 +33,26 @@
                     }
                 }
             });
-        }, 100);
+            table.addClass('uk-width-1-1');
+            table.addClass('uk-card uk-card-default uk-margin-small-top uk-margin-small-bottom uk-box-shadow-small');
+            let wrapper = table.parents('div.dataTables_wrapper');
+            wrapper.addClass('uk-grid-collapse uk-child-width-expand uk-margin-small-top').attr('uk-grid', '');
+            let divTableLength = wrapper.find('div.dataTables_length');
+            divTableLength.addClass('uk-width-1-2');
+            let tableLength = divTableLength.find('select');
+            tableLength.addClass('uk-select uk-form-width-medium uk-form-small uk-float-left');
+            var divSearch = wrapper.find('div.dataTables_filter');
+            divSearch.addClass('uk-width-1-2');
+            let search =  divSearch.find('input[type="search"]');
+            search.addClass('uk-input uk-form-width-medium uk-form-small uk-float-right');
+            let info = wrapper.find('div.dataTables_info');
+            info.addClass('uk-width-1-2 uk-float-left uk-visible@m uk-text-lighter uk-text-muted');
+            let divPaginate = wrapper.find('div.dataTables_paginate.paging_simple_numbers');
+            divPaginate.addClass('uk-width-1-2@m uk-width-auto@s');
+            let paginateButtons = divPaginate.find('a.paginate_button');
+            let emptyText = table.find('.dataTables_empty');
+            emptyText.addClass(' uk-text-lighter uk-text-emphasis');
+        }, 50);
     },
     hasProperty: function (obj, key) {
         return key.split(".").every(function (x) {

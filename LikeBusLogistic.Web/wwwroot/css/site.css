@@ -6,7 +6,7 @@
 }
 
     #slide:hover {
-        opacity: 0.95;
+        opacity: 0.97;
     }
 
 footer {
@@ -23,6 +23,10 @@ footer {
     cursor: pointer;
     z-index: 8 !important;
     padding-bottom: 50px;
+}
+
+#footer-content {
+    overflow-x: scroll;
 }
 
 #menu-button {
@@ -110,4 +114,19 @@ table {
     width: 34px;
     margin-left: 1px;
     margin-top: 3px;
+}
+
+/*
+    dataTable styles
+*/
+table.dataTable {
+    margin: 0;
+}
+@media screen and (max-width: 767px) {
+    div.dataTables_paginate {
+        text-align: left !important;
+    }
+}
+.dataTables_paginate a.paginate_button {
+    margin: 0 3px;
 }
