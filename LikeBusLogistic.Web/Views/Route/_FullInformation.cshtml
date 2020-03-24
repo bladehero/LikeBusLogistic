@@ -4,15 +4,11 @@
     <li class="uk-active"><a href="#">Маршруты</a></li>
 </ul>
 <ul class="uk-switcher uk-margin">
-    <li>
-        @{
-            await Html.RenderPartialAsync("_Routes.cshtml", new LikeBusLogistic.Web.Models.Routes.RoutesVM { Routes = Model.Routes });
-        }
-    </li>
+    <li data-content-url="@Url.Action("_Routes", "Route")"></li>
 </ul>
 
 <script>
-    App.footer.setBreadcrumbs([{ name: 'Маршруты', url: '@Url.Action("_FullInformation", "Route")' }]);
+    App.footer.setBreadcrumbs(null);
     App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
     App.geo.route.clear();
     App.tab.name = 'route';

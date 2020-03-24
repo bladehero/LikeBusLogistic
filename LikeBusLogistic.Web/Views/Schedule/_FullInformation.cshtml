@@ -8,14 +8,10 @@
     </li>
 </ul>
 <ul class="uk-switcher uk-margin">
-    <li>
-        @{
-            await Html.RenderPartialAsync("_Schedule.cshtml", new LikeBusLogistic.Web.Models.Schedule.ScheduleVM { Schedules = Model.Schedules });
-        }
-    </li>
+    <li data-content-url="@Url.Action("_Schedule", "Schedule")"></li>
 </ul>
 
 <script>
-    App.footer.setBreadcrumbs([{ name: 'Расписания', url: '@Url.Action("_FullInformation", "Schedule")' }]);
+    App.footer.setBreadcrumbs(null);
     App.tab.name = 'schedule';
 </script>

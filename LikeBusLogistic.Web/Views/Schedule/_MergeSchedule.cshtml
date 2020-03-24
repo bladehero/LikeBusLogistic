@@ -3,7 +3,7 @@
     <div class="uk-grid-small" uk-grid id="save-schedule-grid">
         <input type="hidden" name="id" value="@Model?.Schedule?.Id" />
 
-        <div class="uk-margin uk-width-1-2">
+        <div class="uk-margin uk-margin-remove-top uk-width-1-2@m uk-width-1-1@s">
             <label class="uk-form-label">Маршрут</label>
             <div class="uk-form-controls">
                 @Model.Routes.SelectListWithEmptyOption(
@@ -18,7 +18,7 @@
             </div>
         </div>
 
-        <div class="uk-margin uk-width-1-2">
+        <div class="uk-margin uk-margin-remove-top uk-width-1-2@m uk-width-1-1@s">
             <label class="uk-form-label" for="form-stacked-text">Наименование</label>
             <div class="uk-form-controls">
                 <input class="uk-input to-validate" name="name" type="text" placeholder="Наименование..." value="@Model?.Schedule?.Name">

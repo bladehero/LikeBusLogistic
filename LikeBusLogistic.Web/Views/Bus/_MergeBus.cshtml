@@ -2,7 +2,7 @@
 
 <div class="uk-grid" uk-grid id="save-bus-grid">
     <input type="hidden" name="busId" value="@Model.Bus?.BusId" />
-    <div class="uk-margin uk-width-1-1">
+    <div class="uk-margin uk-width-1-1 uk-margin-remove-top">
         <label class="uk-form-label">Модель</label>
         <div class="uk-form-controls">
             @Model.Vehicles.SelectList(
@@ -16,24 +16,24 @@
 
     <div class="uk-margin uk-margin-remove-top uk-width-1-1">
         <label class="uk-form-label">Описание</label>
-        <textarea class="uk-textarea" name="vehicle-description" rows="6" placeholder="Описание..." disabled></textarea>
+        <textarea class="uk-textarea" name="vehicle-description" rows="3" placeholder="Описание..." disabled></textarea>
     </div>
 
-    <div class="uk-margin uk-margin-remove-top uk-width-1-5">
+    <div class="uk-margin uk-margin-remove-top uk-width-1-5@m uk-width-1-1@s">
         <label class="uk-form-label">Пасс-емкость</label>
         <div class="uk-form-controls">
             <input class="uk-input" name="vehicle-passenger-capacity" type="number" placeholder="Кол-во..." disabled>
         </div>
     </div>
 
-    <div class="uk-margin uk-margin-remove-top uk-width-2-5">
+    <div class="uk-margin uk-margin-remove-top uk-width-2-5@m uk-width-1-1@s">
         <label class="uk-form-label">Номер</label>
         <div class="uk-form-controls">
             <input class="uk-input" name="number" type="text" placeholder="Номерной знак..." value="@Model.Bus?.Number">
         </div>
     </div>
 
-    <div class="uk-margin uk-margin-remove-top uk-width-2-5">
+    <div class="uk-margin uk-margin-remove-top uk-width-2-5@m uk-width-1-1@s">
         <label class="uk-form-label">Экипаж</label>
         <div class="uk-form-controls">
             <input class="uk-input" name="crewCapacity" type="number" placeholder="Кол-во..." min="1" value="@(Model.Bus?.CrewCapacity > 0 ? Model.Bus.CrewCapacity : 2)">

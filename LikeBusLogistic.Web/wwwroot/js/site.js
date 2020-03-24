@@ -1,8 +1,9 @@
 ﻿var App = {
+    loader: '<div class="lds-ripple uk-align-center"><div></div><div></div></div>',
     customDataTable: function (selector) {
         setTimeout(function () {
             let table = $(selector).dataTable({
-                responsive: true,
+                lengthMenu: [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "Все"]],
                 'language': {
                     "processing": "Подождите...",
                     "search": "",
@@ -33,8 +34,10 @@
                     }
                 }
             });
-            table.addClass('uk-width-1-1');
-            table.addClass('uk-card uk-card-default uk-margin-small-top uk-margin-small-bottom uk-box-shadow-small');
+            table.addClass('custom-table-resize');
+            table.addClass('uk-width-1-1 uk-table-small uk-table-justify uk-table-middle uk-table-divider uk-card uk-card-default uk-margin-small-top uk-margin-small-bottom uk-box-shadow-small');
+            let th = table.find('th');
+            th.addClass('uk-text-center');
             let wrapper = table.parents('div.dataTables_wrapper');
             wrapper.addClass('uk-grid-collapse uk-child-width-expand uk-margin-small-top').attr('uk-grid', '');
             let divTableLength = wrapper.find('div.dataTables_length');
@@ -95,6 +98,71 @@
         }
     },
     geo: {
+        icons: {
+            folder: '../images/leaflet-icons/',
+            getIconsUrl: function (type) {
+                let folder = App.geo.icons.folder;
+                let image = { iconUrl: folder, iconRetinaUrl: folder };
+                switch (type) {
+                    case 'background':
+                        image.iconUrl += 'background-marker-icon.png';
+                        image.iconRetinaUrl += 'background-marker-icon-2x.png';
+                        break;
+                    case 'finish':
+                        image.iconUrl += 'finish-marker-icon.png';
+                        image.iconRetinaUrl += 'finish-marker-icon-2x.png';
+                        break;
+                    case 'new':
+                        image.iconUrl += 'new-marker-icon.png';
+                        image.iconRetinaUrl += 'new-marker-icon-2x.png';
+                        break;
+                    case 'start':
+                        image.iconUrl += 'start-marker-icon.png';
+                        image.iconRetinaUrl += 'start-marker-icon-2x.png';
+                        break;
+                    case '':
+                    default:
+                        image.iconUrl += 'marker-icon.png';
+                        image.iconRetinaUrl += 'marker-icon-2x.png';
+                        break;
+                }
+                return image;
+            },
+            getShadowUrl: function () {
+                return App.geo.icons.folder + 'marker-shadow.png';
+            },
+            getIcon: function (type) {
+                let shadowUrl = App.geo.icons.getShadowUrl();
+                let urls = App.geo.icons.getIconsUrl(type);
+                let leafIcon = L.icon({
+                    iconUrl: urls.iconUrl,
+                    iconRetinaUrl: urls.iconRetinaUrl,
+                    shadowUrl: shadowUrl,
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    tooltipAnchor: [16, -28],
+                    shadowSize: [41, 41]
+                });
+                return leafIcon;
+            }
+        },
+        setIconById: function (id, type) {
+            let i = App.geo.icons.getIcon(type);
+            App.geo.getLocationById(id).marker.setIcon(i);
+        },
+        setView: function (locationId, zoom) {
+            if (!locationId) {
+                return;
+            }
+            let location = App.geo.getLocationById(locationId);
+            if (!location) {
+                return;
+            }
+
+            zoom = zoom || App.geo.getZoomToView();
+            App.map.setView([location.data.latitude, location.data.longitude], zoom)
+        },
         locations: [],
         defaultZoom: 10,
         closeAllPopups: function (is_forced) {
@@ -162,7 +230,8 @@
                     if (result.success) {
                         if (result.data.length) {
                             for (var i = 0; i < result.data.length; i++) {
-                                var marker = L.marker([result.data[i].latitude, result.data[i].longitude]);
+                                let icon = App.geo.icons.getIcon();
+                                var marker = L.marker([result.data[i].latitude, result.data[i].longitude], { icon: icon });
                                 locations.push({
                                     marker: marker,
                                     data: result.data[i]
@@ -176,6 +245,12 @@
                 false
             );
             return locations;
+        },
+        setAllDefaultIcon: function () {
+            App.geo.locations.forEach(function (l) {
+                let d = App.geo.icons.getIcon();
+                l.marker.setIcon(d);
+            });
         },
         route: {
             id: null,
@@ -243,9 +318,23 @@
                 }
             },
             setRouteLocations: function (routeLocations, id, color) {
+                App.geo.setAllDefaultIcon();
                 color = color || '#1e87f0';
                 let latlngs = [];
                 for (var i = 0; i < routeLocations.length; i++) {
+                    let id = routeLocations[i].id || routeLocations[i].routeLocation.currentLocationId;
+                    let icon = null;
+                    if (!i) {
+                        icon = App.geo.icons.getIcon('start');
+                    }
+                    else if (i < routeLocations.length - 1) {
+                        icon = App.geo.icons.getIcon('background');
+
+                    } else {
+                        icon = App.geo.icons.getIcon('finish');
+                    }
+                    App.geo.getLocationById(id).marker.setIcon(icon);
+
                     let leg = routeLocations[i].tomTomLeg;
                     if (routeLocations[i].routeLocation) {
                         leg = routeLocations[i].routeLocation.tomTomLeg;
@@ -305,6 +394,12 @@
                     false
                 );
                 return routeLocations;
+            },
+            setStartView() {
+                var id = App.geo.route.routeLocations[0].routeLocation.currentLocationId;
+                if (id) {
+                    App.geo.setView(id, 8);
+                }
             },
             clear: function () {
                 if (App.geo.route.path) {
@@ -376,12 +471,18 @@
         getContent: function (url, data, finished) {
             App.map.off('mousemove');
             App.map.off('click');
-            App.footer.content.html('<div uk-spinner="ratio: 1.5" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);"></div>');
+            App.footer.content.html(App.loader);
             if (App.footer.mode !== -1) {
                 App.footer.show();
             }
             $.get(url, data, function (html) {
                 App.footer.content.html(html);
+                UIkit.util.on('.uk-switcher', 'shown', function (event, component) {
+                    let url = $(event.target).data('content-url');
+                    if (url) {
+                        App.loadContent(event.target, url);
+                    }
+                });
             }).fail(function () {
                 App.footer.content.html('Произошла непредвиденная ошибка!');
             }).then(function () {
@@ -393,25 +494,24 @@
             });
         },
         setBreadcrumbs: function (crumbs) {
-            if (crumbs) {
-                var htmlBreadCrumbs = '';
-                for (var i = 0; i < crumbs.length; i++) {
-                    if (crumbs[i] && crumbs[i].name) {
-                        htmlBreadCrumbs += '<li><span';
-                        if (crumbs[i].url && i !== crumbs.length - 1) {
-                            htmlBreadCrumbs += ' data-href="' + crumbs[i].url + '"';
-                        }
-                        htmlBreadCrumbs += '>' + crumbs[i].name + '</span></li>';
+            crumbs = crumbs || [];
+            var htmlBreadCrumbs = '';
+            for (var i = 0; i < crumbs.length; i++) {
+                if (crumbs[i] && crumbs[i].name) {
+                    htmlBreadCrumbs += '<li><span';
+                    if (crumbs[i].url && i !== crumbs.length - 1) {
+                        htmlBreadCrumbs += ' data-href="' + crumbs[i].url + '"';
                     }
+                    htmlBreadCrumbs += '>' + crumbs[i].name + '</span></li>';
                 }
-
-                App.footer.breadcrumb.html(htmlBreadCrumbs).find('li span').off('click').click(function () {
-                    var href = $(this).data('href');
-                    if (href) {
-                        App.footer.getContent(href);
-                    }
-                });
             }
+
+            App.footer.breadcrumb.html(htmlBreadCrumbs).find('li span').off('click').click(function () {
+                var href = $(this).data('href');
+                if (href) {
+                    App.footer.getContent(href);
+                }
+            });
         }
     },
     menu: {
@@ -565,7 +665,7 @@
     loadContent: function (selector, url, data, handler, finished) {
         let _content = $(selector);
         _content.empty();
-        _content.html('<div uk-spinner="ratio: 1.5" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);"></div>');
+        _content.html(App.loader);
         $.get(url, data, function (html) {
             if (handler) {
                 handler(html);
@@ -648,4 +748,23 @@ $(document).ready(function () {
             }
         }
     }
+
+
+    $(window).on('resize', function () {
+        let customTables = $('.custom-table-resize');
+        for (let table of customTables) {
+            setTimeout(function () {
+                let wrapper = $(table).parents('div.dataTables_wrapper').first();
+                let width = wrapper.width();
+                customTables.width(width);
+            }, 150);
+        }
+    });
+
+    $(window).on("orientationchange", function (event) {
+        setTimeout(function () {
+            App.footer.show();
+            App.menu.hide();
+        }, 50);
+    });
 });

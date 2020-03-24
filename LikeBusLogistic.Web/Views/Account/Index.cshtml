@@ -6,43 +6,38 @@
 }
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Войти в систему LikeBusLogistic</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Войти в LikeBusLogistic</title>
     <link href="~/lib/uikit/css/uikit.css" rel="stylesheet" />
 </head>
 <body>
-    <div class="uk-flex-center uk-padding" uk-grid>
-        <div class="uk-width-1-1@s uk-width-1-2@m uk-width-1-3@l uk-width-1-4@xl">
-            <div class="uk-card uk-card-default uk-card-hover uk-card-body">
-                <form asp-controller="Account" asp-action="Login">
-                    <fieldset class="uk-fieldset uk-text-center">
-                        <legend class="uk-legend">LikeBusLogistic</legend>
-                        <div class="uk-margin">
-                            <div class="uk-inline">
-                                <span class="uk-form-icon" uk-icon="icon: user"></span>
-                                <input class="uk-input" type="text" asp-for="Login" tabindex="1" value="@Model.Login">
-                            </div>
-                        </div>
-                        <div class="uk-margin">
-                            <div class="uk-inline">
-                                <button type="button" class="uk-form-icon uk-form-icon-flip" uk-icon="icon: lock" onclick="showPassword()" tabindex="3"></button>
-                                <input class="uk-input" type="password" id="password" asp-for="Password" value="@Model.Password" tabindex="2">
-                            </div>
-                        </div>
-                        <div class="uk-margin">
-                            <button type="submit" class="uk-button uk-button-primary">Войти</button>
-                        </div>
-                    </fieldset>
-                </form>
+    <form asp-controller="Account" asp-action="Login"
+          class="uk-card uk-card-default uk-card-hover uk-card-body uk-position-center">
+        <fieldset class="uk-fieldset uk-text-center">
+            <legend class="uk-legend">LikeBusLogistic</legend>
+            <div class="uk-margin">
+                <div class="uk-inline">
+                    <span class="uk-form-icon" uk-icon="icon: user"></span>
+                    <input class="uk-input" type="text" asp-for="Login" tabindex="1" value="@Model.Login">
+                </div>
             </div>
-        </div>
-    </div>
+            <div class="uk-margin">
+                <div class="uk-inline">
+                    <button type="button" class="uk-form-icon uk-form-icon-flip" uk-icon="icon: lock" onclick="showPassword()" tabindex="3"></button>
+                    <input class="uk-input" type="password" id="password" asp-for="Password" value="@Model.Password" tabindex="2">
+                </div>
+            </div>
+            <div class="uk-margin">
+                <button type="submit" class="uk-button uk-button-primary">Войти</button>
+            </div>
+        </fieldset>
+    </form>
 
 
     <script src="~/lib/uikit/js/uikit.js"></script>
     <script src="~/lib/uikit/js/uikit-icons.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="~/js/site.js"></script>
     <script>
         localStorage.setItem('isLoggedOff', 'false');
         function showPassword() {
@@ -55,7 +50,7 @@
         }
         @if (hasError)
         {
-        @: App.message.showErrorWithOk('Ошибка', '@Html.Raw(errorMessage)');
+        @: setTimeout(function () { UIkit.notification('<div class="uk-card uk-card-default uk-card-body uk-text-center"><p class="uk-text-danger uk-text-small uk-text-bold">@Html.Raw(errorMessage)</p></div>'); }, 50);
         }
     </script>
 </body>

@@ -55,6 +55,33 @@ namespace LikeBusLogistic.Web.Controllers
             };
             return PartialView(model);
         }
+
+
+        [HttpGet]
+        public IActionResult _Locations()
+        {
+            var locations = ServiceFactory.GeolocationManagement.GetLocations().Data;
+            return PartialView(locations);
+        }
+        [HttpGet]
+        public IActionResult _Cities()
+        {
+            var cities = ServiceFactory.GeolocationManagement.GetCities().Data;
+            return PartialView(cities);
+        }
+        [HttpGet]
+        public IActionResult _Districts()
+        {
+            var districts = ServiceFactory.GeolocationManagement.GetDistricts().Data;
+            return PartialView(districts);
+        }
+        [HttpGet]
+        public IActionResult _Countries()
+        {
+            var countries = ServiceFactory.GeolocationManagement.GetCountries().Data;
+            return PartialView(countries);
+        }
+
         [HttpGet]
         public IActionResult _Location(int? id)
         {

@@ -19,11 +19,8 @@ namespace LikeBusLogistic.Web.Controllers
         [HttpGet]
         public IActionResult _FullInformation(ScheduleTab tab = ScheduleTab.Schedule)
         {
-            var schedules = ServiceFactory.ScheduleManagement.GetSchedules().Data;
-
             var model = new FullInformationVM
             {
-                Schedules = schedules,
                 Tab = tab
             };
             return PartialView(model);

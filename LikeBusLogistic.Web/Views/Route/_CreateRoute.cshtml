@@ -38,7 +38,10 @@
     function initPosition() {
         App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
         App.geo.route.clear();
-        App.geo.route.routeLocations[0] = @Html.Raw(Json.Serialize(Model.StartLocation));
+        let start = @Html.Raw(Json.Serialize(Model.StartLocation));
+        App.geo.route.routeLocations[0] = start;
+        App.geo.setIconById(start.id, 'start');
+        App.geo.setView(start.id, 8);
         $('#route-location-list li:not(:first)').remove();
         for (let location of App.geo.locations) {
             setLogicForMarker(location);

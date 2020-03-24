@@ -184,7 +184,8 @@
         });
         const isRouteLocation = (element) => element.routeLocation.currentLocationId == locationId;
         for (let i = 0; i < App.geo.locations.length; i++) {
-            App.geo.locations[i].marker.off('click').on('click', function () {
+            let _this = App.geo.locations[i];
+            _this.marker.off('click').on('click', function () {
                 if (routeLocationId) {
                     if (!App.geo.route.routeLocations.some(isRouteLocation)) {
                         App.message.showErrorWithOk(
@@ -194,7 +195,23 @@
                         return;
                     }
 
-                    var latlng = L.latLng(App.geo.locations[i].marker._latlng.lat, App.geo.locations[i].marker._latlng.lng);
+                    debugger;
+                    let existedLocation = _this;
+                    let firstId = mode ? existedLocation.data.id : locationId;
+                    let lastId = mode ? locationId : existedLocation.id;
+                    let leg = null;
+                    App.postDataOnServer('@Url.Action("GetDistanceInfo", "Route")',
+                        { locationId1: firstId, locationId2: lastId },
+                        function (result) {
+                            if (result.success) {
+                                leg = result.data;
+                            }
+                        },
+                        null,
+                        'GET',
+                        false
+                    );
+                    var latlng = L.latLng(_this.marker._latlng.lat, _this.marker._latlng.lng);
                     var latlngs = App.geo.route.path.getLatLngs();
                     spliceHandler(latlngs, latlng);
                     App.geo.route.path.setLatLngs(latlngs);
@@ -202,7 +219,7 @@
                     {
                         routeId: App.geo.route.id,
                         routeLocationId: locationId,
-                        locationToAddId: App.geo.locations[i].data.id,
+                        locationToAddId: _this.data.id,
                         mode: mode
                     });
                 }
@@ -218,12 +235,12 @@
                     let locationToAdd = App.geo.getLocationById(locationId);
                     var latlng = L.latLng(locationToAdd.marker._latlng.lat, locationToAdd.marker._latlng.lng);
                     var latlngs = App.geo.route.path.getLatLngs();
-                    spliceHandler(latlngs, latlng, App.geo.locations[i].data.id);
+                    spliceHandler(latlngs, latlng, _this.data.id);
                     App.geo.route.path.setLatLngs(latlngs);
                     App.footer.getContent('@Url.Action("_MergeRouteLocation", "Route")',
                     {
                         routeId: App.geo.route.id,
-                        routeLocationId: App.geo.locations[i].data.id,
+                        routeLocationId: _this.data.id,
                         locationToAddId: locationId,
                         mode: mode
                     });

@@ -3,9 +3,6 @@
     RoleName roleName = (RoleName)ViewBag.RoleName;
 }
 <div class="uk-clearfix">
-    <div class="uk-float-left">
-        <h4>Регионы</h4>
-    </div>
     <div class="uk-float-right">
         @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
         {
@@ -18,24 +15,43 @@
         <tr>
             <th>Регион</th>
             <th>Страна</th>
-            <th></th>
+            <th class="uk-visible@s"></th>
+            <th class="uk-hidden@s"></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var district in Model)
         {
-            <tr data-district-id="@district.Id" data-country-id="@district.CountryId">
+            <tr data-district-id="@district.Id" data-country-id="@district.CountryId"
+                class="@(district.IsDeleted ? "uk-background-muted" : "")">
                 <td>@district.Name</td>
                 <td>@district.CountryName</td>
-                <td class="uk-float-right tool-cell-2">
-                    @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
-                    {
-                        @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-district-icon")
-                    }
-                    @if (roleName == RoleName.Administrator)
-                    {
-                        @CustomExtensions.HtmlDeleteOrRestoreIcon(district.IsDeleted, "delete-district-icon")
-                    }
+                <td class="uk-visible@s">
+                    <div class="tool-cell-2 uk-float-right">
+                        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                        {
+                            @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-district-icon")
+                        }
+                        @if (roleName == RoleName.Administrator)
+                        {
+                            @CustomExtensions.HtmlDeleteOrRestoreIcon(district.IsDeleted, "delete-district-icon")
+                        }
+                    </div>
+                </td>
+                <td class="uk-hidden@s uk-table-shrink">
+                    <div class="uk-inline">
+                        <span uk-icon="more-vertical"></span>
+                        <div uk-dropdown="pos: left-center">
+                            @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                            {
+                                @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-district-icon")
+                            }
+                            @if (roleName == RoleName.Administrator)
+                            {
+                                @CustomExtensions.HtmlDeleteOrRestoreIcon(district.IsDeleted, "delete-district-icon")
+                            }
+                        </div>
+                    </div>
                 </td>
             </tr>
         }

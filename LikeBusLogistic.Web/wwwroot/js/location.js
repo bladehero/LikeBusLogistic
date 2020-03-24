@@ -65,11 +65,11 @@
         grid.find('input[name="IsCarRepair"]').prop('checked', false);
     }
 
-    window.onresize = function () {
-        if ($('#toggle-animation').attr('hidden')) {
-            UIkit.toggle('#toggler').toggle();
-        }
-    };
+    //window.onresize = function () {
+    //    if (!$('#toggle-animation').attr('hidden')) {
+    //        UIkit.toggle('#toggler').toggle();
+    //    }
+    //};
     UIkit.util.on(document, 'show', '#toggle-animation', function () {
         var toggler = $('#toggler');
         toggler.removeClass('uk-button-primary')

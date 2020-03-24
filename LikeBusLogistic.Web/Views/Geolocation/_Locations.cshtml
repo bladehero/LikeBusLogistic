@@ -2,22 +2,18 @@
 @{
     RoleName roleName = (RoleName)ViewBag.RoleName;
 }
-<div class="uk-clearfix">
-    <div class="uk-float-left">
-        <h4>Локации</h4>
-    </div>
-</div>
 <table class="uk-table uk-table-small uk-table-hover" id="locations-table">
     <thead>
         <tr>
-            <th>Наименование</th>
-            <th>Долгота</th>
-            <th>Широта</th>
-            <th>Город</th>
-            <th>Регион</th>
-            <th>Страна</th>
+            <th>Локация</th>
+            <th class="uk-visible@m">Долгота</th>
+            <th class="uk-visible@m">Широта</th>
+            <th class="uk-visible@m">Город</th>
+            <th class="uk-visible@m">Регион</th>
+            <th class="uk-visible@m">Страна</th>
             <th>Парковка</th>
-            <th></th>
+            <th class="uk-visible@s"></th>
+            <th class="uk-hidden@s"></th>
         </tr>
     </thead>
     <tbody>
@@ -26,23 +22,46 @@
             <tr data-location-id="@location.Id"
                 data-city-id="@location.CityId"
                 data-district-id="@location.DistrictId"
-                data-country-id="@location.CountryId">
-                <td class="uk-link uk-text-bolder uk-text-secondary go-to-location">@location.Name</td>
-                <td class="uk-text-truncate">@location.Longitude</td>
-                <td class="uk-text-truncate">@location.Latitude</td>
-                <td>@location.CityName</td>
-                <td>@location.DistrictName</td>
-                <td>@location.CountryName</td>
+                data-country-id="@location.CountryId"
+                class="@(location.IsDeleted ? "uk-background-muted" : "")">
+                <td>
+                    <p>
+                        <span class="go-to-location uk-text-bolder uk-text-secondary">@location.Name</span>
+                        <span class="uk-hidden@m uk-link" uk-icon="info" uk-tooltip="title: @location.FullName"></span>
+                    </p>
+                </td>
+                <td class="uk-text-truncate uk-visible@m">@location.Longitude</td>
+                <td class="uk-text-truncate uk-visible@m">@location.Latitude</td>
+                <td class="uk-visible@m">@location.CityName</td>
+                <td class="uk-visible@m">@location.DistrictName</td>
+                <td class="uk-visible@m">@location.CountryName</td>
                 <td class="uk-table-shrink">@(location.IsParking ? CustomExtensions.HtmlEnabledIcon : CustomExtensions.HtmlDisabledIcon)</td>
-                <td class="uk-float-right tool-cell-2">
-                    @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
-                    {
-                        @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-location-icon")
-                    }
-                    @if (roleName == RoleName.Administrator)
-                    {
-                        @CustomExtensions.HtmlDeleteOrRestoreIcon(location.IsDeleted, "delete-location-icon")
-                    }
+                <td class="uk-visible@s">
+                    <div class="tool-cell-2 uk-float-right">
+                        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                        {
+                            @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-location-icon")
+                        }
+                        @if (roleName == RoleName.Administrator)
+                        {
+                            @CustomExtensions.HtmlDeleteOrRestoreIcon(location.IsDeleted, "delete-location-icon")
+                        }
+                    </div>
+                </td>
+                <td class="uk-hidden@s uk-table-shrink">
+                    <div class="uk-inline">
+                        <span uk-icon="more-vertical"></span>
+                        <div uk-dropdown="pos: left-center">
+                            @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                            {
+                                @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-location-icon")
+                            }
+                            @if (roleName == RoleName.Administrator)
+                            {
+                                @CustomExtensions.HtmlDeleteOrRestoreIcon(location.IsDeleted, "delete-location-icon")
+                            }
+                        </div>
+                    </div>
                 </td>
             </tr>
         }
@@ -54,17 +73,15 @@
         App.customDataTable('#locations-table');
         $('#locations-table').on('click', '.go-to-location', function () {
             var id = $(this).parents('tr').data('location-id');
-            for	(var i = 0; i < App.geo.locations.length; i++)
-            {
-            	if(App.geo.locations[i].data.id === id)
-                {
+            for (var i = 0; i < App.geo.locations.length; i++) {
+                if (App.geo.locations[i].data.id === id) {
                     let location = App.geo.locations[i];
                     if (!location.marker.isPopupOpen()) {
                         location.marker.fire('click');
                     }
-                    App.map.setView([location.data.latitude, location.data.longitude], App.geo.getZoomToView());
+                    App.geo.setView(id);
                     App.footer.show();
-            		break;
+                    break;
                 }
             }
         });

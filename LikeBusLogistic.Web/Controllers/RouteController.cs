@@ -20,9 +20,15 @@ namespace LikeBusLogistic.Web.Controllers
         [HttpGet]
         public IActionResult _FullInformation()
         {
+            return PartialView();
+        }
+
+        [HttpGet]
+        public IActionResult _Routes()
+        {
             var routes = ServiceFactory.RouteManagement.GetRoutes();
 
-            var model = new FullInformationVM
+            var model = new RoutesVM
             {
                 Routes = routes.Data
             };

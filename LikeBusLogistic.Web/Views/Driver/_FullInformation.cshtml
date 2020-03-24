@@ -5,20 +5,12 @@
     <li class="@(Model.Tab == DriverTab.Contact ? "uk-active" : "")" data-url="@Url.Action("_FullInformation", "Driver", new { tab = DriverTab.Contact })"><a href="#">Контакты</a></li>
 </ul>
 <ul class="uk-switcher uk-margin">
-    <li>
-        @{
-            await Html.RenderPartialAsync("_Information.cshtml", new LikeBusLogistic.Web.Models.Drivers.InformationVM { Drivers = Model.Drivers });
-        }
-    </li>
-    <li>
-        @{
-            await Html.RenderPartialAsync("_Contacts.cshtml", new LikeBusLogistic.Web.Models.Drivers.ContactsVM { Contacts = Model.Contacts });
-        }
-    </li>
+    <li data-content-url="@Url.Action("_Information", "Driver")"></li>
+    <li data-content-url="@Url.Action("_Contacts", "Driver")"></li>
 </ul>
 
 <script>
-    App.footer.setBreadcrumbs([{ name: 'Водители', url: '@Url.Action("_FullInformation", "Driver")' }]);
+    App.footer.setBreadcrumbs(null);
     App.geo.clearLocations();
     App.geo.route.clear();
     App.tab.name = 'driver';

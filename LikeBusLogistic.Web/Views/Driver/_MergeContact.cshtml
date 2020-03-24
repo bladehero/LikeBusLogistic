@@ -4,7 +4,7 @@
 <div class="uk-grid-small" uk-grid id="save-contact-grid">
     <input type="hidden" name="id" value="@Model.Contact?.Id" />
 
-    <div class="uk-margin uk-width-1-1">
+    <div class="uk-margin uk-margin-remove-top uk-width-1-1">
         <label class="uk-form-label">Закреплен на машине</label>
         <div class="uk-form-controls">
             @Model.Drivers.SelectList(
@@ -15,14 +15,14 @@
         </div>
     </div>
 
-    <div class="uk-margin uk-width-1-1">
-        <label class="uk-form-label">Имя</label>
+    <div class="uk-margin uk-margin-remove-top uk-width-1-1">
+        <label class="uk-form-label">Контакт</label>
         <div class="uk-form-controls">
             <input class="uk-input" name="contact" type="text" placeholder="Контактные данные..." value="@Model.Contact?.Contact">
         </div>
     </div>
 
-    <div class="uk-margin uk-margin-remove-top uk-margin-remove-top uk-width-1-1">
+    <div class="uk-margin uk-margin-remove-top uk-margin-remove-top uk-margin-remove-top uk-width-1-1">
         <button class="uk-button uk-button-primary uk-float-right" id="save-contact-btn">Сохранить</button>
     </div>
 </div>

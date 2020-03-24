@@ -3,9 +3,6 @@
     RoleName roleName = (RoleName)ViewBag.RoleName;
 }
 <div class="uk-clearfix">
-    <div class="uk-float-left">
-        <h4>Контакты</h4>
-    </div>
     <div class="uk-float-right">
         @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
         {
@@ -16,26 +13,47 @@
 <table class="uk-table uk-table-small uk-table-hover" id="contact-table">
     <thead>
         <tr>
-            <th>Водитель</th>
+            <th class="uk-hidden@m">Водитель</th>
+            <th class="uk-visible@m">Водитель</th>
             <th>Контакт</th>
-            <th></th>
+            <th class="uk-visible@s"></th>
+            <th class="uk-hidden@s"></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var contact in Model.Contacts)
         {
-            <tr data-contact-id="@contact.Id">
-                <td>@contact.DriverInfo</td>
+            <tr data-contact-id="@contact.Id"
+                class="@(contact.IsDeleted ? "uk-background-muted" : "")">
+                <td class="uk-hidden@m">@contact.FullNameWithInitials</td>
+                <td class="uk-visible@m">@contact.DriverInfo</td>
                 <td>@contact.Contact</td>
-                <td class="uk-float-right tool-cell-2">
-                    @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
-                    {
-                        @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-contact-icon")
-                    }
-                    @if (roleName == RoleName.Administrator)
-                    {
-                        @CustomExtensions.HtmlDeleteOrRestoreIcon(contact.IsDeleted, "delete-contact-icon")
-                    }
+                <td class="uk-visible@s">
+                    <div class="tool-cell-2 uk-float-right">
+                        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                        {
+                            @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-contact-icon")
+                        }
+                        @if (roleName == RoleName.Administrator)
+                        {
+                            @CustomExtensions.HtmlDeleteOrRestoreIcon(contact.IsDeleted, "delete-contact-icon")
+                        }
+                    </div>
+                </td>
+                <td class="uk-hidden@s uk-table-shrink">
+                    <div class="uk-inline">
+                        <span uk-icon="more-vertical"></span>
+                        <div uk-dropdown="pos: left-center">
+                            @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                            {
+                                @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-contact-icon")
+                            }
+                            @if (roleName == RoleName.Administrator)
+                            {
+                                @CustomExtensions.HtmlDeleteOrRestoreIcon(contact.IsDeleted, "delete-contact-icon")
+                            }
+                        </div>
+                    </div>
                 </td>
             </tr>
         }
@@ -43,7 +61,7 @@
 </table>
 
 <script>
-    App.footer.setBreadcrumbs([{ name: 'Водители', url: '@Url.Action("_FullInformation", "Driver")' }, { name: 'Контакты', url: '@Url.Action("_Contacts","Driver")' }]);
+    App.footer.setBreadcrumbs(null);
     $(document).ready(function () {
         App.customDataTable('#contact-table');
         $('.edit-contact-icon').click(function () {

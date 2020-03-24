@@ -3,9 +3,6 @@
     RoleName roleName = (RoleName)ViewBag.RoleName;
 }
 <div class="uk-clearfix">
-    <div class="uk-float-left">
-        <h4>Страны</h4>
-    </div>
     <div class="uk-float-right">
         @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
         {
@@ -18,24 +15,43 @@
         <tr>
             <th>Страна</th>
             <th>Код</th>
-            <th></th>
+            <th class="uk-visible@s"></th>
+            <th class="uk-hidden@s"></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var country in Model)
         {
-            <tr data-country-id="@country.Id">
+            <tr data-country-id="@country.Id"
+                class="@(country.IsDeleted ? "uk-background-muted" : "")">
                 <td>@country.Name</td>
                 <td class="uk-table-shrink">@country.ShortName</td>
-                <td class="uk-float-right tool-cell-2">
-                    @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
-                    {
-                        @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-country-icon")
-                    }
-                    @if (roleName == RoleName.Administrator)
-                    {
-                        @CustomExtensions.HtmlDeleteOrRestoreIcon(country.IsDeleted, "delete-country-icon")
-                    }
+                <td class="uk-visible@s">
+                    <div class="tool-cell-2 uk-float-right">
+                        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                        {
+                            @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-country-icon")
+                        }
+                        @if (roleName == RoleName.Administrator)
+                        {
+                            @CustomExtensions.HtmlDeleteOrRestoreIcon(country.IsDeleted, "delete-country-icon")
+                        }
+                    </div>
+                </td>
+                <td class="uk-hidden@s uk-table-shrink">
+                    <div class="uk-inline">
+                        <span uk-icon="more-vertical"></span>
+                        <div uk-dropdown="pos: left-center">
+                            @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                            {
+                                @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-country-icon")
+                            }
+                            @if (roleName == RoleName.Administrator)
+                            {
+                                @CustomExtensions.HtmlDeleteOrRestoreIcon(country.IsDeleted, "delete-country-icon")
+                            }
+                        </div>
+                    </div>
                 </td>
             </tr>
         }

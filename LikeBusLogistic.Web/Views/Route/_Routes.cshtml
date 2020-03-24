@@ -4,9 +4,6 @@
     RoleName roleName = (RoleName)ViewBag.RoleName;
 }
 <div class="uk-clearfix">
-    <div class="uk-float-left">
-        <h4>Маршруты</h4>
-    </div>
     <div class="uk-float-right">
         <button class="uk-button uk-button-small uk-button-default" id="reset-route-button">Сбросить</button>
     </div>
@@ -15,37 +12,63 @@
     <thead>
         <tr>
             <th>Маршрут</th>
-            <th>Откуда</th>
-            <th>Куда</th>
-            <th class="uk-table-shrink">Продолжительность</th>
-            <th></th>
+            <th class="uk-visible@l">Откуда</th>
+            <th class="uk-visible@l">Куда</th>
+            <th class="uk-table-shrink">
+                <span class="uk-visible@s">Продолжительность</span>
+                <span class="uk-hidden@s"><span uk-icon="clock"></span></span>
+            </th>
+            <th class="uk-visible@s"></th>
+            <th class="uk-hidden@s"></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var route in Model.Routes)
         {
-            <tr data-route-id="@route.Id">
-                <td>@route.Name</td>
-                <td class="uk-text-truncate" uk-tooltip="@route.DepartureLocationName">
+            <tr data-route-id="@route.Id"
+                class="@(route.IsDeleted ? "uk-background-muted" : "")">
+                <td uk-tooltip="@route.DepartureLocationName - @route.ArrivalLocationName">@route.Name</td>
+                <td class="uk-text-truncate uk-visible@l" uk-tooltip="@route.DepartureLocationName">
                     @route.DepartureLocationName
                 </td>
-                <td class="uk-text-truncate" uk-tooltip="@route.ArrivalLocationName">
+                <td class="uk-text-truncate uk-visible@l" uk-tooltip="@route.ArrivalLocationName">
                     @route.ArrivalLocationName
                 </td>
-                <td class="uk-text-right">@route.EstimatedDurationInHours ч.</td>
-                <td class="uk-float-right uk-text-right tool-cell-3">
-                    @if (!route.IsDeleted)
-                    {
-                        @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-route-icon")
-                    }
-                    @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
-                    {
-                        @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-route-icon")
-                    }
-                    @if (roleName == RoleName.Administrator)
-                    {
-                        @CustomExtensions.HtmlDeleteOrRestoreIcon(route.IsDeleted, "delete-route-icon")
-                    }
+                <td>@(route.EstimatedDurationInHours)ч.</td>
+                <td class="uk-visible@s">
+                    <div class="tool-cell-3 uk-float-right">
+                        @if (!route.IsDeleted)
+                        {
+                            @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-route-icon")
+                        }
+                        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                        {
+                            @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-route-icon")
+                        }
+                        @if (roleName == RoleName.Administrator)
+                        {
+                            @CustomExtensions.HtmlDeleteOrRestoreIcon(route.IsDeleted, "delete-route-icon")
+                        }
+                    </div>
+                </td>
+                <td class="uk-hidden@s uk-table-shrink">
+                    <div class="uk-inline">
+                        <span uk-icon="more-vertical"></span>
+                        <div uk-dropdown="pos: left-center">
+                            @if (!route.IsDeleted)
+                            {
+                                @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-route-icon")
+                            }
+                            @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                            {
+                                @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-route-icon")
+                            }
+                            @if (roleName == RoleName.Administrator)
+                            {
+                                @CustomExtensions.HtmlDeleteOrRestoreIcon(route.IsDeleted, "delete-route-icon")
+                            }
+                        </div>
+                    </div>
                 </td>
             </tr>
         }
@@ -60,7 +83,6 @@
             App.footer.getContent('@Url.Action("_MergeRoute", "Route")', { id: id });
         });
         $('.delete-route-icon').click(function () {
-            debugger;
             var id = $(this).parents('tr').data('route-id');
             App.postDataOnServer('@Url.Action("DeleteOrRestoreRoute", "Route")', { id: id }, function (result) {
                 App.message.showSuccessWithOk('Успешно', result.message || 'Маршрут успешно удален!');
@@ -71,7 +93,7 @@
             routeValidation(() => {
                 Swal.fire({
                     title: 'Сброс',
-                    text: 'Вы уверены, что хотите сбросить изменения в текущем маршруте?',
+                    text: 'Вы уверены, что хотите сбросить текущий маршрут маршруте?',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Да',
@@ -87,6 +109,7 @@
             let _this = $(this);
             let id = _this.parents('tr').first().data('route-id');
             App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', id);
+            App.geo.route.setStartView();
             if (App.geo.route.routeLocations.length != 0) {
                 App.geo.route.path.on('click', function () {
                     // TODO: Updating route modal

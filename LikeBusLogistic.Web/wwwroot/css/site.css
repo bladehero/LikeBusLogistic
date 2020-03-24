@@ -25,8 +25,8 @@ footer {
     padding-bottom: 50px;
 }
 
-#footer-content {
-    overflow-x: scroll;
+#footer-breacrumb:empty {
+    margin: 0;
 }
 
 #menu-button {
@@ -121,12 +121,16 @@ table {
 */
 table.dataTable {
     margin: 0;
+    text-align: center;
 }
 @media screen and (max-width: 767px) {
     div.dataTables_paginate {
-        text-align: left !important;
+        text-align: center !important;
     }
 }
 .dataTables_paginate a.paginate_button {
     margin: 0 3px;
+}
+.uk-dropdown {
+    min-width: 120px;
 }

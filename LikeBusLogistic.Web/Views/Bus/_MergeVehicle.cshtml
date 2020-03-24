@@ -2,21 +2,21 @@
 
 <div class="uk-grid-small" uk-grid id="save-vehicle-grid">
     <input type="hidden" name="id" value="@Model.Vehicle?.Id" />
-    <div class="uk-margin uk-width-1-1">
+    <div class="uk-margin uk-width-1-1 uk-margin-remove-top">
         <label class="uk-form-label" for="form-stacked-text">Производитель</label>
         <div class="uk-form-controls">
             <input class="uk-input" name="producer" type="text" placeholder="Производитель..." value="@Model.Vehicle?.Producer">
         </div>
     </div>
 
-    <div class="uk-margin uk-margin-remove-top uk-width-3-4">
+    <div class="uk-margin uk-margin-remove-top uk-width-3-4@m uk-width-1-1@s">
         <label class="uk-form-label" for="form-stacked-text">Модель</label>
         <div class="uk-form-controls">
             <input class="uk-input" name="model" type="text" placeholder="Модель..." value="@Model.Vehicle?.Model">
         </div>
     </div>
 
-    <div class="uk-margin uk-margin-remove-top uk-width-1-4">
+    <div class="uk-margin uk-margin-remove-top uk-width-1-4@m uk-width-1-1">
         <label class="uk-form-label" for="form-stacked-text">Пасс-емкость</label>
         <div class="uk-form-controls">
             <input class="uk-input" name="passengercapacity" type="number" placeholder="Кол-во..."  value="@Model.Vehicle?.PassengerCapacity">
@@ -25,7 +25,7 @@
 
     <div class="uk-margin uk-margin-remove-top uk-width-1-1">
         <label class="uk-form-label" for="form-stacked-text">Описание</label>
-        <textarea class="uk-textarea" name="description" rows="6" placeholder="Описание...">@Model.Vehicle?.Description</textarea>
+        <textarea class="uk-textarea" name="description" rows="3" placeholder="Описание...">@Model.Vehicle?.Description</textarea>
     </div>
 
     <div class="uk-margin uk-margin-remove-top uk-margin-remove-top uk-width-1-1">

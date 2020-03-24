@@ -1,10 +1,10 @@
 ﻿@model LikeBusLogistic.Web.Models.Geolocations.FullInformationVM
 
-<button id="toggler" href="#toggle-animation" class="uk-button uk-button-small uk-button-default uk-margin-small-bottom" type="button" uk-toggle="target: #toggle-animation; animation: uk-animation-fade">
-    Свернуть
+<button id="toggler" href="#toggle-animation" class="uk-button uk-button-small uk-button-primary uk-margin-small-bottom" type="button" uk-toggle="target: #toggle-animation; animation: uk-animation-fade">
+    Показать
 </button>
 <div uk-grid>
-    <div class="uk-width-1-4@l uk-width-1-1@m" id="toggle-animation">
+    <div class="uk-width-1-4@l uk-width-1-1@m" id="toggle-animation" hidden>
         <div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom uk-card-hover" id="current-location-card">
             @{
                 await Html.RenderPartialAsync("_Location.cshtml", new LikeBusLogistic.Web.Models.Geolocations.LocationVM { Countries = Model.Countries });
@@ -12,7 +12,7 @@
         </div>
     </div>
     <div class="uk-width-expand@l uk-width-1-1@m uk-margin-remove-top">
-        <ul uk-tab>
+        <ul uk-tab class="uk-child-width-expand">
             <li class="@(Model.Tab == GeolocationTab.Locations ? "uk-active" : "")"
                 data-url="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Locations })">
                 <a href="#">Локации</a>
@@ -31,32 +31,16 @@
             </li>
         </ul>
         <ul class="uk-switcher uk-margin">
-            <li>
-                @{
-                    await Html.RenderPartialAsync("_Locations.cshtml", Model.Locations);
-                }
-            </li>
-            <li>
-                @{
-                    await Html.RenderPartialAsync("_Cities.cshtml", Model.Cities);
-                }
-            </li>
-            <li>
-                @{
-                    await Html.RenderPartialAsync("_Districts.cshtml", Model.Districts);
-                }
-            </li>
-            <li>
-                @{
-                    await Html.RenderPartialAsync("_Countries.cshtml", Model.Countries);
-                }
-            </li>
+            <li data-content-url="@Url.Action("_Locations", "Geolocation")"></li>
+            <li data-content-url="@Url.Action("_Cities", "Geolocation")"></li>
+            <li data-content-url="@Url.Action("_Districts", "Geolocation")"></li>
+            <li data-content-url="@Url.Action("_Countries", "Geolocation")"></li>
         </ul>
     </div>
 </div>
 
 <script>
-    App.footer.setBreadcrumbs([{ name: 'Логистика', url: '@Url.Action("_FullInformation", "Geolocation")' }]);
+    App.footer.setBreadcrumbs(null);
     App.geo.route.clear();
     App.tab.name = 'geolocation';
     App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
@@ -76,13 +60,20 @@
         });
     });
     function editLocationFunction() {
-        var id = $(this).parents('tr,div').first().data('location-id');
+        if ($('#toggle-animation').is(':hidden')) {
+            UIkit.toggle('#toggler').toggle();
+        }
+        let id = $(this).parents('tr[data-location-id],div[data-location-id]').first().data('location-id');
+        let topPosition = 250;
+        if ($('#slide').scrollTop() > topPosition) {
+            $('#slide').animate({ scrollTop: topPosition }, 1000);
+        }
         App.loadContent('#current-location-card', '@Url.Action("_Location", "Geolocation")', { id: id });
         App.map.off('mousemove');
         App.map.off('click');
     }
     function deleteLocationFunction() {
-        var id = $(this).parents('tr,div').first().data('location-id');
+        var id = $(this).parents('tr[data-location-id],div[data-location-id]').first().data('location-id');
         Swal.fire({
             title: 'Удаление',
             text: 'Вы уверены, что хотите удалить?',

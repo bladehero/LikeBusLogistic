@@ -847,7 +847,7 @@ using
   select c.Id as CountryId
        , d.Id as DistrictId
        , ci.Id as CityId
-       , concat(N'Локация (', li.City, ')') as Name
+       , li.City as Name
        , li.Latitude as Latitude
        , li.Longitude as Longitude
        , crypt_gen_random(1) % 2 as IsParking -- random value 
