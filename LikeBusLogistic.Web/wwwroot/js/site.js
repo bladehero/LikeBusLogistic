@@ -780,8 +780,13 @@ $(document).ready(function () {
         }
     }
 
-
+    var lastWindowWidth;
     $(window).on('resize', function () {
+        windowWidth = $(window).width();
+        if (lastWindowWidth && lastWindowWidth <= 960 && $(window).width() > 960) {
+            App.footer.show();
+        }
+        lastWindowWidth = windowWidth;
         let customTables = $('.custom-table-resize');
         for (let table of customTables) {
             setTimeout(function () {
@@ -797,5 +802,13 @@ $(document).ready(function () {
             App.footer.show();
             App.menu.hide();
         }, 50);
+    });
+
+    $('#dragging-slider').off('touchstart').on('touchmove', function (e) {
+        let offset = $('#dragging-slider').parent().offset().top;
+        let sliderHeight = $('#dragging-slider').parent().height();
+        let maxHeight = $(window).height();
+        if (maxHeight - e.touches[0].clientY < maxHeight - sliderHeight)
+            $('footer').height(maxHeight - e.touches[0].clientY);
     });
 });
