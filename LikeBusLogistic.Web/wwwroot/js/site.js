@@ -2,7 +2,15 @@
     loader: '<div class="lds-ripple uk-align-center"><div></div><div></div></div>',
     customDataTable: function (selector) {
         setTimeout(function () {
-            let table = $(selector).dataTable({
+            let _this = $(selector);
+            let defaultIndex = $(_this).find('th.datatable-default-column').index();
+            defaultIndex = defaultIndex === -1 ? 0 : defaultIndex;
+            let table = _this.dataTable({
+                aoColumnDefs: [{
+                    bSortable: false,
+                    aTargets: ['datatable-no-sort']
+                }],
+                order: [[defaultIndex, "asc"]],
                 lengthMenu: [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "Все"]],
                 'language': {
                     "processing": "Подождите...",

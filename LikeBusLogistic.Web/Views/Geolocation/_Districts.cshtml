@@ -18,8 +18,8 @@
             <th>Страна</th>
             @if (isEditable)
             {
-                <th class="uk-visible@s"></th>
-                <th class="uk-hidden@s"></th>
+                <th class="uk-visible@s datatable-no-sort"></th>
+                <th class="uk-hidden@s datatable-no-sort"></th>
             }
         </tr>
     </thead>
@@ -45,7 +45,7 @@
                             }
                         </div>
                     </td>
-                    <td class="uk-hidden@s uk-table-shrink">
+                    <td class="uk-hidden@s">
                         <div class="uk-inline">
                             <span uk-icon="more-vertical"></span>
                             <div uk-dropdown="pos: left-center">
