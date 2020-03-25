@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<LikeBusLogistic.VM.ViewModels.LocationVM>
 @{
     RoleName roleName = (RoleName)ViewBag.RoleName;
+    bool isEditable = roleName == RoleName.Administrator || roleName == RoleName.Moderator;
 }
 <table class="uk-table uk-table-small uk-table-hover" id="locations-table">
     <thead>
@@ -12,14 +13,17 @@
             <th class="uk-visible@m">Регион</th>
             <th class="uk-visible@m">Страна</th>
             <th>Парковка</th>
-            <th class="uk-visible@s"></th>
-            <th class="uk-hidden@s"></th>
+            @if (isEditable)
+            {
+                <th class="uk-visible@s"></th>
+                <th class="uk-hidden@s"></th>
+            }
         </tr>
     </thead>
     <tbody>
         @foreach (var location in Model)
         {
-            var show = !location.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator);
+            var show = !location.IsDeleted && (isEditable);
             <tr data-location-id="@location.Id"
                 data-city-id="@location.CityId"
                 data-district-id="@location.DistrictId"
@@ -37,23 +41,11 @@
                 <td class="uk-visible@m">@location.DistrictName</td>
                 <td class="uk-visible@m">@location.CountryName</td>
                 <td class="uk-table-shrink">@(location.IsParking ? CustomExtensions.HtmlEnabledIcon : CustomExtensions.HtmlDisabledIcon)</td>
-                <td class="uk-visible@s">
-                    <div class="tool-cell-2 uk-float-right" @(show ? "" : "hidden")>
-                        @if (!location.IsDeleted  && (roleName == RoleName.Administrator || roleName == RoleName.Moderator))
-                        {
-                            @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-location-icon")
-                        }
-                        @if (roleName == RoleName.Administrator)
-                        {
-                            @CustomExtensions.HtmlDeleteOrRestoreIcon(location.IsDeleted, "delete-location-icon")
-                        }
-                    </div>
-                </td>
-                <td class="uk-hidden@s uk-table-shrink">
-                    <div class="uk-inline" @(show ? "" : "hidden")>
-                        <span uk-icon="more-vertical"></span>
-                        <div uk-dropdown="pos: left-center">
-                            @if (!location.IsDeleted  && (roleName == RoleName.Administrator || roleName == RoleName.Moderator))
+                @if (isEditable)
+                {
+                    <td class="uk-visible@s">
+                        <div class="tool-cell-2 uk-float-right">
+                            @if (!location.IsDeleted && (isEditable))
                             {
                                 @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-location-icon")
                             }
@@ -62,8 +54,23 @@
                                 @CustomExtensions.HtmlDeleteOrRestoreIcon(location.IsDeleted, "delete-location-icon")
                             }
                         </div>
-                    </div>
-                </td>
+                    </td>
+                    <td class="uk-hidden@s uk-table-shrink">
+                        <div class="uk-inline">
+                            <span uk-icon="more-vertical"></span>
+                            <div uk-dropdown="pos: left-center">
+                                @if (!location.IsDeleted && (isEditable))
+                                {
+                                    @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-location-icon")
+                                }
+                                @if (roleName == RoleName.Administrator)
+                                {
+                                    @CustomExtensions.HtmlDeleteOrRestoreIcon(location.IsDeleted, "delete-location-icon")
+                                }
+                            </div>
+                        </div>
+                    </td>
+                }
             </tr>
         }
     </tbody>

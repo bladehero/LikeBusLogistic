@@ -1,10 +1,11 @@
 ﻿@model LikeBusLogistic.Web.Models.Buses.VehiclesVM
 @{
     RoleName roleName = (RoleName)ViewBag.RoleName;
+    bool isEditable = roleName == RoleName.Administrator || roleName == RoleName.Moderator;
 }
 <div class="uk-clearfix">
     <div class="uk-float-right">
-        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+        @if (isEditable)
         {
             <button class="uk-button uk-button-small uk-button-primary" id="add-vehicle-button">Добавить</button>
         }
@@ -17,36 +18,27 @@
             <th>Модель</th>
             <th class="uk-table-shrink">Пасс<span class="uk-visible@s">-емкость</span></th>
             <th class="uk-visible@m">Описание</th>
-            <th class="uk-visible@s"></th>
-            <th class="uk-hidden@s"></th>
+            @if (isEditable)
+            {
+                <th class="uk-visible@s"></th>
+                <th class="uk-hidden@s"></th>
+            }
         </tr>
     </thead>
     <tbody>
         @foreach (var vehicle in Model.Vehicles)
         {
-            var show = !vehicle.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator);
+            var show = !vehicle.IsDeleted && (isEditable);
             <tr data-vehicle-id="@vehicle.Id"
                 class="@(vehicle.IsDeleted ? "uk-background-muted" : "")">
                 <td>@vehicle.Producer</td>
                 <td>@vehicle.Model</td>
                 <td class="uk-table-shrink">@vehicle.PassengerCapacity</td>
                 <td class="uk-text-truncate uk-visible@m">@vehicle.Description</td>
-                <td class="uk-visible@s">
-                    <div class="tool-cell-2 uk-float-right" @(show ? "" : "hidden")>
-                        @if (show)
-                        {
-                            @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-vehicle-icon")
-                        }
-                        @if (roleName == RoleName.Administrator)
-                        {
-                            @CustomExtensions.HtmlDeleteOrRestoreIcon(vehicle.IsDeleted, "delete-vehicle-icon")
-                        }
-                    </div>
-                </td>
-                <td class="uk-hidden@s uk-table-shrink">
-                    <div class="uk-inline" @(show ? "" : "hidden")>
-                        <span uk-icon="more-vertical"></span>
-                        <div uk-dropdown="pos: left-center">
+                @if (isEditable)
+                {
+                    <td class="uk-visible@s">
+                        <div class="tool-cell-2 uk-float-right">
                             @if (show)
                             {
                                 @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-vehicle-icon")
@@ -56,8 +48,23 @@
                                 @CustomExtensions.HtmlDeleteOrRestoreIcon(vehicle.IsDeleted, "delete-vehicle-icon")
                             }
                         </div>
-                    </div>
-                </td>
+                    </td>
+                    <td class="uk-hidden@s uk-table-shrink">
+                        <div class="uk-inline">
+                            <span uk-icon="more-vertical"></span>
+                            <div uk-dropdown="pos: left-center">
+                                @if (show)
+                                {
+                                    @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-vehicle-icon")
+                                }
+                                @if (roleName == RoleName.Administrator)
+                                {
+                                    @CustomExtensions.HtmlDeleteOrRestoreIcon(vehicle.IsDeleted, "delete-vehicle-icon")
+                                }
+                            </div>
+                        </div>
+                    </td>
+                }
             </tr>
         }
     </tbody>

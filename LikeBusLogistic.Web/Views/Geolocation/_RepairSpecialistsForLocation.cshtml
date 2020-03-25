@@ -3,6 +3,7 @@
 @{
     RoleName roleName = (RoleName)ViewBag.RoleName;
     var hasRepair = Model.RepairSpecialists?.Count() > 0;
+    bool isEditable = roleName == RoleName.Administrator || roleName == RoleName.Moderator;
 }
 
 <div uk-grid>
@@ -29,7 +30,7 @@
         }
     </div>
     <div class="uk-width-1-1 uk-margin-small-bottom uk-margin-small-top">
-        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+        @if (isEditable)
         {
             <button class="uk-button uk-button-small uk-button-primary uk-float-right"
                     id="add-specialist-button"
@@ -44,8 +45,11 @@
                 <tr>
                     <th>ФИО</th>
                     <th class="uk-text-break">Контакты</th>
-                    <th class="uk-visible@s"></th>
-                    <th class="uk-hidden@s"></th>
+                    @if (isEditable)
+                    {
+                        <th class="uk-visible@s"></th>
+                        <th class="uk-hidden@s"></th>
+                    }
                 </tr>
             </thead>
             <tbody data-location-id="@Model.Location.Id">
@@ -53,27 +57,15 @@
                 {
                     @foreach (var specialist in Model.RepairSpecialists)
                     {
-                        var show = !specialist.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator);
+                        var show = !specialist.IsDeleted && (isEditable);
                         <tr data-specialist-id="@specialist.Id"
                             class="@(specialist.IsDeleted ? "uk-background-muted" : "")">
                             <td>@specialist.Name</td>
                             <td>@specialist.Contact</td>
-                            <td class="uk-visible@s">
-                                <div class="tool-cell-2 uk-float-right" @(show ? "" : "hidden")>
-                                    @if (show)
-                                    {
-                                        @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-specialist-icon")
-                                    }
-                                    @if (roleName == RoleName.Administrator)
-                                    {
-                                        @CustomExtensions.HtmlDeleteOrRestoreIcon(specialist.IsDeleted, "delete-specialist-icon")
-                                    }
-                                </div>
-                            </td>
-                            <td class="uk-hidden@s uk-table-shrink">
-                                <div class="uk-inline" @(show ? "" : "hidden")>
-                                    <span uk-icon="more-vertical"></span>
-                                    <div uk-dropdown="pos: left-center">
+                            @if (isEditable)
+                            {
+                                <td class="uk-visible@s">
+                                    <div class="tool-cell-2 uk-float-right">
                                         @if (show)
                                         {
                                             @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-specialist-icon")
@@ -83,8 +75,23 @@
                                             @CustomExtensions.HtmlDeleteOrRestoreIcon(specialist.IsDeleted, "delete-specialist-icon")
                                         }
                                     </div>
-                                </div>
-                            </td>
+                                </td>
+                                <td class="uk-hidden@s uk-table-shrink">
+                                    <div class="uk-inline">
+                                        <span uk-icon="more-vertical"></span>
+                                        <div uk-dropdown="pos: left-center">
+                                            @if (show)
+                                            {
+                                                @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-specialist-icon")
+                                            }
+                                            @if (roleName == RoleName.Administrator)
+                                            {
+                                                @CustomExtensions.HtmlDeleteOrRestoreIcon(specialist.IsDeleted, "delete-specialist-icon")
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                            }
                         </tr>
                     }
                 }

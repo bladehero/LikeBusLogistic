@@ -1,10 +1,11 @@
 ﻿@model IEnumerable<DistrictVM>
 @{
     RoleName roleName = (RoleName)ViewBag.RoleName;
+    bool isEditable = roleName == RoleName.Administrator || roleName == RoleName.Moderator;
 }
 <div class="uk-clearfix">
     <div class="uk-float-right">
-        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+        @if (isEditable)
         {
             <button class="uk-button uk-button-small uk-button-primary" id="add-district-button">Добавить</button>
         }
@@ -15,34 +16,25 @@
         <tr>
             <th>Регион</th>
             <th>Страна</th>
-            <th class="uk-visible@s"></th>
-            <th class="uk-hidden@s"></th>
+            @if (isEditable)
+            {
+                <th class="uk-visible@s"></th>
+                <th class="uk-hidden@s"></th>
+            }
         </tr>
     </thead>
     <tbody>
         @foreach (var district in Model)
         {
-            var show = !district.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator);
+            var show = !district.IsDeleted && (isEditable);
             <tr data-district-id="@district.Id" data-country-id="@district.CountryId"
                 class="@(district.IsDeleted ? "uk-background-muted" : "")">
                 <td>@district.Name</td>
                 <td>@district.CountryName</td>
-                <td class="uk-visible@s">
-                    <div class="tool-cell-2 uk-float-right" @(show ? "" : "hidden")>
-                        @if (show)
-                        {
-                            @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-district-icon")
-                        }
-                        @if (roleName == RoleName.Administrator)
-                        {
-                            @CustomExtensions.HtmlDeleteOrRestoreIcon(district.IsDeleted, "delete-district-icon")
-                        }
-                    </div>
-                </td>
-                <td class="uk-hidden@s uk-table-shrink">
-                    <div class="uk-inline" @(show ? "" : "hidden")>
-                        <span uk-icon="more-vertical"></span>
-                        <div uk-dropdown="pos: left-center">
+                @if (isEditable)
+                {
+                    <td class="uk-visible@s">
+                        <div class="tool-cell-2 uk-float-right" )>
                             @if (show)
                             {
                                 @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-district-icon")
@@ -52,8 +44,23 @@
                                 @CustomExtensions.HtmlDeleteOrRestoreIcon(district.IsDeleted, "delete-district-icon")
                             }
                         </div>
-                    </div>
-                </td>
+                    </td>
+                    <td class="uk-hidden@s uk-table-shrink">
+                        <div class="uk-inline">
+                            <span uk-icon="more-vertical"></span>
+                            <div uk-dropdown="pos: left-center">
+                                @if (show)
+                                {
+                                    @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-district-icon")
+                                }
+                                @if (roleName == RoleName.Administrator)
+                                {
+                                    @CustomExtensions.HtmlDeleteOrRestoreIcon(district.IsDeleted, "delete-district-icon")
+                                }
+                            </div>
+                        </div>
+                    </td>
+                }
             </tr>
         }
     </tbody>
