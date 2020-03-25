@@ -55,7 +55,7 @@
             let paginateButtons = divPaginate.find('a.paginate_button');
             let emptyText = table.find('.dataTables_empty');
             emptyText.addClass(' uk-text-lighter uk-text-emphasis');
-        }, 50);
+        }, 45);
     },
     hasProperty: function (obj, key) {
         return key.split(".").every(function (x) {
@@ -677,13 +677,24 @@
     loadContent: function (selector, url, data, handler, finished) {
         let _content = $(selector);
         _content.empty();
-        _content.html(App.loader);
+        let loader = $(App.loader);
+        _content.html(loader);
         $.get(url, data, function (html) {
             if (handler) {
                 handler(html);
             }
-            if (selector) {
-                _content.html(html);
+            else if (selector) {
+                let wrapper = $('<div style="display: none;"></div>');
+                wrapper.ready(function () {
+                    setTimeout(
+                        function () {
+                            $(window).resize();
+                            loader.remove();
+                            wrapper.fadeIn("slow");
+                        }, 100);
+                });
+                wrapper.html(html);
+                _content.append(wrapper);
             }
         }).fail(function () {
             _content.html('Произошла непредвиденная ошибка!');
@@ -768,7 +779,7 @@ $(document).ready(function () {
             setTimeout(function () {
                 let wrapper = $(table).parents('div.dataTables_wrapper').first();
                 let width = wrapper.width();
-                customTables.width(width);
+                $(table).width(width);
             }, 150);
         }
     });
