@@ -396,10 +396,22 @@
                 return routeLocations;
             },
             setStartView() {
-                var id = App.geo.route.routeLocations[0].routeLocation.currentLocationId;
+                let id = App.geo.route.routeLocations[0].routeLocation.currentLocationId;
                 if (id) {
                     App.geo.setView(id, 8);
                 }
+            },
+            setViewToRouteLocation(routeLocationId) {
+                let routeLocation = App.geo.route.getRouteLocationById(routeLocationId);
+                App.map.setView([routeLocation.currentLatitude, routeLocation.currentLongitude], 8);
+            },
+            getRouteLocationById(routeLocationId) {
+                for (let routeLocation of App.geo.route.routeLocations) {
+                    if (routeLocation.routeLocation.routeLocationId == routeLocationId) {
+                        return routeLocation.routeLocation;
+                    }
+                }
+                return null;
             },
             clear: function () {
                 if (App.geo.route.path) {

@@ -3,6 +3,7 @@ using LikeBusLogistic.DAL.Models;
 using LikeBusLogistic.VM.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 
 namespace LikeBusLogistic.BLL.Services
@@ -108,6 +109,17 @@ namespace LikeBusLogistic.BLL.Services
 
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
+            }
+            catch(SqlException ex)
+            {
+                if (ex.Number == 2627)
+                {
+                    result.Message = "Такая запись уже существует. Попробуйте изменить название расписания!";
+                }
+                else
+                {
+                    throw;
+                }
             }
             catch (Exception ex)
             {

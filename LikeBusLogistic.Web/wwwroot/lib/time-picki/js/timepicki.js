@@ -101,6 +101,15 @@
 			var ele_next_all_child = ele_next.find("div");
 			var inputs = ele_par.find('input');
 
+			var min_left = 0;
+			if (ele.offset().left - ele.width() > 0) {
+				var min_left = $(window).width() - ele.offset().left - ele.width() - ele_next.width() - 10;
+				new_ele.css('left', min_left);
+				if (min_left < 0) {
+					new_ele.find('.arrow_top').css('left', min_left * -1);
+				}
+			}
+
 			$('.reset_time').on("click", function (event) {
 				ele.val("");
 				close_timepicki();
@@ -263,7 +272,7 @@
 
 						ele_next.css({
 							"top": ele_hei + "px",
-							"left": ele_lef + "px"
+							"left": min_left ||ele_lef + "px"
 						});
 						open_timepicki();
 					}

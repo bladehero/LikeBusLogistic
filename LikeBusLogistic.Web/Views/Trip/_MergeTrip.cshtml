@@ -6,7 +6,7 @@
     <input type="hidden" name="id" value="@Model?.Id" />
     <input type="hidden" name="status" value="@Model?.Status" />
 
-    <div class="uk-margin uk-width-auto">
+    <div class="uk-margin uk-margin-remove-top uk-width-auto">
         <label class="uk-form-label">Цвет</label>
         <div class="uk-form-controls custom-picker">
             <input type="hidden" name="color" value="@Model.Color"/>
@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <div class="uk-margin uk-width-1-4">
+    <div class="uk-margin uk-margin-remove-top uk-width-1-4@m uk-width-expand">
         <label class="uk-form-label" for="form-stacked-text">Отправление</label>
         <div class="uk-form-controls">
             <input class="uk-input"
@@ -26,7 +26,7 @@
         </div>
     </div>
 
-    <div class="uk-margin uk-width-1-4">
+    <div class="uk-margin uk-margin-remove-top uk-width-1-4@m uk-width-1-1">
         <label class="uk-form-label">Маршрут</label>
         <div class="uk-form-controls">
             @Model.Schedules.SelectListWithEmptyOption(
@@ -40,7 +40,7 @@
         </div>
     </div>
 
-    <div class="uk-margin uk-width-expand">
+    <div class="uk-margin uk-margin-remove-top uk-width-expand@m uk-width-1-1">
         <label class="uk-form-label">Автобус</label>
         <div class="uk-form-controls">
             @Model.Buses.SelectListWithEmptyOption(
@@ -53,7 +53,7 @@
         </div>
     </div>
 
-    <div class="uk-margin uk-width-1-1" id="trip-drivers"> </div>
+    <div class="uk-margin uk-margin-remove-top uk-width-1-1" id="trip-drivers"> </div>
 </div>
 
 <script>
@@ -71,10 +71,14 @@
         let colorInput = $('input[name="color"]');
         $('select[name="scheduleId"]').change(function () {
             let selected = $(this).find('option:selected').first();
-            let routeId = selected.data('route-id');
             let color = colorInput.val();
-            App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', routeId, color);
+            let routeId = selected.data('route-id');
+            if (routeId) {
+                App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', routeId, color);
+                App.geo.route.setStartView();
+            }
         });
+        $('select[name="scheduleId"]').change();
 
         if (!!tripId) {
             App.loadContent('div#trip-drivers', '@Url.Action("_TripDrivers", "Trip")', { tripId: tripId });

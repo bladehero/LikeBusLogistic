@@ -6,7 +6,7 @@
         var result = string.Empty;
         foreach (var tripStatus in Enum.GetValues(typeof(TripStatus)).Cast<TripStatus>())
         {
-            if(tripStatus.ToString() == status)
+            if (tripStatus.ToString() == status)
             {
                 result = tripStatus.GetDescription();
             }
@@ -26,47 +26,85 @@
 <table class="uk-table uk-table-small uk-table-hover trips-table @Model.Tab.ToString().ToLower()">
     <thead>
         <tr>
-            <th></th>  
-            <th>Расписание</th>
-            <th>Маршрут</th>
-            <th>Отправление</th>
-            <th>Статус</th>
-            <th>Номер</th>
-            <th class="uk-visible@m">Модель</th>
-            <th class="uk-visible@m">Расстояние</th>
-            <th></th>
+            <th class="uk-visible@m"></th>
+            <th>
+                Расписание
+                <span class="uk-hidden@s"> /<br />Отправление</span>
+            </th>
+            <th>
+                Маршрут
+                <span class="uk-hidden@s"> /<br />Статус</span>
+            </th>
+            <th class="uk-visible@s">Отправка</th>
+            <th class="uk-visible@s">Статус</th>
+            <th class="uk-visible@s">Номер</th>
+            <th class="uk-visible@l">Модель</th>
+            <th class="uk-visible@m">Км</th>
+            <th class="uk-visible@m"></th>
+            <th class="uk-hidden@m uk-table-shrink"></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var trip in Model.Trips)
         {
-        <tr data-trip-id="@trip.Id" data-trip-color="@trip.Color" data-route-id="@trip.RouteId">
-            <td><div class="show-trip-icon" style="width: 25px; height: 25px; background-color: @trip.Color;"></div></td>
-            <td>@trip.ScheduleName</td>
-            <td>@trip.RouteName</td>
-            <td>@trip.Departure.ToString("dd/MM/yyyy HH:mm")</td>
-            <td>@Html.Raw(statusMapping(trip.Status))</td>
-            <td>@trip.BusNumber</td>
-            <td class="uk-visible@m">@($"{trip.VehicleProducer} {trip.VehicleModel} ({trip.VehiclePassengerCapacity})")</td>
-            <td class="uk-visible@m">@trip.TotalDistance</td>
-            <td class="uk-float-right tool-cell-3">
-                @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-trip-icon uk-visible@m")
-                @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
-                {
-                    @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-trip-icon")
-                }
-                @if (roleName == RoleName.Administrator)
-                {
-                    @CustomExtensions.HtmlDeleteOrRestoreIcon(trip.IsDeleted, "delete-trip-icon")
-                }
-            </td>
-        </tr>
+            <tr data-trip-id="@trip.Id" data-trip-color="@trip.Color" data-route-id="@trip.RouteId"
+                class="@(trip.IsDeleted ? "uk-background-muted" : "")">
+                <td class="uk-visible@m uk-table-shrink"><div class="trip-color-rect show-trip-icon" style="background-color: @trip.Color;"></div></td>
+                <td>
+                    @trip.ScheduleName
+                    <span class="uk-hidden@s"> /<br />@trip.Departure.ToString("dd/MM/yyyy HH:mm") </span>
+                </td>
+                <td>
+                    @trip.RouteName
+                    <span class="uk-hidden@s"><br />@Html.Raw(statusMapping(trip.Status))</span>
+                </td>
+                <td class="uk-visible@s">@trip.Departure.ToString("dd/MM/yyyy HH:mm")</td>
+                <td class="uk-visible@s">@Html.Raw(statusMapping(trip.Status))</td>
+                <td class="uk-visible@s"><p class="uk-text-small">@trip.BusNumber</p></td>
+                <td class="uk-visible@l">@($"{trip.VehicleProducer} {trip.VehicleModel} ({trip.VehiclePassengerCapacity})")</td>
+                <td class="uk-visible@m">@trip.TotalDistance</td>
+                <td class="uk-visible@m">
+                    <div class="tool-cell-3 uk-float-right">
+                        @if (!trip.IsDeleted)
+                        {
+                            @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-trip-icon")
+                        }
+                        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                        {
+                            @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-trip-icon")
+                        }
+                        @if (roleName == RoleName.Administrator)
+                        {
+                            @CustomExtensions.HtmlDeleteOrRestoreIcon(trip.IsDeleted, "delete-trip-icon")
+                        }
+                    </div>
+                </td>
+                <td class="uk-hidden@m uk-table-shrink">
+                    <div class="uk-inline">
+                        <span uk-icon="more-vertical"></span>
+                        <div uk-dropdown="pos: left-center">
+                            @if (!trip.IsDeleted)
+                            {
+                                @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-trip-icon")
+                            }
+                            @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                            {
+                                @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-trip-icon")
+                            }
+                            @if (roleName == RoleName.Administrator)
+                            {
+                                @CustomExtensions.HtmlDeleteOrRestoreIcon(trip.IsDeleted, "delete-trip-icon")
+                            }
+                        </div>
+                    </div>
+                </td>
+            </tr>
         }
     </tbody>
 </table>
 
 <script>
-    App.footer.setBreadcrumbs([{ name: 'Рейсы', url: '@Url.Action("_FullInformation", "Trip", new { tab = Model.Tab })' }]);
+    App.footer.setBreadcrumbs(null);
     App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
     App.geo.route.clear();
     $(document).ready(function () {
@@ -77,6 +115,7 @@
             let id = first.data('route-id');
             let color = first.data('trip-color');
             App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', id, color);
+            App.geo.route.setStartView();
             $('#clean-route-button').removeClass('uk-hidden');
         });
         $('#clean-route-button').click(function () {

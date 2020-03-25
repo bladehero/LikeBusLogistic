@@ -46,12 +46,12 @@
         let selectList = $('select[name="routeId"]');
         let selected = $(selectList).find('option:selected').first();
 
-        var data = {};
-        var scheduleId = $('#save-schedule-grid input[name="id"]').val();
+        let data = {};
+        let scheduleId = $('#save-schedule-grid input[name="id"]').val();
         if (scheduleId) {
             data.scheduleId = scheduleId;
         }
-        var routeId = selected.val();
+        let routeId = selected.val();
         data.routeId = routeId;
 
         App.loadContent(
@@ -62,10 +62,13 @@
 
         @if (Model?.Schedule?.Id == null)
         {
-            @:var abbreviation = (selected.data('suggested-name') || '').replace(/[a-zа-я]/g, '').replace(/[^A-ZА-Я]/g, "");
-            @:var suggestedName = abbreviation ? new Date().toLocaleDateString().split('/').reverse().join('') + '-' + abbreviation : '';
+            @:var abbreviation = (selected.data('suggested-name') || '').replace(/[a-zа-я]/g, '').replace(/[^A-ZА-Я]/g, ""); let date = new Date(); let postfix = date.getHours() * 60 + date.getMinutes() % 1440;
+            @:var suggestedName = abbreviation ? new Date().toLocaleDateString().split('/').reverse().join('') + '-' + abbreviation + '-' + postfix : '';
             @:$('input[name="name"]').val(suggestedName);
         }
         App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', routeId);
+        if (!isNaN(routeId)) {
+            App.geo.route.setStartView();
+        }
     }
 </script>

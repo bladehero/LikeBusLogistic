@@ -23,7 +23,8 @@
     <tbody>
         @foreach (var schedule in Model.Schedules)
         {
-            <tr data-schedule-id="@schedule.Id" data-route-id="@schedule.RouteId">
+            <tr data-schedule-id="@schedule.Id" data-route-id="@schedule.RouteId"
+                class="@(schedule.IsDeleted ? "uk-background-muted" : "")">
                 <td><a class="schedule-info-link uk-link-text uk-text-warning" href="#modal-full" uk-toggle>@schedule.Name</a></td>
                 <td>@schedule.RouteName</td>
                 <td class="uk-visible@s">
@@ -70,7 +71,7 @@
     <div class="uk-modal-dialog">
         <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
         <div class="uk-grid-collapse uk-child-width-expand uk-flex-middle" uk-grid uk-height-viewport>
-            <div class="uk-padding-large" id="schedule-modal-content">
+            <div class="uk-padding-small" id="schedule-modal-content">
             </div>
         </div>
     </div>

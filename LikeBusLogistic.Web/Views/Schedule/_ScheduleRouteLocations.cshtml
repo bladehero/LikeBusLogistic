@@ -4,37 +4,49 @@
     var last = Model.ScheduleRouteLocations.LastOrDefault();
     double totalDistance = 0;
 }
-<div class="uk-grid-small" uk-grid>
-    <div class="uk-width-expand">
+<div class="uk-grid-small uk-text-center" uk-grid>
+    <div class="uk-width-expand@s uk-visible@s">
         <label class="uk-form-label">Локация</label>
     </div>
-    <div class="uk-width-1-6">
+    <div class="uk-width-1-6@s uk-width-1-3">
         <label class="uk-form-label">Прибытие</label>
     </div>
-    <div class="uk-width-1-6">
-        <label class="uk-form-label">Остановка (мин.)</label>
+    <div class="uk-width-1-6@s uk-width-1-3">
+        <label class="uk-form-label">Остановка<span class="uk-visible@m"> (мин.)</span></label>
     </div>
-    <div class="uk-width-1-6">
+    <div class="uk-width-1-6@s uk-width-1-3">
         <label class="uk-form-label">Отправление</label>
     </div>
-    <div class="uk-width-1-6">
-        <label class="uk-form-label">Расстояние (км.)</label>
+    <div class="uk-width-1-6@s uk-visible@s">
+        <label class="uk-form-label">Расстояние<span class="uk-visible@m"> (км.)</span></label>
     </div>
 </div>
+<hr />
 @foreach (var scheduleRouteLocation in Model.ScheduleRouteLocations)
 {
     totalDistance += scheduleRouteLocation.Distance;
-    <div class="uk-grid-small location-table" uk-grid>
-        <div class="uk-width-expand">
-            <input class="uk-input uk-form-small"
-                   name="routeLocation"
-                   data-route-location-id="@scheduleRouteLocation.RouteLocationId"
-                   type="text"
-                   value="@(scheduleRouteLocation.LocationFullName ?? scheduleRouteLocation.RouteLocationFullName)"
-                   disabled>
+    var fullName = scheduleRouteLocation.LocationFullName ?? scheduleRouteLocation.RouteLocationFullName;
+    <div class="uk-grid-small location-table" uk-grid data-route-location-id="@scheduleRouteLocation.RouteLocationId">
+        <div class="uk-width-1-6@s uk-hidden@s uk-text-center">
+            <p class="uk-text-muted uk-text-small uk-link go-to-route-location" uk-tooltip="@fullName">
+                <span uk-icon="icon: info; ratio: 0.8;"></span>
+                @(scheduleRouteLocation.LocationName ?? scheduleRouteLocation.CityName ?? scheduleRouteLocation.LocationFullName)
+                @(totalDistance)км.
+            </p>
         </div>
-        <div class="uk-width-1-6 uk-flex uk-flex-inline">
-            <input class="uk-input uk-form-small uk-wi999dth-expand timepicker @(scheduleRouteLocation.Equals(first) ? "" : "to-validate")"
+        <div class="uk-width-expand uk-visible@s">
+            <div class="uk-inline uk-width-1-1">
+                <a class="uk-form-icon uk-form-icon-flip go-to-route-location" href="#" uk-icon="icon: info"></a>
+                <input class="uk-input uk-form-small"
+                       name="routeLocation"
+                       data-route-location-id="@scheduleRouteLocation.RouteLocationId"
+                       type="text"
+                       value="@(scheduleRouteLocation.LocationFullName ?? scheduleRouteLocation.RouteLocationFullName)"
+                       readonly>
+            </div>
+        </div>
+        <div class="uk-width-1-6@s uk-width-1-3 uk-flex uk-flex-inline">
+            <input class="uk-input uk-form-small timepicker @(scheduleRouteLocation.Equals(first) ? "" : "to-validate")"
                    type="text"
                    name="arrivalTime"
                    value="@scheduleRouteLocation.ArrivalTime?.ToString(@"hh\:mm")"
@@ -45,10 +57,10 @@
                 <a href="#" class="uk-margin-small-left uk-margin-auto-vertical clean-time" tabIndex="-1" uk-icon="close"></a>
             }
         </div>
-        <div class="uk-width-1-6">
+        <div class="uk-width-1-6@s uk-width-1-3">
             <input class="uk-input uk-form-small stop-duration" type="text" placeholder="" disabled>
         </div>
-        <div class="uk-width-1-6 uk-flex uk-flex-inline">
+        <div class="uk-width-1-6@s uk-width-1-3 uk-flex uk-flex-inline">
             <input class="uk-input uk-form-small timepicker @(scheduleRouteLocation.Equals(last) ? "" : "to-validate")"
                    type="text"
                    value="@scheduleRouteLocation.DepartureTime?.ToString(@"hh\:mm")"
@@ -60,13 +72,14 @@
                 <a href="#" class="uk-margin-small-left uk-margin-auto-vertical clean-time" tabIndex="-1" uk-icon="close"></a>
             }
         </div>
-        <div class="uk-width-1-6">
+        <div class="uk-width-1-6@s uk-visible@s">
             <input class="uk-input uk-form-small" type="number" step="1" value="@totalDistance" placeholder="" disabled>
         </div>
     </div>
+    <hr />
 }
 <div class="uk-margin uk-width-1-1">
-    <button class="uk-button uk-button-primary uk-float-right" id="save-schedule-btn">Сохранить</button>
+    <button class="uk-button uk-button-primary uk-button-small uk-float-right" id="save-schedule-btn">Сохранить</button>
 </div>
 
 <script>
@@ -135,6 +148,12 @@
             });
             return flag;
         }
+
+        $('.go-to-route-location').click(function () {
+            let _this = $(this);
+            let id = _this.parents('.location-table').first().data('route-location-id');
+            App.geo.route.setViewToRouteLocation(id);
+        });
 
         $('#save-schedule-btn').click(function () {
             if (!validate()) {
