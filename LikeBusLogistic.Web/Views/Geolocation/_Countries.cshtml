@@ -22,13 +22,14 @@
     <tbody>
         @foreach (var country in Model)
         {
+            var show = !country.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator);
             <tr data-country-id="@country.Id"
                 class="@(country.IsDeleted ? "uk-background-muted" : "")">
                 <td>@country.Name</td>
                 <td class="uk-table-shrink">@country.ShortName</td>
                 <td class="uk-visible@s">
-                    <div class="tool-cell-2 uk-float-right">
-                        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                    <div class="tool-cell-2 uk-float-right" @(show ? "" : "hidden")>
+                        @if (show)
                         {
                             @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-country-icon")
                         }
@@ -39,10 +40,10 @@
                     </div>
                 </td>
                 <td class="uk-hidden@s uk-table-shrink">
-                    <div class="uk-inline">
+                    <div class="uk-inline" @(show ? "" : "hidden")>
                         <span uk-icon="more-vertical"></span>
                         <div uk-dropdown="pos: left-center">
-                            @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                            @if (show)
                             {
                                 @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-country-icon")
                             }

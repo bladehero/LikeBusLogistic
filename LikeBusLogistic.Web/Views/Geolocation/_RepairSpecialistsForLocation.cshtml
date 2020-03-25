@@ -28,48 +28,71 @@
             </p>
         }
     </div>
-</div>
-<div class="uk-float-right">
-    @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
-    {
-        <button class="uk-button uk-button-small uk-button-primary"
-                id="add-specialist-button"
-                data-location-id="@Model.Location.Id">
-            Добавить
-        </button>
-    }
-</div>
-<table class="uk-table uk-table-small uk-table-hover" id="specialists-table">
-    <thead>
-        <tr>
-            <th>ФИО</th>
-            <th>Контактные данные</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody data-location-id="@Model.Location.Id">
-        @if (hasRepair)
+    <div class="uk-width-1-1 uk-margin-small-bottom uk-margin-small-top">
+        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
         {
-            @foreach (var specialist in Model.RepairSpecialists)
-            {
-                <tr data-specialist-id="@specialist.Id">
-                    <td>@specialist.Name</td>
-                    <td>@specialist.Contact</td>
-                    <td class="uk-float-right tool-cell-2">
-                        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
-                        {
-                            @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-specialist-icon")
-                        }
-                        @if (roleName == RoleName.Administrator)
-                        {
-                            @CustomExtensions.HtmlDeleteOrRestoreIcon(specialist.IsDeleted, "delete-specialist-icon")
-                        }
-                    </td>
-                </tr>
-            }
+            <button class="uk-button uk-button-small uk-button-primary uk-float-right"
+                    id="add-specialist-button"
+                    data-location-id="@Model.Location.Id">
+                Добавить
+            </button>
         }
-    </tbody>
-</table>
+    </div>
+    <div class="uk-width-1-1 uk-overflow-auto uk-margin-remove-top uk-margin-bottom">
+        <table class="uk-table uk-table-small uk-table-hover uk-margin-small-bottom uk-margin-small-top" id="specialists-table">
+            <thead>
+                <tr>
+                    <th>ФИО</th>
+                    <th class="uk-text-break">Контакты</th>
+                    <th class="uk-visible@s"></th>
+                    <th class="uk-hidden@s"></th>
+                </tr>
+            </thead>
+            <tbody data-location-id="@Model.Location.Id">
+                @if (hasRepair)
+                {
+                    @foreach (var specialist in Model.RepairSpecialists)
+                    {
+                        var show = !specialist.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator);
+                        <tr data-specialist-id="@specialist.Id"
+                            class="@(specialist.IsDeleted ? "uk-background-muted" : "")">
+                            <td>@specialist.Name</td>
+                            <td>@specialist.Contact</td>
+                            <td class="uk-visible@s">
+                                <div class="tool-cell-2 uk-float-right" @(show ? "" : "hidden")>
+                                    @if (show)
+                                    {
+                                        @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-specialist-icon")
+                                    }
+                                    @if (roleName == RoleName.Administrator)
+                                    {
+                                        @CustomExtensions.HtmlDeleteOrRestoreIcon(specialist.IsDeleted, "delete-specialist-icon")
+                                    }
+                                </div>
+                            </td>
+                            <td class="uk-hidden@s uk-table-shrink">
+                                <div class="uk-inline" @(show ? "" : "hidden")>
+                                    <span uk-icon="more-vertical"></span>
+                                    <div uk-dropdown="pos: left-center">
+                                        @if (show)
+                                        {
+                                            @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-specialist-icon")
+                                        }
+                                        @if (roleName == RoleName.Administrator)
+                                        {
+                                            @CustomExtensions.HtmlDeleteOrRestoreIcon(specialist.IsDeleted, "delete-specialist-icon")
+                                        }
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
 
 <script>
     $(document).ready(function () {
@@ -81,6 +104,7 @@
             input: 'textarea',
             confirmButtonText: 'Далее',
             showCancelButton: true,
+            cancelButtonText: "Отмена",
             progressSteps: ['1', '2']
         }).queue([
             {
@@ -148,7 +172,7 @@
             }
         });
 
-        if (formValues && formValues.value[0] && formValues.value[1]) {
+        if (formValues && !formValues.dismiss) {
             let name = formValues.value[0];
             let contact = formValues.value[1];
             App.postDataOnServer(

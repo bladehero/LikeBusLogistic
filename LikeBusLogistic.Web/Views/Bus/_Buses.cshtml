@@ -24,6 +24,7 @@
     <tbody>
         @foreach (var bus in Model.Buses)
         {
+            var show = !bus.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator);
             <tr data-bus-id="@bus.BusId" data-vehicle-id="@bus.VehicleId"
                 class="@(bus.IsDeleted ? "uk-background-muted" : "")">
                 <td uk-tooltip="@bus.Fullname">@bus.Number</td>
@@ -31,8 +32,8 @@
                 <td>@bus.PassengerCapacity</td>
                 <td>@bus.CrewCapacity</td>
                 <td class="uk-visible@s">
-                    <div class="tool-cell-2 uk-float-right">
-                        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                    <div class="tool-cell-2 uk-float-right" @(show ? "" : "hidden")>
+                        @if (show)
                         {
                             @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-bus-icon")
                         }
@@ -43,10 +44,10 @@
                     </div>
                 </td>
                 <td class="uk-hidden@s uk-table-shrink">
-                    <div class="uk-inline">
+                    <div class="uk-inline" @(show ? "" : "hidden")>
                         <span uk-icon="more-vertical"></span>
                         <div uk-dropdown="pos: left-center">
-                            @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                            @if (show)
                             {
                                 @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-bus-icon")
                             }

@@ -33,7 +33,7 @@
                         {
                             @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-schedule-icon")
                         }
-                        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                        @if (!schedule.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator))
                         {
                             @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-schedule-icon")
                         }
@@ -51,7 +51,7 @@
                             {
                                 @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-schedule-icon")
                             }
-                            @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                            @if (!schedule.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator))
                             {
                                 @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-schedule-icon")
                             }

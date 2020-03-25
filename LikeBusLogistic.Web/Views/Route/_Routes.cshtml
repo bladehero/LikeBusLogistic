@@ -41,7 +41,7 @@
                         {
                             @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-route-icon")
                         }
-                        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                        @if (!route.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator))
                         {
                             @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-route-icon")
                         }
@@ -59,7 +59,7 @@
                             {
                                 @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-route-icon")
                             }
-                            @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                            @if (!route.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator))
                             {
                                 @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-route-icon")
                             }

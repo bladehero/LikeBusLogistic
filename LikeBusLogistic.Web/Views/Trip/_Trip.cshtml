@@ -69,7 +69,7 @@
                         {
                             @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-trip-icon")
                         }
-                        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                        @if (!trip.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator))
                         {
                             @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-trip-icon")
                         }
@@ -87,7 +87,7 @@
                             {
                                 @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-trip-icon")
                             }
-                            @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                            @if (!trip.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator))
                             {
                                 @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-trip-icon")
                             }

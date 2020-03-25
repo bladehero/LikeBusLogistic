@@ -19,6 +19,7 @@
     <tbody>
         @foreach (var location in Model)
         {
+            var show = !location.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator);
             <tr data-location-id="@location.Id"
                 data-city-id="@location.CityId"
                 data-district-id="@location.DistrictId"
@@ -37,8 +38,8 @@
                 <td class="uk-visible@m">@location.CountryName</td>
                 <td class="uk-table-shrink">@(location.IsParking ? CustomExtensions.HtmlEnabledIcon : CustomExtensions.HtmlDisabledIcon)</td>
                 <td class="uk-visible@s">
-                    <div class="tool-cell-2 uk-float-right">
-                        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                    <div class="tool-cell-2 uk-float-right" @(show ? "" : "hidden")>
+                        @if (!location.IsDeleted  && (roleName == RoleName.Administrator || roleName == RoleName.Moderator))
                         {
                             @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-location-icon")
                         }
@@ -49,10 +50,10 @@
                     </div>
                 </td>
                 <td class="uk-hidden@s uk-table-shrink">
-                    <div class="uk-inline">
+                    <div class="uk-inline" @(show ? "" : "hidden")>
                         <span uk-icon="more-vertical"></span>
                         <div uk-dropdown="pos: left-center">
-                            @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                            @if (!location.IsDeleted  && (roleName == RoleName.Administrator || roleName == RoleName.Moderator))
                             {
                                 @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-location-icon")
                             }
