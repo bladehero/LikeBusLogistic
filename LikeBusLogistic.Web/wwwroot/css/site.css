@@ -87,13 +87,14 @@ footer {
         margin-right: 0px !important;
     }
 }
-td.tool-cell-1 {
+
+th.tool-cell-1,td.tool-cell-1 {
     min-width: 27px;
 }
-td.tool-cell-2 {
+th.tool-cell-2,td.tool-cell-2 {
     min-width: 54px;
 }
-td.tool-cell-3 {
+th.tool-cell-3,td.tool-cell-3 {
     min-width: 81px;
 }
 

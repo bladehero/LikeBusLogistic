@@ -18,8 +18,8 @@
                 <span class="uk-visible@s">Продолжительность</span>
                 <span class="uk-hidden@s"><span uk-icon="clock"></span></span>
             </th>
-            <th class="uk-visible@s datatable-no-sort"></th>
-            <th class="uk-hidden@s datatable-no-sort"></th>
+            <th class="uk-visible@s datatable-no-sort tool-cell-3"></th>
+            <th class="uk-hidden@s datatable-no-sort tool-cell-1"></th>
         </tr>
     </thead>
     <tbody>
@@ -36,7 +36,7 @@
                 </td>
                 <td>@(route.EstimatedDurationInHours)ч.</td>
                 <td class="uk-visible@s">
-                    <div class="tool-cell-3 uk-float-right">
+                    <div class="uk-float-right">
                         @if (!route.IsDeleted)
                         {
                             @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-route-icon")

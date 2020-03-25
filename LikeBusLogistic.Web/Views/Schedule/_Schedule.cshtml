@@ -16,8 +16,8 @@
         <tr>
             <th>Наименование</th>
             <th>Маршрут</th>
-            <th class="uk-visible@s datatable-no-sort"></th>
-            <th class="uk-hidden@s uk-table-shrink datatable-no-sort"></th>
+            <th class="uk-visible@s datatable-no-sort tool-cell-3"></th>
+            <th class="uk-hidden@s uk-table-shrink datatable-no-sort tool-cell-1"></th>
         </tr>
     </thead>
     <tbody>
@@ -28,7 +28,7 @@
                 <td><a class="schedule-info-link uk-link-text uk-text-warning" href="#modal-full" uk-toggle>@schedule.Name</a></td>
                 <td>@schedule.RouteName</td>
                 <td class="uk-visible@s">
-                    <div class="tool-cell-3 uk-float-right">
+                    <div class="uk-float-right">
                         @if (!schedule.IsDeleted)
                         {
                             @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-schedule-icon")

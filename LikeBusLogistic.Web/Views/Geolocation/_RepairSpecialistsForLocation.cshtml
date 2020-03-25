@@ -47,8 +47,8 @@
                     <th class="uk-text-break">Контакты</th>
                     @if (isEditable)
                     {
-                        <th class="uk-visible@s datatable-no-sort"></th>
-                        <th class="uk-hidden@s datatable-no-sort"></th>
+                        <th class="uk-visible@s datatable-no-sort tool-cell-2"></th>
+                        <th class="uk-hidden@s datatable-no-sort tool-cell-1"></th>
                     }
                 </tr>
             </thead>
@@ -65,7 +65,7 @@
                             @if (isEditable)
                             {
                                 <td class="uk-visible@s">
-                                    <div class="tool-cell-2 uk-float-right">
+                                    <div class="uk-float-right">
                                         @if (show)
                                         {
                                             @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-specialist-icon")
