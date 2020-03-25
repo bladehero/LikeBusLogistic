@@ -22,10 +22,7 @@
             popup = location.marker.getPopup();
         }
         selector = '#' + selector;
-        App.loadContent(selector, '@Url.Action("_LocationPopup" , "Home")', { id: location.data.id, routeId: App.geo.route.id, isRoute: true },
-            function (html) {
-                $(selector).html(html);
-        });
+        App.loadContent(selector, '@Url.Action("_LocationPopup" , "Home")', { id: location.data.id, routeId: App.geo.route.id, isRoute: true });
     });
 
     function editLocationFunction() {

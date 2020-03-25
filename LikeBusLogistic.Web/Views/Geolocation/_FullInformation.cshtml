@@ -54,10 +54,7 @@
             popup = location.marker.getPopup();
         }
         selector = '#' + selector;
-        App.loadContent(selector, '@Url.Action("_LocationPopup" , "Home")', { id: location.data.id },
-            function (html) {
-                $(selector).html(html);
-        });
+        App.loadContent(selector, '@Url.Action("_LocationPopup" , "Home")', { id: location.data.id });
     });
     function editLocationFunction() {
         if ($('#toggle-animation').is(':hidden')) {
