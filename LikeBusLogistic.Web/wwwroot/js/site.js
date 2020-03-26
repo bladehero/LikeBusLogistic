@@ -1,4 +1,39 @@
-﻿var App = {
+﻿function setUpAjax() {
+    let timeout;
+    $.ajaxSetup({
+        beforeSend: function () {
+            App.blockUI();
+        },
+        complete: function (xhr) {
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            timeout = setTimeout(App.unblockUI, 500);
+            if (xhr.status === 401) {
+                Swal.fire({
+                    title: 'Выход',
+                    html: 'Ваша сессия истекла!<br />Пожалуйста, перезайдите в систему.',
+                    icon: 'info'
+                }).then(() => {
+                    $('#logout').click();
+                });
+            }
+        },
+    });
+}
+setUpAjax();
+
+var App = {
+    isMobile: function () {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    },
+    lockUI: $('#ui-lock'),
+    blockUI: function () {
+        App.lockUI.fadeIn();
+    },
+    unblockUI: function () {
+        App.lockUI.fadeOut();
+    },
     loader: '<div class="lds-ripple uk-align-center"><div></div><div></div></div>',
     customDataTable: function (selector) {
         setTimeout(function () {
@@ -469,6 +504,9 @@
                 App.footer.content.fadeIn(App.footer.animateTimer / 1.25);
             }
         }),
+        toggle: function () {
+            App.footer.slideButton.click();
+        },
         changeMode: function (m) {
             App.footer.mode = m;
             App.footer.slideButton.click();
@@ -719,19 +757,6 @@
         });
     }
 };
-$.ajaxSetup({
-    complete: function (xhr) {
-        if (xhr.status === 401) {
-            Swal.fire({
-                title: 'Выход',
-                html: 'Ваша сессия истекла!<br />Пожалуйста, перезайдите в систему.',
-                icon: 'info'
-            }).then(() => {
-                $('#logout').click();
-            });
-        }
-    }
-});
 $(document).ready(function () {
     $.datetimepicker.setLocale('ru');
     if (localStorage.getItem('isLoggedOff') === 'true') { App.useContentState(); localStorage.setItem('isLoggedOff', 'false'); }
@@ -827,32 +852,23 @@ $(document).ready(function () {
         e.stopPropagation();
         let maxHeight = $(window).height();
         let currentHeight = maxHeight - e.touches[0].clientY;
-        toCloseSlider = previousHeight > currentHeight + 20;
+        toCloseSlider = previousHeight > (currentHeight + 10);
         if (toCloseSlider) {
             previousHeight = 0;
         } else {
             previousHeight = currentHeight;
         }
-    });
+    }); 
 
     let closeSlider = function (e) {
         if (toCloseSlider) {
-            App.footer.element.stop().animate({
-                height: '0px'
-            }, App.footer.animateTimer);
+            App.footer.hide();
         }
     };
     $('#dragging-slider').off('touchend', closeSlider).on('touchend', closeSlider);
 
     $('#dragging-slider').on('doubleTap', function () {
-        let height = Math.round(App.footer.element.height());
-        if (height >= App.footer.getMaxHeight()) {
-            App.footer.show();
-        } else if (height >= Math.round(App.footer.getMediumHeight())) {
-            App.footer.maximize();
-        } else {
-            App.footer.show();
-        }
+        App.footer.changeMode();
     });
 
     let fullscreenMode;
@@ -894,4 +910,14 @@ $(document).ready(function () {
         }
     });
     $('div.leaflet-bottom.leaflet-right').remove();
+
+    if ($(window).height > 959) {
+        if (App.isMobile()) {
+            $('#dragging-slider').removeClass('uk-hidden@m').show();
+            $('#slide-up').hide();
+        } else {
+            $('#dragging-slider').show();
+            $('#slide-up').hide();
+        }
+    }
 });

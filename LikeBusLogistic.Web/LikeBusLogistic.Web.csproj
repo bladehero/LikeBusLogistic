@@ -13,6 +13,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\lib\color-picker\" />
+    <Folder Include="wwwroot\lib\leaflet-cluster\" />
     <Folder Include="wwwroot\lib\picker\" />
   </ItemGroup>
 

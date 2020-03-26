@@ -10,7 +10,7 @@
 
     var tapTimer,
         moved = false,   // flag to know if the finger had moved while touched the device
-        threshold = 250;     // ms
+        threshold = 500;     // ms
 
     //////////////////////
     // special events

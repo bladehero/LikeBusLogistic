@@ -7,6 +7,8 @@
     <link href="~/css/loader.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.uikit.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="~/lib/leaflet-cluster/MarkerCluster.css" />
+    <link rel="stylesheet" href="~/lib/leaflet-cluster/MarkerCluster.Default.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" rel="stylesheet" />
     <link href="~/lib/uikit/css/uikit.css" rel="stylesheet" />
     <link href="~/lib/picker/picker.min.css" rel="stylesheet" />
@@ -115,7 +117,7 @@
             <button id="slide-up" class="uk-button uk-button-link uk-text-light uk-background-muted uk-margin-medium-left uk-padding-small uk-padding-remove-vertical" style="border-radius: 5px 5px 0px 0px;">
                 <span uk-icon="icon: chevron-up; ratio: 1.2;"></span>
             </button>
-            <div class="uk-width-1-1 uk-text-center uk-hidden@m" id="dragging-slider">
+            <div id="dragging-slider" class="uk-width-1-1 uk-text-center uk-hidden@m">
                 <svg width="25" height="20" viewBox="0 0 25 20" xmlns="http://www.w3.org/2000/svg">
                     <rect height="1" width="25" y="8" x="1"></rect>
                     <rect height="1" width="25" y="12" x="1"></rect>
@@ -129,12 +131,14 @@
             </div>
         </footer>
     </div>
+    <div id="ui-lock"><div class="lds-ripple uk-align-center"><div></div><div></div></div></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="~/js/jquery.touch.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-ant-path" type="text/javascript"></script>
+    <script src="~/lib/leaflet-cluster/leaflet.markercluster.js" type="text/javascript"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" type="text/javascript"></script>
     <script src="~/lib/uikit/js/uikit.js"></script>
