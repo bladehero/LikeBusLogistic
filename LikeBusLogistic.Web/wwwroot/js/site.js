@@ -25,7 +25,7 @@ setUpAjax();
 
 var App = {
     isMobile: function () {
-        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        return /Android|webOS|Safari|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     },
     lockUI: $('#ui-lock'),
     blockUI: function () {
