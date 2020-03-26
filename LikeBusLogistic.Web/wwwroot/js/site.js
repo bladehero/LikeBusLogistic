@@ -22,10 +22,12 @@
     });
 }
 setUpAjax();
-
 var App = {
+    isiOS: function () {
+        return !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+    },
     isMobile: function () {
-        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        return /Android|webOS|Macintosh|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     },
     lockUI: $('#ui-lock'),
     blockUI: function () {
@@ -871,7 +873,14 @@ $(document).ready(function () {
     $('#dragging-slider').off('touchend', closeSlider).on('touchend', closeSlider);
 
     $('#dragging-slider').on('doubleTap', function () {
-        App.footer.changeMode();
+        let height = Math.round(App.footer.element.height());
+        if (height >= App.footer.getMaxHeight()) {
+            App.footer.show();
+        } else if (height >= Math.round(App.footer.getMediumHeight() - $('#dragging-slider').height())) {
+            App.footer.maximize();
+        } else {
+            App.footer.show();
+        }
     });
 
     let fullscreenMode;
@@ -914,13 +923,17 @@ $(document).ready(function () {
     });
     $('div.leaflet-bottom.leaflet-right').remove();
 
-    if ($(window).height > 959) {
+    if ($(window).width() > 959) {
+        debugger;
         if (App.isMobile()) {
             $('#dragging-slider').removeClass('uk-hidden@m').show();
             $('#slide-up').hide();
         } else {
-            $('#dragging-slider').show();
-            $('#slide-up').hide();
+            $('#dragging-slider').hide();
+            $('#slide-up').show();
         }
+    }
+    if (App.isiOS()) {
+        $('#fullscreen-mode-item').hide();
     }
 });
