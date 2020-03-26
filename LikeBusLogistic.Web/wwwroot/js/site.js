@@ -924,7 +924,6 @@ $(document).ready(function () {
     $('div.leaflet-bottom.leaflet-right').remove();
 
     if ($(window).width() > 959) {
-        debugger;
         if (App.isMobile()) {
             $('#dragging-slider').removeClass('uk-hidden@m').show();
             $('#slide-up').hide();
