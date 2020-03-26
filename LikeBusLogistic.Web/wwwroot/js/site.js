@@ -235,17 +235,20 @@ var App = {
             }
         },
         setLocations: function (obj) {
+            let cluster = L.markerClusterGroup();
             if (obj) {
                 if (!!obj.length) {
                     for (var i = 0; i < obj.length; i++) {
                         App.geo.locations.push(obj[i]);
-                        obj[i].marker.addTo(App.map);
+                        cluster.addLayer(obj[i].marker);
+                        //obj[i].marker.addTo(App.map);
                     }
                 } else if (!obj.hasOwnProperty('length')) {
                     App.geo.locations.push(obj);
                     obj.marker.addTo(App.map);
                 }
             }
+            App.map.addLayer(cluster);
         },
         clearLocations: function () {
             let location;
