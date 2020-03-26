@@ -870,7 +870,14 @@ $(document).ready(function () {
     $('#dragging-slider').off('touchend', closeSlider).on('touchend', closeSlider);
 
     $('#dragging-slider').on('doubleTap', function () {
-        App.footer.changeMode();
+        let height = Math.round(App.footer.element.height());
+        if (height >= App.footer.getMaxHeight()) {
+            App.footer.show();
+        } else if (height >= Math.round(App.footer.getMediumHeight() - $('#dragging-slider').height())) {
+            App.footer.maximize();
+        } else {
+            App.footer.show();
+        }
     });
 
     let fullscreenMode;
@@ -913,7 +920,7 @@ $(document).ready(function () {
     });
     $('div.leaflet-bottom.leaflet-right').remove();
 
-    if ($(window).width > 959) {
+    if ($(window).width() > 959) {
         if (App.isMobile()) {
             $('#dragging-slider').removeClass('uk-hidden@m').show();
             $('#slide-up').hide();
