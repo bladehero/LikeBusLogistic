@@ -22,10 +22,9 @@
     });
 }
 setUpAjax();
-
 var App = {
     isMobile: function () {
-        return /Android|webOS|Safari|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        return /Android|webOS|Macintosh|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     },
     lockUI: $('#ui-lock'),
     blockUI: function () {
@@ -914,7 +913,7 @@ $(document).ready(function () {
     });
     $('div.leaflet-bottom.leaflet-right').remove();
 
-    if ($(window).height > 959) {
+    if ($(window).width > 959) {
         if (App.isMobile()) {
             $('#dragging-slider').removeClass('uk-hidden@m').show();
             $('#slide-up').hide();
