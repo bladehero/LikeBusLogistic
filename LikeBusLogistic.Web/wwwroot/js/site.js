@@ -933,6 +933,6 @@ $(document).ready(function () {
         }
     }
     if (App.isiOS()) {
-        $('#fullscreen-mode-item').css({ 'display': 'none';});
+        $('#fullscreen-mode-item').hide();
     }
 });
