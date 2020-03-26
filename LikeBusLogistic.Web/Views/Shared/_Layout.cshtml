@@ -14,110 +14,121 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
-    <button id="menu-button" class="uk-button uk-button-link uk-background-secondary uk-padding-small uk-padding-remove-horizontal" type="button" uk-toggle="target: #offcanvas-slide" style="border-radius: 5px 0px 0px 5px;">
-        <span uk-icon="icon: chevron-left; ratio: 1.2;"></span>
-    </button>
-    <div id="offcanvas-slide" uk-offcanvas="overlay: true; flip: true;">
-        <div class="uk-offcanvas-bar">
-            <button class="uk-offcanvas-close" type="button" uk-close></button>
-            <ul class="uk-nav uk-nav-default">
-                <li class="uk-parent">
-                    <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Bus")">
-                        <span class="uk-margin-small-right" uk-icon="icon: list; ratio: 0.8;"></span>
-                        Автобусы
-                    </a>
-                    <ul class="uk-nav-sub">
-                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Bus", new { tab = BusTab.Bus })">Машины</a></li>
-                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Bus", new { tab = BusTab.Vehicle })">Модели</a></li>
-                    </ul>
-                </li>
-                <li class="uk-nav-divider"></li>
-                <li class="uk-parent">
-                    <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Driver")">
-                        <span class="uk-margin-small-right" uk-icon="icon: happy; ratio: 0.8;"></span>
-                        Водители
-                    </a>
-                    <ul class="uk-nav-sub">
-                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Driver", new { tab = DriverTab.Info })">Информация</a></li>
-                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Driver", new { tab = DriverTab.Contact })">Контакты</a></li>
-                    </ul>
-                </li>
-                <li class="uk-nav-divider"></li>
-                <li class="uk-parent" id="logistic-tab">
-                    <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Geolocation")">
-                        <span class="uk-margin-small-right" uk-icon="icon: social; ratio: 0.8;"></span>
-                        Логистика
-                    </a>
-                    <ul class="uk-nav-sub">
-                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Locations })">Контрольные точки</a></li>
-                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Cities })">Города</a></li>
-                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Districts })">Регионы</a></li>
-                        <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Countries })">Страны</a></li>
-                    </ul>
-                </li>
-                <li class="uk-nav-divider"></li>
-                <li class="uk-parent">
-                    <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Route")">
-                        <span class="uk-margin-small-right" uk-icon="icon: location; ratio: 0.8;"></span>
-                        Маршруты
-                    </a>
-                </li>
-                <li class="uk-nav-divider"></li>
-                <li class="uk-parent">
-                    <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Schedule")">
-                        <span class="uk-margin-small-right" uk-icon="icon: calendar; ratio: 0.8;"></span>
-                        Расписания
-                    </a>
-                </li>
-                <li class="uk-nav-divider"></li>
-                <li class="uk-parent">
-                    <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Trip")">
-                        <span class="uk-margin-small-right" uk-icon="icon: world; ratio: 0.8;"></span>
-                        Рейсы
-                    </a>
-                </li>
-                @*<li class="uk-nav-divider"></li>
-                                <li class="uk-parent">
-                        <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Account")">
-                            <span class="uk-margin-small-right" uk-icon="icon: users; ratio: 0.8;"></span>
-                            Учетные записи
+    <div id="main-container">
+
+        <button id="menu-button" class="uk-button uk-button-link uk-background-secondary uk-padding-small uk-padding-remove-horizontal" type="button" uk-toggle="target: #offcanvas-slide" style="border-radius: 5px 0px 0px 5px;">
+            <span uk-icon="icon: chevron-left; ratio: 1.2;"></span>
+        </button>
+
+        <div id="offcanvas-slide" uk-offcanvas="overlay: true; flip: true;">
+            <div class="uk-offcanvas-bar">
+                <button class="uk-offcanvas-close" type="button" uk-close></button>
+                <ul class="uk-nav uk-nav-default">
+                    <li class="uk-margin-bottom-small uk-hidden@l">
+                        <a id="fullscreen-mode" class="uk-padding-remove-top" href="#">
+                            <span class="uk-margin-small-right" uk-icon="icon: expand"></span> Полный экран
+                        </a>
+                    </li>
+                    <li class="uk-nav-divider uk-hidden@l"></li>
+                    <li class="uk-parent">
+                        <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Bus")">
+                            <span class="uk-margin-small-right" uk-icon="icon: list; ratio: 0.8;"></span>
+                            Автобусы
                         </a>
                         <ul class="uk-nav-sub">
-                            <li><a class="menu-item" data-href="@Url.Action("_AccountManagement", "Account")">Аккаунты</a></li>
-                            <li><a class="menu-item" data-href="@Url.Action("_UserManagement", "Account")">Пользователи</a></li>
+                            <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Bus", new { tab = BusTab.Bus })">Машины</a></li>
+                            <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Bus", new { tab = BusTab.Vehicle })">Модели</a></li>
                         </ul>
-                    </li>*@
-            </ul>
-            <form class="uk-margin-small-top" asp-action="Logout" asp-controller="Account">
-                <button id="logout" class="uk-button uk-button-danger uk-width-1-1" type="submit">
-                    <span class="uk-margin-small-right" uk-icon="icon: sign-out; ratio: 0.8;"></span>
-                    Выйти
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <main class="uk-background-muted">
-        <div id="map"></div>
-        @RenderBody()
-    </main>
-
-    <footer>
-        <button id="slide-up" class="uk-button uk-button-link uk-text-light uk-background-muted uk-margin-medium-left uk-padding-small uk-padding-remove-vertical" style="border-radius: 5px 5px 0px 0px;">
-            <span uk-icon="icon: chevron-up; ratio: 1.2;"></span>
-        </button>
-        <div class="uk-width-1-1 uk-text-center uk-hidden@m uk-padding-remove uk-background-muted" >
-            <span uk-icon="more" id="dragging-slider"></span>
-        </div>
-        <div class="uk-background-muted uk-padding-small uk-box-shadow-medium" id="slide">
-            <ul class="uk-breadcrumb" id="footer-breacrumb"></ul>
-            <div class="uk-text-secondary" id="footer-content">
-                <div class="uk-text-center"></div>
+                    </li>
+                    <li class="uk-nav-divider"></li>
+                    <li class="uk-parent">
+                        <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Driver")">
+                            <span class="uk-margin-small-right" uk-icon="icon: happy; ratio: 0.8;"></span>
+                            Водители
+                        </a>
+                        <ul class="uk-nav-sub">
+                            <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Driver", new { tab = DriverTab.Info })">Информация</a></li>
+                            <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Driver", new { tab = DriverTab.Contact })">Контакты</a></li>
+                        </ul>
+                    </li>
+                    <li class="uk-nav-divider"></li>
+                    <li class="uk-parent" id="logistic-tab">
+                        <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Geolocation")">
+                            <span class="uk-margin-small-right" uk-icon="icon: social; ratio: 0.8;"></span>
+                            Логистика
+                        </a>
+                        <ul class="uk-nav-sub">
+                            <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Locations })">Контрольные точки</a></li>
+                            <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Cities })">Города</a></li>
+                            <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Districts })">Регионы</a></li>
+                            <li><a class="menu-item" data-href="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Countries })">Страны</a></li>
+                        </ul>
+                    </li>
+                    <li class="uk-nav-divider"></li>
+                    <li class="uk-parent">
+                        <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Route")">
+                            <span class="uk-margin-small-right" uk-icon="icon: location; ratio: 0.8;"></span>
+                            Маршруты
+                        </a>
+                    </li>
+                    <li class="uk-nav-divider"></li>
+                    <li class="uk-parent">
+                        <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Schedule")">
+                            <span class="uk-margin-small-right" uk-icon="icon: calendar; ratio: 0.8;"></span>
+                            Расписания
+                        </a>
+                    </li>
+                    <li class="uk-nav-divider"></li>
+                    <li class="uk-parent">
+                        <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Trip")">
+                            <span class="uk-margin-small-right" uk-icon="icon: world; ratio: 0.8;"></span>
+                            Рейсы
+                        </a>
+                    </li>
+                    @*<li class="uk-nav-divider"></li>
+                                    <li class="uk-parent">
+                            <a class="menu-item uk-nav-header" data-href="@Url.Action("_FullInformation", "Account")">
+                                <span class="uk-margin-small-right" uk-icon="icon: users; ratio: 0.8;"></span>
+                                Учетные записи
+                            </a>
+                            <ul class="uk-nav-sub">
+                                <li><a class="menu-item" data-href="@Url.Action("_AccountManagement", "Account")">Аккаунты</a></li>
+                                <li><a class="menu-item" data-href="@Url.Action("_UserManagement", "Account")">Пользователи</a></li>
+                            </ul>
+                        </li>*@
+                </ul>
+                <form class="uk-margin-small-top" asp-action="Logout" asp-controller="Account">
+                    <button id="logout" class="uk-button uk-button-danger uk-width-1-1" type="submit">
+                        <span class="uk-margin-small-right" uk-icon="icon: sign-out; ratio: 0.8;"></span>
+                        Выйти
+                    </button>
+                </form>
             </div>
         </div>
-    </footer>
+
+        <main class="uk-background-muted">
+            <div id="map"></div>
+            @RenderBody()
+        </main>
+
+        <footer>
+            <button id="slide-up" class="uk-button uk-button-link uk-text-light uk-background-muted uk-margin-medium-left uk-padding-small uk-padding-remove-vertical" style="border-radius: 5px 5px 0px 0px;">
+                <span uk-icon="icon: chevron-up; ratio: 1.2;"></span>
+            </button>
+            <div class="uk-width-1-1 uk-text-center uk-hidden@m" id="dragging-slider">
+                <span uk-icon="more"></span>
+            </div>
+            <div class="uk-background-muted uk-padding-small uk-box-shadow-medium" id="slide">
+                <ul class="uk-breadcrumb" id="footer-breacrumb"></ul>
+                <div class="uk-text-secondary" id="footer-content">
+                    <div class="uk-text-center"></div>
+                </div>
+            </div>
+        </footer>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="~/js/jquery.touch.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-ant-path" type="text/javascript"></script>

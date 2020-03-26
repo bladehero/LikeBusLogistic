@@ -434,6 +434,12 @@
     },
     footer: {
         mode: 0,
+        getMaxHeight: function () {
+            return $(window).height() - 70;
+        },
+        getMediumHeight: function () {
+            return $(window).height() / 3;
+        },
         breadcrumb: $('#footer-breacrumb'),
         element: $('footer'),
         content: $('#footer-content').hide(),
@@ -449,14 +455,14 @@
                 App.footer.content.fadeOut(App.footer.animateTimer / 1.5);
             } else if (App.footer.mode > 0) {
                 App.footer.element.stop().animate({
-                    height: $(window).height() - 70
+                    height: App.footer.getMaxHeight()
                 }, App.footer.animateTimer);
                 App.footer.slideButton.find('span').attr('uk-icon', 'chevron-down');
                 App.footer.mode = -1;
                 App.footer.content.fadeIn(App.footer.animateTimer / 1.25);
             } else {
                 App.footer.element.stop().animate({
-                    height: $(window).height() / 3
+                    height: App.footer.getMediumHeight()
                 }, App.footer.animateTimer / 1.5);
                 App.footer.slideButton.find('span').attr('uk-icon', 'chevron-up');
                 App.footer.mode = 1;
@@ -804,11 +810,80 @@ $(document).ready(function () {
         }, 50);
     });
 
-    $('#dragging-slider').off('touchstart').on('touchmove', function (e) {
-        let offset = $('#dragging-slider').parent().offset().top;
-        let sliderHeight = $('#dragging-slider').parent().height();
+    $('#dragging-slider').on('touchmove', function (e) {
+        let sliderHeight = $('#dragging-slider').height();
         let maxHeight = $(window).height();
         if (maxHeight - e.touches[0].clientY < maxHeight - sliderHeight)
-            $('footer').height(maxHeight - e.touches[0].clientY);
+            App.footer.element.height(maxHeight - e.touches[0].clientY);
     });
+
+    let previousHeight;
+    let closeSlider = function (e) {
+        let maxHeight = $(window).height();
+        let currentHeight = maxHeight - e.touches[0].clientY;
+        if (previousHeight > currentHeight + 15) {
+            previousHeight = 0;
+            $('#dragging-slider').off('touchmove', closeSlider);
+            App.footer.element.stop().animate({
+                height: '0px'
+            }, App.footer.animateTimer);
+            setTimeout(function () { $('#dragging-slider').on('touchmove', closeSlider); }, 500);
+        } else {
+            previousHeight = currentHeight;
+        }
+        e.preventDefault();
+        e.stopPropagation();
+    };
+    $('#dragging-slider').off('touchmove', closeSlider).on('touchmove', closeSlider);
+
+    $('#dragging-slider').on('doubleTap', function () {
+        let height = Math.round(App.footer.element.height());
+        if (height >= App.footer.getMaxHeight()) {
+            App.footer.show();
+        } else if (height >= Math.round(App.footer.getMediumHeight())) {
+            App.footer.maximize();
+        } else {
+            App.footer.show();
+        }
+    });
+
+    let fullscreenMode;
+    let body = document.getElementById('main-container');
+    function openFullscreen() {
+        if (body.requestFullscreen) {
+            body.requestFullscreen();
+        } else if (body.mozRequestFullScreen) { /* Firefox */
+            body.mozRequestFullScreen();
+        } else if (body.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+            body.webkitRequestFullscreen();
+        } else if (body.msRequestFullscreen) { /* IE/Edge */
+            body.msRequestFullscreen();
+        }
+        fullscreenMode = true;
+    }
+
+    function closeFullscreen() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) { /* Firefox */
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE/Edge */
+            document.msExitFullscreen();
+        }
+        fullscreenMode = false;
+    }
+
+    $('#fullscreen-mode').click(function () {
+        let _this = $(this);
+        if (fullscreenMode) {
+            closeFullscreen();
+            _this.html('<span class="uk-margin-small-right" uk-icon="icon: expand"></span> Полный экран');
+        } else {
+            openFullscreen();
+            _this.html('<span class="uk-margin-small-right" uk-icon="icon: shrink"></span> Обычный экран');
+        }
+    });
+    $('div.leaflet-bottom.leaflet-right').remove();
 });
