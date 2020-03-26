@@ -23,6 +23,9 @@
 }
 setUpAjax();
 var App = {
+    isiOS: function () {
+        return !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+    },
     isMobile: function () {
         return /Android|webOS|Macintosh|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     },
@@ -928,5 +931,8 @@ $(document).ready(function () {
             $('#dragging-slider').show();
             $('#slide-up').hide();
         }
+    }
+    if (App.isiOS()) {
+        $('#fullscreen-mode-item').css({ 'display': 'none';});
     }
 });
