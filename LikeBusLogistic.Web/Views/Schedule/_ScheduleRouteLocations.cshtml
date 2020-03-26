@@ -28,10 +28,12 @@
     var fullName = scheduleRouteLocation.LocationFullName ?? scheduleRouteLocation.RouteLocationFullName;
     <div class="uk-grid-small location-table" uk-grid data-route-location-id="@scheduleRouteLocation.RouteLocationId">
         <div class="uk-width-1-6@s uk-hidden@s uk-text-center">
-            <p class="uk-text-muted uk-text-small uk-link go-to-route-location" uk-tooltip="@fullName">
-                <span uk-icon="icon: info; ratio: 0.8;"></span>
-                @(scheduleRouteLocation.LocationName ?? scheduleRouteLocation.CityName ?? scheduleRouteLocation.LocationFullName)
-                @(totalDistance)км.
+            <p class="uk-text-muted uk-text-small">
+                <span uk-icon="icon: info; ratio: 0.8;" uk-tooltip="@fullName"></span>
+                <span class=" uk-link go-to-route-location">
+                    @(scheduleRouteLocation.LocationName ?? scheduleRouteLocation.CityName ?? scheduleRouteLocation.LocationFullName)
+                    @(totalDistance)км.
+                </span>
             </p>
         </div>
         <div class="uk-width-expand uk-visible@s">
@@ -49,6 +51,7 @@
             <input class="uk-input uk-form-small timepicker @(scheduleRouteLocation.Equals(first) ? "" : "to-validate")"
                    type="text"
                    name="arrivalTime"
+                   data-title="Прибытие в '@(scheduleRouteLocation.LocationName ?? scheduleRouteLocation.CityName ?? scheduleRouteLocation.LocationFullName)'"
                    value="@scheduleRouteLocation.ArrivalTime?.ToString(@"hh\:mm")"
                    placeholder=""
                    @(scheduleRouteLocation.Equals(first) ? "disabled" : "")>
@@ -65,6 +68,7 @@
                    type="text"
                    value="@scheduleRouteLocation.DepartureTime?.ToString(@"hh\:mm")"
                    placeholder=""
+                   data-title="Отправление из '@(scheduleRouteLocation.LocationName ?? scheduleRouteLocation.CityName ?? scheduleRouteLocation.LocationFullName)'"
                    name="departureTime"
                    @(scheduleRouteLocation.Equals(last) ? "disabled" : "")>
             @if (!scheduleRouteLocation.Equals(last))
@@ -79,36 +83,63 @@
     <hr />
 }
 <div class="uk-margin uk-width-1-1">
-    <button class="uk-button uk-button-primary uk-button-small uk-float-right" id="save-schedule-btn">Сохранить</button>
+    <button class="uk-button uk-button-primary uk-button-small uk-margin-small-bottom uk-float-right" id="save-schedule-btn">Сохранить</button>
 </div>
 
 <script>
     $(document).ready(function () {
-        $('.timepicker').timepicki({
-		    show_meridian:false,
-		    min_hour_value:0,
-		    max_hour_value:23,
-		    step_size_minutes:1,
-		    overflow_minutes:true,
-            increase_direction: 'up',
-            on_change: function (e) {
-                let grid = $(e).parents('.location-table');
-                arrival = grid.find('input[name="arrivalTime"]').val();
-                departure = grid.find('input[name="departureTime"]').val();
-                let minutes = diff(arrival, departure);
-                if (minutes != null && !isNaN(minutes)) {
-                    grid.find('input.stop-duration').val(minutes);
-                } else {
-                    grid.find('input.stop-duration').val(null);
+        $('.timepicker').each(function (i, e) {
+            let _this = $(e);
+            let picker = new Picker(e, {
+                format: 'HH:mm',
+                text: {
+                    title: _this.data('title'),
+                    cancel: 'Отмена',
+                    confirm: 'Сохранить'
+                },
+                pick: function (e) {
+                    let grid = _this.parents('.location-table');
+                    let arrival;
+                    let departure;
+                    if (_this.is('[name="arrivalTime"]')) {
+                        arrival = picker.getDate('HH:mm');
+                        departure = grid.find('input[name="departureTime"]').val();
+                    } else {
+                        arrival  = grid.find('input[name="arrivalTime"]').val();
+                        departure = picker.getDate('HH:mm');
+                    }
+                    let minutes = diff(arrival, departure);
+                    if (minutes != null && !isNaN(minutes)) {
+                        grid.find('input.stop-duration').val(minutes);
+                    } else {
+                        grid.find('input.stop-duration').val(null);
+                    }
                 }
-            }
+            });
+            _this.data('picker', picker);
+            _this.next('.clean-time').click(function () {
+                picker.reset();
+            });
         });
-
-        $('div.time_pick').css({ width: '-webkit-fill-available' });
-        $('.clean-time').click(function () {
-            let _this = this;
-            $(_this).siblings('div.time_pick').children('input').val(null);
-        });
+      //  ({
+		    //show_meridian:false,
+		    //min_hour_value:0,
+		    //max_hour_value:23,
+		    //step_size_minutes:1,
+		    //overflow_minutes:true,
+      //      increase_direction: 'up',
+      //      on_change: function (e) {
+      //          let grid = $(e).parents('.location-table');
+      //          arrival = grid.find('input[name="arrivalTime"]').val();
+      //          departure = grid.find('input[name="departureTime"]').val();
+      //          let minutes = diff(arrival, departure);
+      //          if (minutes != null && !isNaN(minutes)) {
+      //              grid.find('input.stop-duration').val(minutes);
+      //          } else {
+      //              grid.find('input.stop-duration').val(null);
+      //          }
+      //      }
+      //  });
 
         function diff(start, end) {
             start = start.split(":");

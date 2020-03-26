@@ -733,6 +733,7 @@ $.ajaxSetup({
     }
 });
 $(document).ready(function () {
+    $.datetimepicker.setLocale('ru');
     if (localStorage.getItem('isLoggedOff') === 'true') { App.useContentState(); localStorage.setItem('isLoggedOff', 'false'); }
     App.initializeContentState();
     $('#offcanvas-slide').on('shown', function () {
@@ -817,24 +818,31 @@ $(document).ready(function () {
             App.footer.element.height(maxHeight - e.touches[0].clientY);
     });
 
+
+
     let previousHeight;
-    let closeSlider = function (e) {
+    let toCloseSlider;
+    $('#dragging-slider').on('touchmove', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
         let maxHeight = $(window).height();
         let currentHeight = maxHeight - e.touches[0].clientY;
-        if (previousHeight > currentHeight + 15) {
+        toCloseSlider = previousHeight > currentHeight + 20;
+        if (toCloseSlider) {
             previousHeight = 0;
-            $('#dragging-slider').off('touchmove', closeSlider);
-            App.footer.element.stop().animate({
-                height: '0px'
-            }, App.footer.animateTimer);
-            setTimeout(function () { $('#dragging-slider').on('touchmove', closeSlider); }, 500);
         } else {
             previousHeight = currentHeight;
         }
-        e.preventDefault();
-        e.stopPropagation();
+    });
+
+    let closeSlider = function (e) {
+        if (toCloseSlider) {
+            App.footer.element.stop().animate({
+                height: '0px'
+            }, App.footer.animateTimer);
+        }
     };
-    $('#dragging-slider').off('touchmove', closeSlider).on('touchmove', closeSlider);
+    $('#dragging-slider').off('touchend', closeSlider).on('touchend', closeSlider);
 
     $('#dragging-slider').on('doubleTap', function () {
         let height = Math.round(App.footer.element.height());
