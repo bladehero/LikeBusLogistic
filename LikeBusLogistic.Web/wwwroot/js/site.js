@@ -884,7 +884,7 @@ $(document).ready(function () {
     });
 
     let fullscreenMode;
-    let body = document.getElementById('main-container');
+    let body = document.body;
     function openFullscreen() {
         if (body.requestFullscreen) {
             body.requestFullscreen();
@@ -927,12 +927,6 @@ $(document).ready(function () {
         if (App.isMobile()) {
             $('#dragging-slider').removeClass('uk-hidden@m').show();
             $('#slide-up').hide();
-        } else {
-            $('#dragging-slider').hide();
-            $('#slide-up').show();
         }
-    }
-    if (App.isiOS()) {
-        $('#fullscreen-mode-item').hide();
     }
 });
