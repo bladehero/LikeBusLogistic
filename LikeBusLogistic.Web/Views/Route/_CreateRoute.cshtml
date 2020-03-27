@@ -6,10 +6,10 @@
             <li uk-tooltip="Отменить предыдущее действие<br/><b>Ctrl</b> + <b>Z</b>">
                 <a href="#" id="cancel-action" uk-icon="icon: history"></a>
             </li>
-            <li uk-tooltip="Сбросить текущий маршрут<br/><b>Ctrl</b> + <b>X</b>">
+            <li uk-tooltip="Сбросить текущий маршрут<br/><b>Ctrl</b> + <b>B</b>">
                 <a href="#" id="reset" uk-icon="icon: close"></a>
             </li>
-            <li uk-tooltip="Сохранить текущий маршрут<br/><b>Ctrl</b> + <b>C</b>">
+            <li uk-tooltip="Сохранить текущий маршрут<br/><b>Ctrl</b> + <b>M</b>">
                 <a href="#" id="save" uk-icon="icon: check"></a>
             </li>
         </ul>
@@ -41,7 +41,7 @@
         let start = @Html.Raw(Json.Serialize(Model.StartLocation));
         App.geo.route.routeLocations[0] = start;
         App.geo.setIconById(start.id, 'start');
-        App.geo.setView(start.id, 8);
+        App.geo.setView(start.id);
         $('#route-location-list li:not(:first)').remove();
         for (let location of App.geo.locations) {
             setLogicForMarker(location);
@@ -199,8 +199,9 @@
                 App.geo.route.routeLocations.forEach(function (el){
                     let prop = 'tomTomLeg.summary.travelTimeInSeconds';
                     let seconds = App.getPropertyOrDefault(el, prop, 0) / 3600;
-                    hours += Math.round((seconds + Number.EPSILON) * 10) / 10;
+                    hours += seconds;
                 });
+                hours = Math.round((hours + Number.EPSILON) * 10) / 10;
                 let formValues = await Swal.fire({
                     title: 'Создание нового маршрута',
                     html: '<div class="uk-margin uk-text-left">'+
@@ -238,15 +239,15 @@
     }
     $(document).ready(function () {
         setTimeout(function () {
-            $(document).keydown(function (e) {
+            $(document).keypress(function (e) {
                 if (e.ctrlKey) {
-                    if (e.key == 'z') {
+                    if (e.code == 'KeyZ') {
                         cancelLastAction();
                     }
-                    if (e.key == 'x') {
+                    if (e.code == 'KeyB') {
                         initPosition();
                     }
-                    if (e.key == 'c') {
+                    if (e.code == 'KeyM') {
                         saveRoute();
                     }
                 }
@@ -256,4 +257,9 @@
     $('#cancel-action').click(cancelLastAction);
     $('#reset').click(initPosition);
     $('#save').click(saveRoute);
+
+    $(document).on('click', '#route-location-list li', function () {
+        let _this = $(this);
+        App.geo.setView(_this.find('span').data('location-id'));
+    });
 </script>

@@ -76,8 +76,9 @@
                     App.geo.route.routeLocations.forEach(function (el){
                         let prop = 'routeLocation.tomTomLeg.summary.travelTimeInSeconds';
                         let seconds = App.getPropertyOrDefault(el, prop, 0) / 3600;
-                        hours += Math.round((seconds + Number.EPSILON) * 10) / 10;
+                        hours += seconds;
                     });
+                    hours = Math.round((hours + Number.EPSILON) * 10) / 10;
 
                     let formValues = await Swal.fire({
                         title: 'Создание нового маршрута',

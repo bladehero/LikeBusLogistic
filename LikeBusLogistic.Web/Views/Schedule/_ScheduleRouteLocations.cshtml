@@ -83,11 +83,13 @@
     <hr />
 }
 <div class="uk-margin uk-width-1-1">
+    <button class="uk-button uk-button-secondary uk-button-small uk-margin-small-bottom uk-float-left" id="auto-schedule-btn">Автоматически</button>
     <button class="uk-button uk-button-primary uk-button-small uk-margin-small-bottom uk-float-right" id="save-schedule-btn">Сохранить</button>
 </div>
 
 <script>
     $(document).ready(function () {
+        $('div.picker.picker-fixed').remove();
         $('.timepicker').each(function (i, e) {
             let _this = $(e);
             let picker = new Picker(e, {
@@ -105,7 +107,7 @@
                         arrival = picker.getDate('HH:mm');
                         departure = grid.find('input[name="departureTime"]').val();
                     } else {
-                        arrival  = grid.find('input[name="arrivalTime"]').val();
+                        arrival = grid.find('input[name="arrivalTime"]').val();
                         departure = picker.getDate('HH:mm');
                     }
                     let minutes = diff(arrival, departure);
@@ -116,30 +118,11 @@
                     }
                 }
             });
-            _this.data('picker', picker);
             _this.next('.clean-time').click(function () {
                 picker.reset();
             });
+            _this.data('picker', picker);
         });
-      //  ({
-		    //show_meridian:false,
-		    //min_hour_value:0,
-		    //max_hour_value:23,
-		    //step_size_minutes:1,
-		    //overflow_minutes:true,
-      //      increase_direction: 'up',
-      //      on_change: function (e) {
-      //          let grid = $(e).parents('.location-table');
-      //          arrival = grid.find('input[name="arrivalTime"]').val();
-      //          departure = grid.find('input[name="departureTime"]').val();
-      //          let minutes = diff(arrival, departure);
-      //          if (minutes != null && !isNaN(minutes)) {
-      //              grid.find('input.stop-duration').val(minutes);
-      //          } else {
-      //              grid.find('input.stop-duration').val(null);
-      //          }
-      //      }
-      //  });
 
         function diff(start, end) {
             start = start.split(":");
@@ -178,6 +161,73 @@
                 }
             });
             return flag;
+        }
+
+        $('#auto-schedule-btn').click(function () {
+            let departure = $('input[name="departureTime"]:first');
+            let departureTime = departure.val();
+            if (!departureTime) {
+                App.message.showError('Ошибка', 'Установите время отправления!').then(function () {
+                    departure.click();
+                });
+                return;
+            }
+
+
+            Swal.fire({
+                title: 'Автоматическое расписание',
+                text: "Вы уверены, что хотите загрузить автоматическое расписание?",
+                icon: 'info',
+                showCancelButton: true,
+                cancelButtonText: 'Отмена',
+                confirmButtonText: 'Да'
+            }).then((result) => {
+                if (result.value) {
+                    Swal.fire({
+                        title: 'Длительность остановки:',
+                        icon: 'question',
+                        input: 'range',
+                        inputAttributes: {
+                            min: 0,
+                            max: 60,
+                            step: 1,
+                            class: 'uk-range'
+                        },
+                        inputValue: 10
+                    }).then((result) => {
+                        if (!result.dismiss) {
+                            let stopDuration = parseInt(result.value);
+                            let minutes = getMinutes(departureTime);
+                            if (minutes) {
+                                $('input[name="arrivalTime"]:not(:first):enabled,input[name="departureTime"]:not(:first):not(:last):enabled').each(function (i, e) {
+                                    let routeLocationId = $(e).parents('.location-table:first').data('route-location-id');
+                                    let routeLocation = App.geo.route.getRouteLocationById(routeLocationId);
+                                    let summary = routeLocation.tomTomLeg.summary;
+                                    if ($(e).is('[name="departureTime"]')) {
+                                        minutes += stopDuration;
+                                    } else {
+                                        minutes += parseInt(summary.travelTimeInSeconds / 60);
+                                    }
+                                    let p = $(e).data('picker');
+                                    let d = new Date(0, 0, 0, parseInt(minutes / 60 % 24), parseInt(minutes % 60));
+                                    p.setDate(d);
+                                    setTimeout(function () {
+                                        $(e).fadeOut().fadeIn();
+                                        p.pick();
+                                    }, 175 * i);
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+            
+        });
+
+        function getMinutes(time) {
+            var a = time.split(':');
+            var minutes = (+a[0]) * 60 + (+a[1]);
+            return minutes;
         }
 
         $('.go-to-route-location').click(function () {

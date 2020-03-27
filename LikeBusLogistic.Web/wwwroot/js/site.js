@@ -484,7 +484,7 @@ var App = {
         },
         breadcrumb: $('#footer-breacrumb'),
         element: $('footer'),
-        content: $('#footer-content').hide(),
+        content: $('#footer-content'),
         animateTimer: 800,
         slideButton: $('#slide-up').click(function () {
             if (App.footer.mode < 0) {
@@ -494,21 +494,27 @@ var App = {
                 }, App.footer.animateTimer);
                 App.footer.slideButton.find('span').attr('uk-icon', 'chevron-up');
                 App.footer.mode = 0;
-                App.footer.content.fadeOut(App.footer.animateTimer / 1.5);
+                if (!App.isMobile()) {
+                    App.footer.content.fadeOut(App.footer.animateTimer / 1.5);
+                }
             } else if (App.footer.mode > 0) {
                 App.footer.element.stop().animate({
                     height: App.footer.getMaxHeight()
                 }, App.footer.animateTimer);
                 App.footer.slideButton.find('span').attr('uk-icon', 'chevron-down');
                 App.footer.mode = -1;
-                App.footer.content.fadeIn(App.footer.animateTimer / 1.25);
+                if (!App.isMobile()) {
+                    App.footer.content.fadeIn(App.footer.animateTimer / 1.25);
+                }
             } else {
                 App.footer.element.stop().animate({
                     height: App.footer.getMediumHeight()
                 }, App.footer.animateTimer / 1.5);
                 App.footer.slideButton.find('span').attr('uk-icon', 'chevron-up');
                 App.footer.mode = 1;
-                App.footer.content.fadeIn(App.footer.animateTimer / 1.25);
+                if (!App.isMobile()) {
+                    App.footer.content.fadeIn(App.footer.animateTimer / 1.25);
+                }
             }
         }),
         toggle: function () {
@@ -615,7 +621,7 @@ var App = {
     message: {
         defaultTimer: 3000,
         showMessage: function (type, title, text, timer, showConfirmButton) {
-            Swal.fire({
+            return Swal.fire({
                 icon: type,
                 title: title,
                 text: text,
@@ -633,22 +639,22 @@ var App = {
             });
         },
         showError: function (title, text) {
-            this.showMessage('error', title, text, App.message.defaultTimer, false);
+            return this.showMessage('error', title, text, App.message.defaultTimer, false);
         },
         showSuccess: function (title, text) {
-            this.showMessage('success', title, text, App.message.defaultTimer, false);
+            return this.showMessage('success', title, text, App.message.defaultTimer, false);
         },
         showInfo: function (title, text) {
-            this.showMessage('info', title, text, App.message.defaultTimer, false);
+            return this.showMessage('info', title, text, App.message.defaultTimer, false);
         },
         showErrorWithOk: function (title, text) {
-            this.showMessage('error', title, text, 0, true);
+            return this.showMessage('error', title, text, 0, true);
         },
         showSuccessWithOk: function (title, text) {
-            this.showMessage('success', title, text, 0, true);
+            return this.showMessage('success', title, text, 0, true);
         },
         showInfoWithOk: function (title, text) {
-            this.showMessage('info', title, text, 0, true);
+            return this.showMessage('info', title, text, 0, true);
         }
     },
     getCookie: function (name) {
@@ -865,7 +871,7 @@ $(document).ready(function () {
         } else {
             previousHeight = currentHeight;
         }
-    }); 
+    });
 
     let closeSlider = function (e) {
         if (toCloseSlider) {
