@@ -24,7 +24,9 @@
 setUpAjax();
 var App = {
     isiOS: function () {
-        return !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+        return (/iPad|iPhone|iPod/.test(navigator.platform) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+            !window.MSStream;
     },
     isMobile: function () {
         return /Android|webOS|Macintosh|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -928,5 +930,8 @@ $(document).ready(function () {
             $('#dragging-slider').removeClass('uk-hidden@m').show();
             $('#slide-up').hide();
         }
+    }
+    if (App.isiOS()) {
+        $('#fullscreen-mode-item,#fullscreen-mode-item+li').remove();
     }
 });
