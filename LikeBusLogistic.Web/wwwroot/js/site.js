@@ -23,6 +23,10 @@
 }
 setUpAjax();
 var App = {
+    mergeRouteLocationMode: {
+        append: 0,
+        prepend: 1
+    },
     isiOS: function () {
         return (/iPad|iPhone|iPod/.test(navigator.platform) ||
             (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&

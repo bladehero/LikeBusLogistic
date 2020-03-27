@@ -141,6 +141,9 @@
     App.geo.onClickLocation(function (obj, location) {
         let selector = "marker_" + location.marker._leaflet_id;
         let popup = location.marker.getPopup();
+        if (location.marker.isPopupOpen()) {
+            return;
+        }
         let width = window.innerWidth * 0.75;
         width = width > 400 ? 400 : width;
         if (!popup) {
@@ -148,7 +151,13 @@
             popup = location.marker.getPopup();
         }
         selector = '#' + selector;
-        App.loadContent(selector, '@Url.Action("_LocationPopup" , "Home")', { id: location.data.id });
+        App.loadContent(selector,
+            '@Url.Action("_LocationPopup" , "Home")',
+            { id: location.data.id },
+            function (html) {
+                popup.setContent(html);
+            }
+        );
     });
     function editLocationFunction() {
         var id = $(this).parents('tr,div').first().data('location-id');
