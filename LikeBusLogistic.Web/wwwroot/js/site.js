@@ -541,7 +541,7 @@ var App = {
             App.map.off('mousemove');
             App.map.off('click');
             App.footer.content.html(App.loader);
-            if (App.footer.mode !== -1) {
+            if (App.footer.mode !== -1 && !App.isMobile()) {
                 App.footer.show();
             }
             $.get(url, data, function (html) {
@@ -680,7 +680,7 @@ var App = {
     useContentState: function () {
         var _showFunc = () => {
             App.footer.content.html('<div class="uk-text-center">Добро пожаловать в приложение LikeBusLogistic!<br />Для того чтобы начать выберите один из пунктов меню.</div>');
-            App.menu.show(2000);
+            App.menu.show(1000);
             App.footer.show();
         };
         var state = App.getLastContentState();
