@@ -29,49 +29,78 @@
         </div>
     </div>
 
-    <div class="uk-margin uk-margin-remove-top uk-width-1-1">
+    <div class="uk-margin uk-margin-remove-top uk-margin-bottom uk-width-1-1">
         <div class="uk-float-right">
-            <button class="uk-button uk-button-default" id="reset-route-button">Сбросить</button>
-            <button class="uk-button uk-button-primary" id="save-route-location-button">Добавить</button>
+            <button class="uk-button uk-button-small uk-button-default" id="reset-route-button">Сбросить</button>
+            <button class="uk-button uk-button-small uk-button-primary" id="save-route-location-button">Добавить</button>
         </div>
     </div>
 </div>
 
 <script>
-    App.footer.setBreadcrumbs([
-        { name: 'Маршруты', url: '@Url.Action("_FullInformation","Route")' },
-        { name: 'Новая локация', url: '@Url.Action("_MergeRouteLocation","Route")' }
-    ]);
+    $(document).ready(function () {
+        App.footer.setBreadcrumbs([
+            { name: 'Маршруты', url: '@Url.Action("_FullInformation","Route")' },
+            { name: 'Новая локация', url: '@Url.Action("_MergeRouteLocation","Route")' }
+        ]);
 
-    if (!App.geo.route.path) {
-        App.footer.getContent('@Url.Action("_FullInformation", "Route")');
-    }
+        if (!App.geo.route.path) {
+            App.footer.getContent('@Url.Action("_FullInformation", "Route")');
+        }
 
-    $('#reset-route-button').click(function () {
-        let routeId = $('input[name="routeId"]').val();
-        Swal.fire({
-            title: 'Сброс',
-            text: 'Вы уверены, что хотите сбросить изменения в текущем маршруте?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Да',
-            cancelButtonText: 'Отмена'
-        }).then((result) => {
-            if (result.value) {
-                App.geo.route.clear();
-                App.footer.getContent('@Url.Action("_FullInformation", "Route")', null,
-                    function () {
-                        App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', routeId);
-                    });
-            }
+        $('#reset-route-button').click(function () {
+            let routeId = $('input[name="routeId"]').val();
+            Swal.fire({
+                title: 'Сброс',
+                text: 'Вы уверены, что хотите сбросить изменения в текущем маршруте?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Да',
+                cancelButtonText: 'Отмена'
+            }).then((result) => {
+                if (result.value) {
+                    App.geo.route.clear();
+                    App.footer.getContent('@Url.Action("_FullInformation", "Route")', null,
+                        function () {
+                            App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', routeId);
+                        });
+                }
+            });
         });
-    });
-    $('#save-route-location-button').click(function () {
-        var data = App.serializeInputsToObject('#save-route-location-grid input,select');
-        data.mode = $('#save-route-location-grid input[name="mode"]:checked').val();
-        App.postDataOnServer('@Url.Action("MergeRouteLocation", "Route")', data);
-        App.footer.getContent('@Url.Action("_FullInformation", "Route")',
-            null,
-            () => { App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', data.routeId); });
+        $('#save-route-location-button').click(function () {
+            var data = App.serializeInputsToObject('#save-route-location-grid input,select');
+            data.mode = $('#save-route-location-grid input[name="mode"]:checked').val();
+            App.postDataOnServer('@Url.Action("MergeRouteLocation", "Route")', data);
+            App.footer.getContent('@Url.Action("_FullInformation", "Route")',
+                null,
+                () => { App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', data.routeId); });
+        });
+
+        $('select[name="locationToAddId"],select[name="routeLocationId"],input[name="mode"]').change(function () {
+            var data = App.serializeInputsToObject('#save-route-location-grid input,select');
+            data.mode = $('#save-route-location-grid input[name="mode"]:checked').val();
+            insertLocationToRoute(data.routeId, data.routeLocationId, data.locationToAddId, data.mode);
+        });
+
+        function insertLocationToRoute(routeId, routeLocationId, locationToAddId, mode) {
+            App.postDataOnServer('@Url.Action("InsertLocationToRoute", "Route")',
+                {
+                    routeId: routeId,
+                    routeLocationId: routeLocationId,
+                    locationToAddId: locationToAddId,
+                    mode: mode
+                },
+                (result) => {
+                    if (result.success) {
+                        App.geo.route.setRouteLocations(result.data);
+                    } else {
+                        App.message.showError(result.message || 'Произошло ошибка');
+                    }
+                },
+                null,
+                'GET'
+            );
+        }
+        insertLocationToRoute(@Model.RouteId, @Model.RouteLocationId, @Model.LocationToAddId, @((int)Model.Mode));
     });
 </script>

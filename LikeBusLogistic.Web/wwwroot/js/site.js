@@ -311,7 +311,7 @@ var App = {
             path: null,
             getIndexByRouteLocationId: function (id) {
                 for (let i = 0; i < App.geo.route.routeLocations.length; i++) {
-                    if (App.geo.route.routeLocations[i].routeLocation.currentLocationId === id) {
+                    if (App.geo.route.routeLocations[i].currentLocationId === id) {
                         return i;
                     }
                 }
@@ -328,9 +328,6 @@ var App = {
                 let locations = [];
                 for (let routeLocation of App.geo.route.routeLocations) {
                     let location = {};
-                    if (routeLocation.routeLocation) {
-                        routeLocation = routeLocation.routeLocation;
-                    }
                     location.id = routeLocation.id || routeLocation.currentLocationId;
                     location.fullName = routeLocation.fullName || routeLocation.currentFullName;
                     location.name = routeLocation.name || routeLocation.currentName;
@@ -376,7 +373,7 @@ var App = {
                 color = color || '#1e87f0';
                 let latlngs = [];
                 for (var i = 0; i < routeLocations.length; i++) {
-                    let id = routeLocations[i].id || routeLocations[i].routeLocation.currentLocationId;
+                    let id = routeLocations[i].id || routeLocations[i].currentLocationId;
                     let icon = null;
                     if (!i) {
                         icon = App.geo.icons.getIcon('start');
@@ -390,16 +387,13 @@ var App = {
                     App.geo.getLocationById(id).marker.setIcon(icon);
 
                     let leg = routeLocations[i].tomTomLeg;
-                    if (routeLocations[i].routeLocation) {
-                        leg = routeLocations[i].routeLocation.tomTomLeg;
-                    }
                     if (leg) {
                         for (let point of leg.points) {
                             latlngs.push([point.latitude, point.longitude]);
                         }
                     } else {
-                        latlngs.push([routeLocations[i].latitude || routeLocations[i].routeLocation.currentLatitude,
-                        routeLocations[i].longitude || routeLocations[i].routeLocation.currentLongitude]);
+                        latlngs.push([routeLocations[i].latitude || routeLocations[i].currentLatitude,
+                        routeLocations[i].longitude || routeLocations[i].currentLongitude]);
                     }
                 }
                 let shade = App.colorShade(color, 50);
@@ -417,9 +411,9 @@ var App = {
             routeLocationsAsLocations: function () {
                 let locations = [];
                 for (let routeLocation of App.geo.route.routeLocations) {
-                    let l = App.geo.getLocationById(routeLocation.routeLocation.currentLocationId);
+                    let l = App.geo.getLocationById(routeLocation.currentLocationId);
                     if (l && l.data) {
-                        l.data.distance = routeLocation.routeLocation.distance;
+                        l.data.distance = routeLocation.distance;
                         locations.push(l.data);
                     }
                 }
@@ -434,9 +428,7 @@ var App = {
                                 for (var i = 0; i < result.data.length; i++) {
                                     for (var j = 0; j < App.geo.locations.length; j++) {
                                         if (App.geo.locations[j].data.id === result.data[i].currentLocationId) {
-                                            routeLocations.push({
-                                                routeLocation: result.data[i]
-                                            });
+                                            routeLocations.push(result.data[i]);
                                         }
                                     }
                                 }
@@ -450,7 +442,7 @@ var App = {
                 return routeLocations;
             },
             setStartView() {
-                let id = App.geo.route.routeLocations[0].routeLocation.currentLocationId;
+                let id = App.geo.route.routeLocations[0].currentLocationId;
                 if (id) {
                     App.geo.setView(id, 8);
                 }
@@ -461,8 +453,8 @@ var App = {
             },
             getRouteLocationById(routeLocationId) {
                 for (let routeLocation of App.geo.route.routeLocations) {
-                    if (routeLocation.routeLocation.routeLocationId == routeLocationId) {
-                        return routeLocation.routeLocation;
+                    if (routeLocation.routeLocationId == routeLocationId) {
+                        return routeLocation;
                     }
                 }
                 return null;

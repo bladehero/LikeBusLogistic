@@ -6,5 +6,8 @@
         public VM.ViewModels.RouteVM Route { get; set; }
         public VM.ViewModels.RouteLocationVM RouteLocation { get; set; }
         public bool IsRoute { get; set; }
+
+        public bool IsFirstInRoute { get; set; }
+        public bool IsLastInRoute { get; set; }
     }
 }

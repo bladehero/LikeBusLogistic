@@ -9,6 +9,7 @@ using LikeBusLogistic.VM.ViewModels;
 using LikeBusLogistic.Web.Models;
 using LikeBusLogistic.BLL.Services.TomTom.Models;
 using System.Threading.Tasks;
+using LikeBusLogistic.BLL.Results;
 
 namespace LikeBusLogistic.Web.Controllers
 {
@@ -38,16 +39,8 @@ namespace LikeBusLogistic.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> GetRouteLocations(int id, bool reverse = false)
         {
-            var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(id, reverse);
-            foreach (var routeLocation in routeLocations.Data)
-            {
-                if (routeLocation.PreviousLocationId.HasValue && routeLocation.TomTomLeg == null)
-                {
-                    var distance = await GetOrGenerateDistance(routeLocation.PreviousLocationId.Value, routeLocation.CurrentLocationId);
-                    routeLocation.TomTomInfo = distance.TomTomInfo;
-                }
-            }
-            return Json(routeLocations);
+            var data = await GetRouteLocationAsync(id, reverse);
+            return Json(data);
         }
 
         [HttpGet]
@@ -100,11 +93,75 @@ namespace LikeBusLogistic.Web.Controllers
         public IActionResult _MergeRouteLocation(MergeRouteLocationVM mergeRouteLocationVM)
         {
             var locations = ServiceFactory.GeolocationManagement.GetLocations().Data;
-            var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(mergeRouteLocationVM.RouteId).Data;
+            var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(mergeRouteLocationVM.RouteId).Data.ToList();
 
             mergeRouteLocationVM.Locations = locations;
             mergeRouteLocationVM.RouteLocations = routeLocations;
             return PartialView(mergeRouteLocationVM);
+        }
+
+
+        /// <summary>
+        /// Method for inserting a location to route
+        /// </summary>
+        /// <param name="routeId">Route identifier</param>
+        /// <param name="routeLocationId">Route location identifier which is connected with the new location</param>
+        /// <param name="locationToAddId">New location identifier in route</param>
+        /// <param name="mode">The mode defines how new location will be added to route location</param>
+        /// <returns>Base result with list of route locations</returns>
+        [HttpGet]
+        public async Task<IActionResult> InsertLocationToRoute(int routeId, int routeLocationId, int locationToAddId, MergeRouteLocationMode mode)
+        {
+            var result = new Result<IEnumerable<RouteLocationVM>>();
+            try
+            {
+                var route = ServiceFactory.RouteManagement.GetRoute(routeId).Data;
+                var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(route.Id).Data;
+                var firstRouteLocation = routeLocations.First();
+
+                var routeLocationIds = routeLocations.Select(x => x.CurrentLocationId).ToList();
+                var index = routeLocationIds.FindIndex(x => x == routeLocationId);
+                if (mode == MergeRouteLocationMode.Prepend)
+                {
+                    index++;
+                }
+                routeLocationIds.Insert(index, locationToAddId);
+
+                var routeLocationList = new List<RouteLocationVM>();
+                var previousLocationId = (int?)null;
+                foreach (var id in routeLocationIds)
+                {
+                    var routeLocation = new RouteLocationVM
+                    {
+                        CurrentLocationId = id
+                    };
+                    if (previousLocationId.HasValue)
+                    {
+                        var distance = await GetOrGenerateDistance(previousLocationId.Value, id);
+                        routeLocation.Distance = distance.TomTomLeg.Summary.LengthInMeters / (double)1000;
+                        routeLocation.TomTomInfo = distance.TomTomInfo;
+                    }
+                    else
+                    {
+                        routeLocation.CurrentLatitude = firstRouteLocation.CurrentLatitude;
+                        routeLocation.CurrentLongitude = firstRouteLocation.CurrentLongitude;
+                    }
+
+                    routeLocationList.Add(routeLocation);
+                    previousLocationId = id;
+                }
+
+                result.Data = routeLocationList;
+                result.Message = "Успешно добавлена новая локация!";
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+            }
+
+            return Json(result);
         }
 
         [HttpGet]
@@ -220,18 +277,21 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult DeleteRouteLocation(int routeId, int locationId)
+        public async Task<IActionResult> DeleteRouteLocation(int routeId, int locationId)
         {
-            var result = new Result();
+            var result = new Result<IEnumerable<RouteLocationVM>>();
             try
             {
                 var serviceResult = ServiceFactory.RouteManagement.HardDeleteRouteLocation(routeId, locationId);
+                var routeLocationResult = await GetRouteLocationAsync(routeId);
 
-                result.Success = serviceResult.Success;
-                result.Message = serviceResult.Message;
+                result.Data = routeLocationResult.Data;
+                result.Message = routeLocationResult.Message;
+                result.Success = true;
             }
             catch (Exception ex)
             {
+                result.Data = null;
                 result.Success = false;
             }
             return Json(result);
@@ -255,6 +315,21 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         #region Helpers
+
+        private async Task<BaseResult<IEnumerable<RouteLocationVM>>> GetRouteLocationAsync(int routeId, bool reverse = false)
+        {
+            var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(routeId, reverse);
+            foreach (var routeLocation in routeLocations.Data)
+            {
+                if (routeLocation.PreviousLocationId.HasValue && routeLocation.TomTomLeg == null)
+                {
+                    var distance = await GetOrGenerateDistance(routeLocation.PreviousLocationId.Value, routeLocation.CurrentLocationId);
+                    routeLocation.Distance = distance.TomTomLeg.Summary.LengthInMeters / (double)1000;
+                    routeLocation.TomTomInfo = distance.TomTomInfo;
+                }
+            }
+            return routeLocations;
+        }
 
         private async Task<DistanceVM> GetOrGenerateDistance(int locationId1, int locationId2)
         {

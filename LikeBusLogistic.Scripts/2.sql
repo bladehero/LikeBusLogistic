@@ -522,7 +522,6 @@ begin
                  , Distance
                  , CurrentLocationId
                  , PreviousLocationId
-                 , TomTomInfo
                  , [Level])
   as
   (
@@ -532,7 +531,6 @@ begin
          , rl1.Distance as Distance
          , rl1.CurrentLocationId as CurrentLocationId
          , rl1.PreviousLocationId as PreviousLocationId
-         , cast(null as nvarchar(max)) as TomTomInfo
          , 0 as [Level]
       from [Route] r1
       join RouteLocation rl1 
@@ -551,23 +549,12 @@ begin
          , rl2.Distance as Distance
          , rl2.CurrentLocationId as CurrentLocationId
          , rl2.PreviousLocationId as PreviousLocationId
-         , d.TomTomInfo as TomTomInfo
          , [Level] + 1 as [Level]
       from [Route] r2
       join RouteLocation rl2 
         on r2.Id = rl2.RouteId
       join LinkedList as l
         on rl2.PreviousLocationId = l.CurrentLocationId
-      join 
-      (
-        select Location1
-             , Location2
-             , TomTomInfo
-             , row_number() over (partition by Id order by DateModified, DateCreated desc) as rn
-          from Distance
-      ) d on d.Location1 = rl2.PreviousLocationId 
-             and d.Location2 = rl2.CurrentLocationId
-             and d.rn = 1
       where 1=1
         and r2.Id = @routeId
         and r2.IsDeleted = 0
@@ -608,7 +595,14 @@ begin
        , p.Latitude as PreviousLatitude
        , p.Longitude as PreviousLongitude
 
-       , ll.TomTomInfo as TomTomInfo
+       , (
+            select top 1 TomTomInfo 
+              from Distance d 
+              where 1=1 
+                and d.Location1 = PreviousLocationId 
+                and d.Location2 = CurrentLocationId
+              order by d.DateModified, d.DateCreated desc
+         ) as TomTomInfo
     from LinkedList ll
     -- Current location
     cross apply
@@ -624,6 +618,7 @@ begin
     ) p
     where 1=1 
       and ll.CurrentLocationId = isnull(@locationId, ll.CurrentLocationId)
+    order by ll.Level
 
 end;
 go

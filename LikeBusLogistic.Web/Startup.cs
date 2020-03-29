@@ -27,6 +27,11 @@ namespace LikeBusLogistic.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AutomaticAuthentication = true;
+            });
+
             var tokenOptions = new JwtAuthenticationHelper.Types.TokenOptions();
             Configuration.GetSection("TokenOptions").Bind(tokenOptions);
 
@@ -46,6 +51,8 @@ namespace LikeBusLogistic.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
+            app.UseDeveloperExceptionPage();
+
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseAuthentication();

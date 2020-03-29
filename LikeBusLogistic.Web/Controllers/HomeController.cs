@@ -2,6 +2,7 @@
 using LikeBusLogistic.Web.Models.Home;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace LikeBusLogistic.Web.Controllers
 {
@@ -30,14 +31,17 @@ namespace LikeBusLogistic.Web.Controllers
         {
             var location = ServiceFactory.GeolocationManagement.GetLocation(id).Data;
             var route = ServiceFactory.RouteManagement.GetRoute(routeId).Data;
-            var routeLocation = ServiceFactory.RouteManagement.GetRouteLocation(routeId, id).Data;
+            var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(routeId).Data;
+            var selected = ServiceFactory.RouteManagement.GetRouteLocation(routeId, id).Data;
 
             var model = new LocationPopupVM
             {
                 Location = location,
                 Route = route,
-                RouteLocation = routeLocation,
-                IsRoute = isRoute
+                RouteLocation = selected,
+                IsRoute = isRoute,
+                IsFirstInRoute = routeLocations.FirstOrDefault()?.CurrentLocationId == selected?.CurrentLocationId,
+                IsLastInRoute = routeLocations.LastOrDefault()?.CurrentLocationId == selected?.CurrentLocationId
             };
             return PartialView(model);
         }

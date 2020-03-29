@@ -12,11 +12,11 @@ namespace LikeBusLogistic.VM.ViewModels
         public int CurrentLocationId { get; set; }
         public string CurrentFullName { get; set; }
         public string CurrentName { get; set; }
-        public int CurrentCityId { get; set; }
+        public int? CurrentCityId { get; set; }
         public string CurrentCityName { get; set; }
-        public int CurrentCountryId { get; set; }
+        public int? CurrentCountryId { get; set; }
         public string CurrentCountryName { get; set; }
-        public int CurrentDistrictId { get; set; }
+        public int? CurrentDistrictId { get; set; }
         public string CurrentDistrictName { get; set; }
         public bool CurrentIsCarRepair { get; set; }
         public bool CurrentIsParking { get; set; }
