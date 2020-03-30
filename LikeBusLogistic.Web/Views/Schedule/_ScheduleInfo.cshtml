@@ -93,6 +93,14 @@
 {
     totalDistance += scheduleRouteLocation.Distance;
     var fullName = scheduleRouteLocation.LocationFullName ?? scheduleRouteLocation.RouteLocationFullName;
+    if (scheduleRouteLocation.IsBoundary)
+    {
+        <p class="uk-text-muted uk-text-center uk-margin-remove">
+            <span uk-icon="download"></span>
+            <span class="uk-text-middle">Граница</span>
+        </p>
+        <hr />
+    }
     <div class="uk-grid-small location-table" uk-grid>
         @if (!isPrint)
         {

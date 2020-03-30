@@ -109,7 +109,8 @@ namespace LikeBusLogistic.Web.Controllers
             else if (routeId.HasValue)
             {
                 var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(routeId).Data;
-
+                var departureCountryId = routeLocations.First().CurrentCountryId;
+                var boundaryLocationId = routeLocations.FirstOrDefault(x => x.CurrentCountryId != departureCountryId)?.CurrentLocationId;
                 var scheduleRouteLocations = new List<ScheduleRouteLocationVM>(routeLocations.Count());
                 foreach (var routeLocation in routeLocations)
                 {
@@ -120,7 +121,8 @@ namespace LikeBusLogistic.Web.Controllers
                         DistrictName = routeLocation.CurrentDistrictName,
                         LocationName = routeLocation.CurrentName,
                         RouteLocationId = routeLocation.RouteLocationId,
-                        Distance = routeLocation.Distance
+                        Distance = routeLocation.Distance,
+                        IsBoundary = boundaryLocationId ==routeLocation.CurrentLocationId
                     });
                 }
 

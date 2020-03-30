@@ -675,6 +675,24 @@ alter procedure dbo.GetScheduleInfo
 as  
 begin  
   
+  declare @departureCountryId int;
+  
+  -- Update on cte to get first route location
+  select top 1 @departureCountryId = l.CountryId
+    from ScheduleRouteLocation srl
+    join RouteLocation rl on srl.RouteLocationId = rl.Id
+    join Location l on rl.CurrentLocationId = l.Id
+    order by srl.Id
+
+  declare @boundaryLocationId int;
+
+  select top 1 @boundaryLocationId = l.Id
+    from ScheduleRouteLocation srl
+    join RouteLocation rl on srl.RouteLocationId = rl.Id
+    join Location l on rl.CurrentLocationId = l.Id
+    where @departureCountryId <> l.CountryId
+    order by srl.Id
+
   select s.Id                as ScheduleId  
        , s.Name              as ScheduleName
 
@@ -686,10 +704,12 @@ begin
        , srl.DepartureTime   as DepartureTime
        , rl.Distance         as Distance
 
+       , cast(iif(li.Id = @boundaryLocationId, 1, 0) as bit) as IsBoundary
+
        , li.FullName         as LocationFullName    
        , li.Name             as LocationName    
        , li.Latitude         as LocationLatitude    
-       , li.Longitude       as LocationLongitude  
+       , li.Longitude        as LocationLongitude  
        , li.IsCarRepair      as LocationIsCarRepair 
        , li.IsParking        as LocationIsParking   
        , li.CityId           as LocationCityId      

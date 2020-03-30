@@ -12,6 +12,7 @@ namespace LikeBusLogistic.DAL.StoredProcedureResults
         public TimeSpan? ArrivalTime { get; set; }
         public TimeSpan? DepartureTime { get; set; }
         public double Distance { get; set; }
+        public bool IsBoundary { get; set; }
         public string LocationFullName { get; set; }
         public string LocationLatitude { get; set; }
         public string LocationLongitude { get; set; }

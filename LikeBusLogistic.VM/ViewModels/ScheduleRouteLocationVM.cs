@@ -11,6 +11,7 @@ namespace LikeBusLogistic.VM.ViewModels
 
         public string ScheduleName { get; set; }
         public double Distance { get; set; }
+        public bool IsBoundary { get; set; }
 
         public string LocationFullName { get; set; }
 

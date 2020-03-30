@@ -26,6 +26,14 @@
 {
     totalDistance += scheduleRouteLocation.Distance;
     var fullName = scheduleRouteLocation.LocationFullName ?? scheduleRouteLocation.RouteLocationFullName;
+    if (scheduleRouteLocation.IsBoundary)
+    {
+        <p class="uk-text-muted uk-text-center uk-margin-remove">
+            <span uk-icon="download"></span>
+            <span class="uk-text-middle">Граница</span>
+        </p>
+        <hr />
+    }
     <div class="uk-grid-small location-table" uk-grid data-route-location-id="@scheduleRouteLocation.RouteLocationId">
         <div class="uk-width-1-6@s uk-hidden@s uk-text-center">
             <p class="uk-text-muted uk-text-small">
@@ -169,6 +177,13 @@
             if (!departureTime) {
                 App.message.showError('Ошибка', 'Установите время отправления!').then(function () {
                     departure.click();
+                    let picker = $('input[name="departureTime"]:first').data('picker');
+                    let saveButton = $(picker.picker).find('button.picker-confirm');
+                    const autoSelect = () => {
+                        setTimeout(() => $('#auto-schedule-btn').click(), 200)
+                        saveButton.off('click', autoSelect);
+                    };
+                    saveButton.on('click', autoSelect);
                 });
                 return;
             }
@@ -221,7 +236,7 @@
                     });
                 }
             });
-            
+
         });
 
         function getMinutes(time) {
