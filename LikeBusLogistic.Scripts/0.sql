@@ -294,6 +294,7 @@ if not exists (select 1
     RouteId int not null,
     CurrentLocationId int not null,
     PreviousLocationId int null,
+    Distance float not null default(0),
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
     DateCreated datetime not null default(getdate()),
@@ -304,16 +305,6 @@ if not exists (select 1
     constraint FK_dbo_RouteLocation_PreviousLocationId_dbo_Location_Id foreign key (PreviousLocationId) references [Location](Id),
     constraint CK_dbo_RouteLocation_CurrentLocationId_PreviousLocationId check (CurrentLocationId <> PreviousLocationId),
   );
-go
-
-if not exists (select 1
-               from sys.columns c
-               where c.object_id = object_id('dbo.RouteLocation')
-               and c.name = 'Distance')
-
-  alter table RouteLocation
-    add Distance float not null default(0);
-
 go
 
 if not exists (select 1 
@@ -337,13 +328,15 @@ go
  
 if not exists (select 1 
                from sys.tables t 
-               where t.name='ScheduleRouteLocation' 
+               where t.name='ScheduleLocation' 
                and t.schema_id = schema_id('dbo'))
-  create table dbo.ScheduleRouteLocation
+  create table dbo.ScheduleLocation
   (
     Id int not null primary key identity,
     ScheduleId int not null,
-    RouteLocationId int not null,
+    PreviousLocationId int null,
+    CurrentLocationId int not null,
+    Distance float not null default(0),
     ArrivalTime time null,
     DepartureTime time null,
     CreatedBy int null foreign key references Account(Id),
@@ -354,51 +347,12 @@ if not exists (select 1
 
     constraint FK_dbo_ScheduleRouteLocation_ScheduleId_dbo_Schedule_Id 
     foreign key (ScheduleId) references Schedule(Id),
-
-    constraint FK_dbo_ScheduleRouteLocation_RouteLocationId_dbo_RouteLocation_Id 
-    foreign key (RouteLocationId) references RouteLocation(Id),
+    
+    constraint FK_dbo_ScheduleRouteLocation_PreviousLocationId_dbo_Location_Id 
+    foreign key (PreviousLocationId) references Location(Id),
+    constraint FK_dbo_ScheduleRouteLocation_CurrentLocationId_dbo_Location_Id 
+    foreign key (CurrentLocationId) references Location(Id)
   );
-go
-
-if (object_id('CK_dbo_ScheduleRouteLocation_ScheduleId_RouteLocationId') is not null)
-begin
-  alter table ScheduleRouteLocation
-  drop constraint CK_dbo_ScheduleRouteLocation_ScheduleId_RouteLocationId;
-end
-go
-
-if (object_ID('dbo.ScheduleRouteLocationCheck') is not null)
-  drop function dbo.ScheduleRouteLocationCheck;
-go
- 
- -- ============================================================================
- -- Example    : select dbo.ScheduleRouteLocationCheck(1,3)
- -- Author     : Nikita Dermenzhi
- -- Date       : 25/07/2019
- -- Description: —
- -- ============================================================================
- 
- create function dbo.ScheduleRouteLocationCheck(@scheduleId int, @routeLocationId int)
- returns bit
- as 
- begin 
-  if exists 
-  (
-    select 1
-      from ScheduleRouteLocation srl
-      join Schedule s on srl.ScheduleId = s.Id
-      where 1=1
-        and @scheduleId = s.Id
-        and @routeLocationId = srl.RouteLocationId 
-  ) 
-  return 1;
-  return 0;
- end
- go
-
-alter table dbo.ScheduleRouteLocation
-  add constraint CK_dbo_ScheduleRouteLocation_ScheduleId_RouteLocationId 
-  check (dbo.ScheduleRouteLocationCheck(ScheduleId, RouteLocationId) = 1)
 go
 
 if not exists (select 1 

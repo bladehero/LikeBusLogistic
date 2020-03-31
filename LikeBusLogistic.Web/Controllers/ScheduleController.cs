@@ -58,16 +58,16 @@ namespace LikeBusLogistic.Web.Controllers
             var scheduleRouteLocations = ServiceFactory.ScheduleManagement.GetScheduleRouteLocations(scheduleId).Data;
 
 
-            double totalDistance = Math.Round(scheduleRouteLocations.Sum(x => x.Distance), 1);
+            double totalDistance = Math.Round(scheduleRouteLocations.Sum(x => x.ScheduleLocationDistance), 1);
             int totalTime = 0;
             ScheduleRouteLocationVM previousLocation = null;
             foreach (var currentLocation in scheduleRouteLocations)
             {
                 if (previousLocation != null)
                 {
-                    var minutes = (currentLocation.ArrivalTime - previousLocation.DepartureTime).Value.TotalMinutes;
+                    var minutes = (currentLocation.ScheduleLocationArrivalTime - previousLocation.ScheduleLocationDepartureTime).Value.TotalMinutes;
                     var duration = (int)(minutes < 0 ? minutes + new TimeSpan(1, 0, 0, 0).TotalMinutes : minutes);
-                    totalTime += duration; 
+                    totalTime += duration;
                 }
                 previousLocation = currentLocation;
             }
@@ -95,47 +95,49 @@ namespace LikeBusLogistic.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult _ScheduleRouteLocations(int? scheduleId, int? routeId)
+        public IActionResult _ScheduleRouteLocations(int? routeId, int? scheduleId)
         {
+            if (!scheduleId.HasValue && !routeId.HasValue)
+            {
+                return Content("");
+            }
+
+            var model = new ScheduleRouteLocationsVM();
             if (scheduleId.HasValue)
             {
-                var scheduleRouteLocations = ServiceFactory.ScheduleManagement.GetScheduleRouteLocations(scheduleId).Data;
-                var model = new ScheduleRouteLocationsVM
+                var schedule = ServiceFactory.ScheduleManagement.GetSchedule(scheduleId).Data;
+                if (!routeId.HasValue)
                 {
-                    ScheduleRouteLocations = scheduleRouteLocations,
-                };
-                return PartialView(model);
+                    var scheduleRouteLocations = ServiceFactory.ScheduleManagement.GetScheduleRouteLocations(scheduleId).Data;
+                    model.ScheduleRouteLocations = scheduleRouteLocations;
+                }
+                var hasConfirmedTrips = ServiceFactory.ScheduleManagement.HasConfirmedTripsByRouteId(schedule.RouteId).Data;
+                model.HideAutoSelect = schedule.NeedsSync && !routeId.HasValue;
+                model.HasConfirmedTrips = hasConfirmedTrips;
             }
-            else if (routeId.HasValue)
+
+            if (routeId.HasValue)
             {
                 var routeLocations = ServiceFactory.RouteManagement.GetRouteLocations(routeId).Data;
-                var departureCountryId = routeLocations.First().CurrentCountryId;
-                var boundaryLocationId = routeLocations.FirstOrDefault(x => x.CurrentCountryId != departureCountryId)?.CurrentLocationId;
                 var scheduleRouteLocations = new List<ScheduleRouteLocationVM>(routeLocations.Count());
                 foreach (var routeLocation in routeLocations)
                 {
                     scheduleRouteLocations.Add(new ScheduleRouteLocationVM
                     {
-                        CityName = routeLocation.CurrentCityName,
-                        CountryName = routeLocation.CurrentCountryName,
-                        DistrictName = routeLocation.CurrentDistrictName,
-                        LocationName = routeLocation.CurrentName,
-                        RouteLocationId = routeLocation.RouteLocationId,
-                        Distance = routeLocation.Distance,
-                        IsBoundary = boundaryLocationId ==routeLocation.CurrentLocationId
+                        ScheduleLocationCurrentCityName = routeLocation.CurrentCityName,
+                        ScheduleLocationCurrentCountryName = routeLocation.CurrentCountryName,
+                        ScheduleLocationCurrentDistrictName = routeLocation.CurrentDistrictName,
+                        ScheduleLocationCurrentName = routeLocation.CurrentName,
+                        ScheduleCurrentLocationId = routeLocation.CurrentLocationId,
+                        SchedulePreviousLocationId = routeLocation.PreviousLocationId,
+                        ScheduleLocationDistance = routeLocation.Distance,
+                        ScheduleLocationIsBoundary = (routeLocation.PreviousLocationId.HasValue && routeLocation.PreviousLocationId == routeLocation.CurrentLocationId)
                     });
                 }
 
-                var model = new ScheduleRouteLocationsVM
-                {
-                    ScheduleRouteLocations = scheduleRouteLocations
-                };
-                return PartialView(model);
+                model.ScheduleRouteLocations = scheduleRouteLocations;
             }
-            else
-            {
-                return Content("");
-            }
+            return PartialView(model);
         }
 
         [HttpPost]
@@ -161,7 +163,7 @@ namespace LikeBusLogistic.Web.Controllers
             var result = new Result();
             try
             {
-                var deleteOrRestoreScheduleResult = 
+                var deleteOrRestoreScheduleResult =
                     ServiceFactory.ScheduleManagement.DeleteOrRestoreSchedule(scheduleId);
                 result.Success = deleteOrRestoreScheduleResult.Success;
                 result.Message = deleteOrRestoreScheduleResult.Message;

@@ -25,7 +25,23 @@
         {
             <tr data-schedule-id="@schedule.Id" data-route-id="@schedule.RouteId"
                 class="@(schedule.IsDeleted ? "uk-background-muted" : "")">
-                <td><a class="schedule-info-link uk-link-text uk-text-warning" href="#modal-full" uk-toggle>@schedule.Name</a></td>
+                <td class="uk-text-middle">
+                    <a class="schedule-info-link uk-link-text uk-text-warning" href="#modal-full" uk-toggle>
+                        @schedule.Name
+                    </a>
+                    @if (schedule.NeedsSync)
+                    {
+                        <span class="uk-text-danger" 
+                              uk-tooltip="<div class='uk-text-center'>Маршрут был изменен, необходима <b>синхронизация</b>!</div>" 
+                              uk-icon="warning"></span>
+                    }
+                    @if (schedule.HasConfirmedTrips)
+                    {
+                        <span class="uk-text-primary"
+                              uk-tooltip="<div class='uk-text-center'>По текущему расписанию готовиться, либо осуществляется рейс, <b>изменения временно заблокированы</b>.</div>" 
+                              uk-icon="bolt"></span>
+                    }
+                </td>
                 <td>@schedule.RouteName</td>
                 <td class="uk-visible@s">
                     <div class="uk-float-right">

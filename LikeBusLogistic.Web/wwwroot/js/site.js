@@ -459,6 +459,9 @@ var App = {
                 }
                 return null;
             },
+            getRouteLocationByLocationId(locationId) {
+                return App.geo.route.routeLocations.filter(x => x.currentLocationId === locationId)[0];
+            },
             clear: function () {
                 if (App.geo.route.path) {
                     App.map.removeControl(App.geo.route.path);

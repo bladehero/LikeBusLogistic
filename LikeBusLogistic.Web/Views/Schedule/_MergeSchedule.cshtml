@@ -48,11 +48,12 @@
 
         let data = {};
         let scheduleId = $('#save-schedule-grid input[name="id"]').val();
+        let routeId = selected.val();
         if (scheduleId) {
             data.scheduleId = scheduleId;
+        } else {
+            data.routeId = routeId;
         }
-        let routeId = selected.val();
-        data.routeId = routeId;
 
         App.loadContent(
             '#schedule-route-locations',

@@ -31,7 +31,7 @@ namespace LikeBusLogistic.DAL
         public UserDao UserDao { get; set; }
         public VehicleDao VehicleDao { get; set; }
         public ScheduleDao ScheduleDao { get; set; }
-        public ScheduleRouteLocationDao ScheduleRouteLocationDao { get; set; }
+        public ScheduleLocationDao ScheduleLocationDao { get; set; }
         public StoredProcedureDao StoredProcedureDao { get; set; }
 
 
@@ -62,7 +62,7 @@ namespace LikeBusLogistic.DAL
             UserDao = new UserDao(connection);
             VehicleDao = new VehicleDao(connection);
             ScheduleDao = new ScheduleDao(connection);
-            ScheduleRouteLocationDao = new ScheduleRouteLocationDao(connection);
+            ScheduleLocationDao = new ScheduleLocationDao(connection);
 
             StoredProcedureDao = new StoredProcedureDao(connection);
         }

@@ -91,8 +91,22 @@ namespace LikeBusLogistic.VM.MapperExtensions
 
                 cfg.CreateMap<GetScheduleInfo_Result, ScheduleRouteLocationVM>();
                 cfg.CreateMap<ScheduleRouteLocationVM, GetScheduleInfo_Result>();
-                cfg.CreateMap<ScheduleRouteLocation, ScheduleRouteLocationVM>();
-                cfg.CreateMap<ScheduleRouteLocationVM, ScheduleRouteLocation>();
+                cfg.CreateMap<ScheduleLocation, ScheduleRouteLocationVM>().AfterMap((m, vm) =>
+                {
+                    vm.ScheduleCurrentLocationId = m.CurrentLocationId;
+                    vm.SchedulePreviousLocationId = m.PreviousLocationId;
+                    vm.ScheduleLocationArrivalTime = m.ArrivalTime;
+                    vm.ScheduleLocationArrivalTime = m.DepartureTime;
+                    vm.ScheduleLocationDistance = m.Distance;
+                });
+                cfg.CreateMap<ScheduleRouteLocationVM, ScheduleLocation>().AfterMap((vm, m) =>
+                {
+                    m.CurrentLocationId = vm.ScheduleCurrentLocationId;
+                    m.PreviousLocationId = vm.SchedulePreviousLocationId;
+                    m.ArrivalTime = vm.ScheduleLocationArrivalTime;
+                    m.DepartureTime = vm.ScheduleLocationDepartureTime;
+                    m.Distance = vm.ScheduleLocationDistance;
+                });
                 #endregion
 
                 #region Trip Management Service

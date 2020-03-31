@@ -39,7 +39,7 @@
             <input class="uk-input uk-form-blank"
                    id="departure-time"
                    type="text"
-                   value="@Model.First.DepartureTime?.ToString(@"hh\:mm")"
+                   value="@Model.First.ScheduleLocationDepartureTime?.ToString(@"hh\:mm")"
                    disabled>
         </div>
     </div>
@@ -50,7 +50,7 @@
             <input class="uk-input uk-form-blank"
                    id="arrival-time"
                    type="text"
-                   value="@Model.Last.ArrivalTime?.ToString(@"hh\:mm")"
+                   value="@Model.Last.ScheduleLocationArrivalTime?.ToString(@"hh\:mm")"
                    disabled>
         </div>
     </div>
@@ -91,13 +91,17 @@
 <hr />
 @foreach (var scheduleRouteLocation in Model.ScheduleRouteLocations)
 {
-    totalDistance += scheduleRouteLocation.Distance;
-    var fullName = scheduleRouteLocation.LocationFullName ?? scheduleRouteLocation.RouteLocationFullName;
-    if (scheduleRouteLocation.IsBoundary)
+    totalDistance += scheduleRouteLocation.ScheduleLocationDistance;
+    var fullName = scheduleRouteLocation.ScheduleLocationCurrentName ?? scheduleRouteLocation.ScheduleLocationCurrentFullName;
+    if (scheduleRouteLocation.ScheduleLocationIsBoundary)
     {
         <p class="uk-text-muted uk-text-center uk-margin-remove">
             <span uk-icon="download"></span>
-            <span class="uk-text-middle">Граница</span>
+            <span class="uk-text-middle">
+                Граница:
+                @scheduleRouteLocation.ScheduleLocationPreviousCountryName -
+                @scheduleRouteLocation.ScheduleLocationCurrentCountryName
+            </span>
         </p>
         <hr />
     }
@@ -106,7 +110,9 @@
         {
             <div class="uk-width-1-6@s uk-hidden@s uk-text-center">
                 <p class="uk-text-muted uk-text-small uk-link" uk-tooltip="@fullName">
-                    @(scheduleRouteLocation.LocationName ?? scheduleRouteLocation.CityName ?? scheduleRouteLocation.LocationFullName)
+                    @(scheduleRouteLocation.ScheduleLocationCurrentName ?? 
+                      scheduleRouteLocation.ScheduleLocationCurrentCityName ?? 
+                      scheduleRouteLocation.ScheduleLocationCurrentFullName)
                     @(totalDistance)км.
                 </p>
             </div>
@@ -114,17 +120,15 @@
         <div class="@(isPrint ? "uk-width-expand" : "uk-width-expand uk-visible@s")">
             <input class="uk-input uk-form-small"
                    name="routeLocation"
-                   data-route-location-id="@scheduleRouteLocation.RouteLocationId"
                    type="text"
-                   value="@(scheduleRouteLocation.LocationFullName ?? scheduleRouteLocation.RouteLocationFullName)"
+                   value="@(fullName)"
                    disabled>
         </div>
         <div class="@(isPrint ? "uk-width-1-6" : "uk-width-1-6@s uk-width-1-3") uk-flex uk-flex-inline">
             <input class="uk-input uk-form-small timepicker"
                    type="text"
                    name="arrivalTime"
-                   value="@scheduleRouteLocation.ArrivalTime?.ToString(@"hh\:mm")"
-                   placeholder=""
+                   value="@scheduleRouteLocation.ScheduleLocationArrivalTime?.ToString(@"hh\:mm")"
                    disabled>
         </div>
         <div class="@(isPrint ? "uk-width-1-6" : "uk-width-1-6@s  uk-width-1-3")">
@@ -133,8 +137,7 @@
         <div class="@(isPrint ? "uk-width-1-6" : "uk-width-1-6@s uk-width-1-3") uk-flex uk-flex-inline">
             <input class="uk-input uk-form-small timepicker"
                    type="text"
-                   value="@scheduleRouteLocation.DepartureTime?.ToString(@"hh\:mm")"
-                   placeholder=""
+                   value="@scheduleRouteLocation.ScheduleLocationDepartureTime?.ToString(@"hh\:mm")"
                    name="departureTime"
                    disabled>
         </div>

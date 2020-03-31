@@ -15,12 +15,12 @@
             _this.marker.off('click').on('click', function () {
                 let hasError = false;
                 let errorMessage;
-                if (routeLocationId && App.geo.route.routeLocations.some(isRouteLocation)) {
+                if (routeLocationId && !App.geo.route.routeLocations.some(isRouteLocation)) {
                     hasError = true;
                     errorMessage = 'Невозможно добавить в маршрут уже добавленную ранее локацию!';
                 }
                 if (!routeLocationId) {
-                    if (!App.geo.route.routeLocations.some(isRouteLocation)) {
+                    if (App.geo.route.routeLocations.some(isRouteLocation)) {
                         errorMessage = 'Локация должна быть прикреплена к локации, которая уже есть в маршруте!';
                         hasError = true;
                     } else if (firstLocation == _this.data.id && mode == App.mergeRouteLocationMode.append) {

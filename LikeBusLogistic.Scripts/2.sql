@@ -482,7 +482,7 @@ begin
     from [Route] r
     cross apply
     (
-      select *from dbo.GetLocationInfo
+      select * from dbo.GetLocationInfo
         (r.DepartureId) l
     ) d
     cross apply
@@ -502,7 +502,7 @@ if object_id(N'dbo.GetRouteLocation') is null
 go
 
 -- ============================================================================
--- Example    : exec dbo.GetRouteLocation 1, 5
+-- Example    : exec dbo.GetRouteLocation 2, 5
 -- Author     : Nikita Dermenzhi
 -- Date       : 13/12/2019
 -- Description: —
@@ -636,23 +636,48 @@ go
   
 alter procedure dbo.GetSchedule  
 (    
-   @scheduleId as int = null,  
+   @scheduleId as int = null,
+   @routeId as int = null, 
    @withDeleted as bit = 0  
 )    
 as    
 begin    
     
-  select s.Id as Id  
-       , s.Name as Name  
-       , s.RouteId as RouteId  
-       , r.Name as RouteName  
+  select s.Id        as Id  
+       , s.Name      as Name  
+       , s.RouteId   as RouteId  
+       , iif(dbo.IsScheduleMatchRoute(s.Id) = 0, 1, 0) as NeedsSync  
+       , r.Name      as RouteName
+       , case 
+           when exists
+           (
+              select 1 
+                from Trip t
+                where 1=1
+                  and t.ScheduleId = s.Id
+                  and (t.Status in('S', 'D')
+                       or getdate() > dateadd(hour, -12, (cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime)))
+                      )
+           ) then 1
+             else 0 
+         end as HasConfirmedTrips
        , s.IsDeleted as IsDeleted  
     from Schedule s  
-    join [Route] r on s.RouteId = r.Id  
+    join [Route] r on s.RouteId = r.Id
+    outer apply
+    (
+      select top 1 sl.DepartureTime
+        from ScheduleLocation sl
+        where 1=1
+          and sl.ScheduleId = s.Id
+          and sl.PreviousLocationId is null
+          and sl.IsDeleted = 0
+    ) as dt
     where 1=1  
      and (s.IsDeleted = 0 or @withDeleted = 1)  
      and (r.IsDeleted = 0 or @withDeleted = 1)  
-     and s.Id  = isnull(@scheduleId, s.Id)  
+     and s.Id         = isnull(@scheduleId, s.Id)
+     and s.RouteId    = isnull(@routeId, s.RouteId)
   
 end;  
 go
@@ -662,7 +687,7 @@ if object_id(N'dbo.GetScheduleInfo') is null
 go
 
 -- ============================================================================  
--- Example    : exec dbo.GetScheduleInfo  5
+-- Example    : exec dbo.GetScheduleInfo 8
 -- Author     : Nikita Dermenzhi  
 -- Date       : 01/03/2020  
 -- Description: —  
@@ -674,85 +699,111 @@ alter procedure dbo.GetScheduleInfo
 )  
 as  
 begin  
-  
-  declare @departureCountryId int;
-  
-  -- Update on cte to get first route location
-  select top 1 @departureCountryId = l.CountryId
-    from ScheduleRouteLocation srl
-    join RouteLocation rl on srl.RouteLocationId = rl.Id
-    join Location l on rl.CurrentLocationId = l.Id
-    order by srl.Id
 
-  declare @boundaryLocationId int;
+  with LinkedList (ScheduleId
+                 , ScheduleName
+                 , ScheduleRouteId
+                 , SchedulePreviousLocationId
+                 , ScheduleCurrentLocationId
+                 , ScheduleLocationArrivalTime
+                 , ScheduleLocationDepartureTime
+                 , ScheduleLocationDistance
+                 , Level)
+  as
+  (
+    select parents.Id                  as ScheduleId
+         , parents.Name                as ScheduleName
+         , parents.RouteId             as ScheduleRouteId
+         , parentsl.PreviousLocationId as SchedulePreviousLocationId
+         , parentsl.CurrentLocationId  as ScheduleCurrentLocationId
+         , parentsl.ArrivalTime        as ScheduleLocationArrivalTime
+         , parentsl.DepartureTime      as ScheduleLocationDepartureTime
+         , parentsl.Distance           as ScheduleLocationDistance
+         , 0                           as Level
+      from Schedule parents
+      join ScheduleLocation parentsl 
+        on parents.Id = parentsl.ScheduleId
+      where 1=1
+        and parents.Id = @scheduleId
+        and parentsl.PreviousLocationId is null
+        and parents.IsDeleted = 0
+        and parentsl.IsDeleted = 0
 
-  select top 1 @boundaryLocationId = l.Id
-    from ScheduleRouteLocation srl
-    join RouteLocation rl on srl.RouteLocationId = rl.Id
-    join Location l on rl.CurrentLocationId = l.Id
-    where @departureCountryId <> l.CountryId
-    order by srl.Id
+    union all
 
-  select s.Id                as ScheduleId  
-       , s.Name              as ScheduleName
+    select childs.Id                  as ScheduleId
+         , childs.Name                as ScheduleName
+         , childs.RouteId             as ScheduleRouteId
+         , childsl.PreviousLocationId as SchedulePreviousLocationId
+         , childsl.CurrentLocationId  as ScheduleCurrentLocationId
+         , childsl.ArrivalTime        as ScheduleLocationArrivalTime
+         , childsl.DepartureTime      as ScheduleLocationDepartureTime
+         , childsl.Distance           as ScheduleLocationDistance
+         , parentlist.Level + 1       as Level
+      from Schedule childs
+      join ScheduleLocation childsl 
+        on childs.Id = childsl.ScheduleId
+      join LinkedList parentlist
+        on childsl.PreviousLocationId = parentlist.ScheduleCurrentLocationId
+      where 1=1
+        and childs.Id = @scheduleId
+        and childs.IsDeleted = 0
+        and childsl.IsDeleted = 0
+  )
+  select l.ScheduleId                                       as Id
+       , l.ScheduleName                                     as Name
+       , l.ScheduleRouteId                                  as RouteId
+       , l.SchedulePreviousLocationId                       as SchedulePreviousLocationId
+       , l.ScheduleCurrentLocationId                        as ScheduleCurrentLocationId
+       , l.ScheduleLocationArrivalTime                      as ScheduleLocationArrivalTime
+       , l.ScheduleLocationDepartureTime                    as ScheduleLocationDepartureTime
+       , l.ScheduleLocationDistance                         as ScheduleLocationDistance
 
-       , s.RouteId           as RouteId  
-       , r.Name              as RouteName
+       -- Current Location
+       , c.FullName                                         as ScheduleLocationCurrentFullName
+       , c.[Name]                                           as ScheduleLocationCurrentName
+       , c.CityId                                           as ScheduleLocationCurrentCityId
+       , c.CityName                                         as ScheduleLocationCurrentCityName
+       , c.CountryId                                        as ScheduleLocationCurrentCountryId
+       , c.CountryName                                      as ScheduleLocationCurrentCountryName
+       , c.DistrictId                                       as ScheduleLocationCurrentDistrictId
+       , c.DistrictName                                     as ScheduleLocationCurrentDistrictName
+       , c.IsCarRepair                                      as ScheduleLocationCurrentIsCarRepair
+       , c.IsParking                                        as ScheduleLocationCurrentIsParking
+       , c.Latitude                                         as ScheduleLocationCurrentLatitude
+       , c.Longitude                                        as ScheduleLocationCurrentLongitude
 
-       , srl.RouteLocationId as RouteLocationId
-       , srl.ArrivalTime     as ArrivalTime
-       , srl.DepartureTime   as DepartureTime
-       , rl.Distance         as Distance
+       -- Previous Location
+       , p.FullName                                         as ScheduleLocationPreviousFullName
+       , p.[Name]                                           as ScheduleLocationPreviousName
+       , p.CityId                                           as ScheduleLocationPreviousCityId
+       , p.CityName                                         as ScheduleLocationPreviousCityName
+       , p.CountryId                                        as ScheduleLocationPreviousCountryId
+       , p.CountryName                                      as ScheduleLocationPreviousCountryName
+       , p.DistrictId                                       as ScheduleLocationPreviousDistrictId
+       , p.DistrictName                                     as ScheduleLocationPreviousDistrictName
+       , p.IsCarRepair                                      as ScheduleLocationPreviousIsCarRepair
+       , p.IsParking                                        as ScheduleLocationPreviousIsParking
+       , p.Latitude                                         as ScheduleLocationPreviousLatitude
+       , p.Longitude                                        as ScheduleLocationPreviousLongitude
+       
+       , cast(iif(c.CountryId <> isnull(p.CountryId, c.CountryId), 1, 0) as bit) as ScheduleLocationIsBoundary
 
-       , cast(iif(li.Id = @boundaryLocationId, 1, 0) as bit) as IsBoundary
-
-       , li.FullName         as LocationFullName    
-       , li.Name             as LocationName    
-       , li.Latitude         as LocationLatitude    
-       , li.Longitude        as LocationLongitude  
-       , li.IsCarRepair      as LocationIsCarRepair 
-       , li.IsParking        as LocationIsParking   
-       , li.CityId           as LocationCityId      
-       , li.CityName         as LocationCityName    
-       , li.DistrictId       as LocationDistrictId  
-       , li.DistrictName     as LocationDistrictName
-       , li.CountryId        as LocationCountryId   
-       , li.CountryName      as LocationCountryName 
-        
-       , s.IsDeleted         as IsDeleted
-
-    from Schedule s 
-    join ScheduleRouteLocation srl on s.Id = srl.ScheduleId
-    join RouteLocation rl on srl.RouteLocationId = rl.Id
-    join [Route] r on s.RouteId = r.Id  
+    from LinkedList l 
+    -- Current location
     cross apply
     (
-      select top 1 Id          
-                 , FullName    
-                 , Name        
-                 , Latitude    
-                 , Longitude  
-                 , IsCarRepair 
-                 , IsParking   
-                 , CityId      
-                 , CityName    
-                 , DistrictId  
-                 , DistrictName
-                 , CountryId   
-                 , CountryName 
-                 , IsDeleted   
-        from dbo.GetLocationInfo(rl.CurrentLocationId)
-    ) as li
-    where 1=1
-     and 
-     (
-       (
-         srl.IsDeleted = 0
-         and s.IsDeleted = 0
-         and r.IsDeleted = 0
-       )
-     )
-     and s.Id  = @scheduleId  
+      select *
+        from dbo.GetLocationInfo(l.ScheduleCurrentLocationId)
+    ) c
+    -- Previous Location
+    outer apply
+    (
+      select *
+        from dbo.GetLocationInfo(l.SchedulePreviousLocationId)
+    ) p
+    where 1=1 
+    order by l.Level
 
 end;
 go
@@ -762,103 +813,92 @@ if (object_ID('dbo.GetScheduleRouteLocation') is not null)
 go
 
 -- ============================================================================
--- Example    : select * from dbo.GetScheduleRouteLocation(1)
+-- Example    : select * from dbo.GetScheduleRouteLocation(8)
 -- Author     : Nikita Dermenzhi
 -- Date       : 25/07/2019
 -- Description: —
 -- ============================================================================
 
 create function dbo.GetScheduleRouteLocation(@scheduleId int)
-returns @result table
-(
-  Id                   int not null identity,
-  ScheduleId           int not null,
-  ScheduleName         nvarchar(500) not null,
-  RouteId              int not null,
-  RouteName            nvarchar(500) not null,
-  RouteLocationId      int not null,
-  ArrivalTime          time null,
-  DepartureTime        time null,
-  Distance             float not null,
-  LocationFullName     nvarchar(500) null,
-  LocationName         nvarchar(500) null,
-  LocationLatitude     float not null,
-  LocationLongitude   float not null,
-  LocationIsCarRepair  bit not null,
-  LocationIsParking    bit not null,
-  LocationCityId       int null,
-  LocationCityName     nvarchar(500) null,
-  LocationDistrictId   int null,
-  LocationDistrictName nvarchar(500) null,
-  LocationCountryId    int null,
-  LocationCountryName  nvarchar(500) null,
-  IsDeleted            bit not null
-)
+returns table
 as 
-begin 
-
-  insert @result  
-  select s.Id                as ScheduleId  
-       , s.Name              as ScheduleName
-
-       , s.RouteId           as RouteId  
-       , r.Name              as RouteName
-
-       , srl.RouteLocationId as RouteLocationId
-       , srl.ArrivalTime     as ArrivalTime
-       , srl.DepartureTime   as DepartureTime
-       , rl.Distance         as Distance
-
-       , li.FullName         as LocationFullName    
-       , li.Name             as LocationName    
-       , li.Latitude         as LocationLatitude    
-       , li.Longitude       as LocationLongitude  
-       , li.IsCarRepair      as LocationIsCarRepair 
-       , li.IsParking        as LocationIsParking   
-       , li.CityId           as LocationCityId      
-       , li.CityName         as LocationCityName    
-       , li.DistrictId       as LocationDistrictId  
-       , li.DistrictName     as LocationDistrictName
-       , li.CountryId        as LocationCountryId   
-       , li.CountryName      as LocationCountryName 
-        
-       , s.IsDeleted         as IsDeleted
-
-    from Schedule s 
-    join ScheduleRouteLocation srl on s.Id = srl.ScheduleId
-    join RouteLocation rl on srl.RouteLocationId = rl.Id
-    join [Route] r on s.RouteId = r.Id  
-    cross apply
+  return 
+  (
+    with LinkedList (
+                       ScheduleId
+                     , ScheduleName
+                     , ScheduleRouteId
+                     , SchedulePreviousLocationId
+                     , ScheduleCurrentLocationId
+                     , ScheduleLocationArrivalTime
+                     , ScheduleLocationDepartureTime
+                     , ScheduleLocationDistance
+                     , Level
+                    )
+    as
     (
-      select top 1 Id          
-                 , FullName    
-                 , Name        
-                 , Latitude    
-                 , Longitude  
-                 , IsCarRepair 
-                 , IsParking   
-                 , CityId      
-                 , CityName    
-                 , DistrictId  
-                 , DistrictName
-                 , CountryId   
-                 , CountryName 
-                 , IsDeleted   
-        from dbo.GetLocationInfo(rl.CurrentLocationId)
-    ) as li
-    where 1=1
-     and 
-     (
-       (
-         srl.IsDeleted = 0
-         and s.IsDeleted = 0
-         and r.IsDeleted = 0
-       )
-     )
-     and s.Id  = @scheduleId  
-     return;
-
-end
+      select parents.Id                  as ScheduleId
+           , parents.Name                as ScheduleName
+           , parents.RouteId             as ScheduleRouteId
+           , parentsl.PreviousLocationId as SchedulePreviousLocationId
+           , parentsl.CurrentLocationId  as ScheduleCurrentLocationId
+           , parentsl.ArrivalTime        as ScheduleLocationArrivalTime
+           , parentsl.DepartureTime      as ScheduleLocationDepartureTime
+           , parentsl.Distance           as ScheduleLocationDistance
+           , 0                           as Level
+        from Schedule parents
+        join ScheduleLocation parentsl 
+          on parents.Id = parentsl.ScheduleId
+        where 1=1
+          and parents.Id = @scheduleId
+          and parentsl.PreviousLocationId is null
+          and parents.IsDeleted = 0
+          and parentsl.IsDeleted = 0
+  
+      union all
+  
+      select childs.Id                  as ScheduleId
+           , childs.Name                as ScheduleName
+           , childs.RouteId             as ScheduleRouteId
+           , childsl.PreviousLocationId as SchedulePreviousLocationId
+           , childsl.CurrentLocationId  as ScheduleCurrentLocationId
+           , childsl.ArrivalTime        as ScheduleLocationArrivalTime
+           , childsl.DepartureTime      as ScheduleLocationDepartureTime
+           , childsl.Distance           as ScheduleLocationDistance
+           , parentlist.Level + 1       as Level
+        from Schedule childs
+        join ScheduleLocation childsl 
+          on childs.Id = childsl.ScheduleId
+        join LinkedList parentlist
+          on childsl.PreviousLocationId = parentlist.ScheduleCurrentLocationId
+        where 1=1
+          and childs.Id = @scheduleId
+          and childs.IsDeleted = 0
+          and childsl.IsDeleted = 0
+    )  
+    select l.ScheduleId                                       as Id
+         , l.ScheduleRouteId                                  as RouteId
+         , l.SchedulePreviousLocationId                       as SchedulePreviousLocationId
+         , l.ScheduleCurrentLocationId                        as ScheduleCurrentLocationId
+         , l.ScheduleLocationArrivalTime                      as ScheduleLocationArrivalTime
+         , l.ScheduleLocationDepartureTime                    as ScheduleLocationDepartureTime
+         , l.ScheduleLocationDistance                         as ScheduleLocationDistance
+         , l.Level                                            as Level
+      from LinkedList l 
+      -- Current location
+      cross apply
+      (
+        select *
+          from dbo.GetLocationInfo(l.ScheduleCurrentLocationId)
+      ) c
+      -- Previous Location
+      outer apply
+      (
+        select *
+          from dbo.GetLocationInfo(l.SchedulePreviousLocationId)
+      ) p
+      where 1=1 
+  )
 go
 
 if object_id(N'dbo.GetTrips') is null
@@ -883,7 +923,7 @@ begin
 
   select t.Id                       as Id
        , cast(t.Departure as datetime) + 
-         cast(dti.DepartureTime as datetime) as Departure
+         cast(dt.DepartureTime as datetime) as Departure
        , t.Status                   as Status
        , t.Color                    as Color
        , s.Id                       as ScheduleId
@@ -920,14 +960,18 @@ begin
           and tb.IsDeleted = 0
         order by tb.DateModified, tb.DateCreated desc
     ) as b
+    outer apply
+    (
+      select top 1 sl.DepartureTime
+        from ScheduleLocation sl
+        where 1=1
+          and sl.ScheduleId = s.Id
+          and sl.PreviousLocationId is null
+          and sl.IsDeleted = 0
+    ) as dt
     cross apply
     (
-      select top 1 srl.DepartureTime
-        from dbo.GetScheduleRouteLocation(s.Id) srl
-    ) as dti
-    cross apply
-    (
-      select sum(srl.Distance) as TotalDistance
+      select sum(srl.ScheduleLocationDistance) as TotalDistance
         from dbo.GetScheduleRouteLocation(s.Id) srl
     ) as td
     where 1=1
@@ -1013,4 +1057,79 @@ begin
     order by d.DateModified, d.DateCreated, d.Id
 
 end;
+go
+
+if (object_ID('dbo.HasConfirmedTripsByRouteId') is not null)
+   drop function dbo.HasConfirmedTripsByRouteId
+go
+
+-- ============================================================================
+-- Example    : select dbo.HasConfirmedTripsByRouteId(2)
+-- Author     : Nikita Dermenzhi
+-- Date       : 25/07/2019
+-- Description: —
+-- ============================================================================
+
+create function dbo.HasConfirmedTripsByRouteId(@routeId int)
+returns bit
+as 
+begin 
+
+  if exists
+  (
+    select 1
+      from Route r
+      join Schedule s 
+        on r.Id = s.RouteId
+      join Trip t
+        on s.Id = t.ScheduleId
+      outer apply
+      (
+        select top 1 sl.DepartureTime
+          from ScheduleLocation sl
+          where 1=1
+            and sl.ScheduleId = s.Id
+            and sl.PreviousLocationId is null
+            and sl.IsDeleted = 0
+      ) as dt
+      where 1=1
+        and @routeId = r.Id
+        and (
+              t.Status in('S', 'D')
+              or getdate() > dateadd(hour, -12, (cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime)))
+            )
+  ) return 1;
+  return 0;
+
+end
+go
+
+if (object_ID('dbo.IsScheduleMatchRoute') is not null)
+   drop function dbo.IsScheduleMatchRoute
+go
+
+-- ============================================================================
+-- Example    : select dbo.IsScheduleMatchRoute(14)
+-- Author     : Nikita Dermenzhi
+-- Date       : 25/07/2019
+-- Description: —
+-- ============================================================================
+
+create function dbo.IsScheduleMatchRoute(@scheduleId int)
+returns bit
+as 
+begin 
+  if exists
+  (
+    select 1 
+      from ScheduleLocation s
+      full join RouteLocation r
+        on s.CurrentLocationId = r.CurrentLocationId
+      where s.ScheduleId=@scheduleId
+        and s.IsDeleted = 0
+        and isnull(r.IsDeleted, 0) = 0
+        and (s.Id is null or r.Id is null)
+  ) return 0;
+  return 1;
+end
 go

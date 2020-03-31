@@ -265,6 +265,7 @@ namespace LikeBusLogistic.Web.Controllers
                 }
 
                 var serviceResult = ServiceFactory.RouteManagement.MergeRouteLocation(locationToAdd, nextId);
+                ServiceFactory.ScheduleManagement.UpdateNeedsSyncStatusByRouteId(locationToAdd.RouteId);
 
                 result.Success = serviceResult.Success;
                 result.Message = serviceResult.Message;
@@ -284,6 +285,7 @@ namespace LikeBusLogistic.Web.Controllers
             {
                 var serviceResult = ServiceFactory.RouteManagement.HardDeleteRouteLocation(routeId, locationId);
                 var routeLocationResult = await GetRouteLocationAsync(routeId);
+                ServiceFactory.ScheduleManagement.UpdateNeedsSyncStatusByRouteId(routeId);
 
                 result.Data = routeLocationResult.Data;
                 result.Message = routeLocationResult.Message;

@@ -24,22 +24,29 @@
 <hr />
 @foreach (var scheduleRouteLocation in Model.ScheduleRouteLocations)
 {
-    totalDistance += scheduleRouteLocation.Distance;
-    var fullName = scheduleRouteLocation.LocationFullName ?? scheduleRouteLocation.RouteLocationFullName;
-    if (scheduleRouteLocation.IsBoundary)
+    totalDistance += scheduleRouteLocation.ScheduleLocationDistance;
+    var fullName = scheduleRouteLocation.ScheduleLocationCurrentName ?? scheduleRouteLocation.ScheduleLocationCurrentFullName;
+    if (scheduleRouteLocation.ScheduleLocationIsBoundary)
     {
         <p class="uk-text-muted uk-text-center uk-margin-remove">
             <span uk-icon="download"></span>
-            <span class="uk-text-middle">Граница</span>
+
+            <span class="uk-text-middle">
+                Граница:
+                @scheduleRouteLocation.ScheduleLocationPreviousCountryName -
+                @scheduleRouteLocation.ScheduleLocationCurrentCountryName
+            </span>
         </p>
         <hr />
     }
-    <div class="uk-grid-small location-table" uk-grid data-route-location-id="@scheduleRouteLocation.RouteLocationId">
+    <div class="uk-grid-small location-table" uk-grid
+         data-previous-location-id="@scheduleRouteLocation.SchedulePreviousLocationId"
+         data-current-location-id="@scheduleRouteLocation.ScheduleCurrentLocationId">
         <div class="uk-width-1-6@s uk-hidden@s uk-text-center">
             <p class="uk-text-muted uk-text-small">
-                <span uk-icon="icon: info; ratio: 0.8;" uk-tooltip="@fullName"></span>
+                <span uk-icon="icon: info; ratio: 0.8;" uk-tooltip="@scheduleRouteLocation.ScheduleLocationCurrentFullName"></span>
                 <span class=" uk-link go-to-route-location">
-                    @(scheduleRouteLocation.LocationName ?? scheduleRouteLocation.CityName ?? scheduleRouteLocation.LocationFullName)
+                    @(fullName)
                     @(totalDistance)км.
                 </span>
             </p>
@@ -49,9 +56,8 @@
                 <a class="uk-form-icon uk-form-icon-flip go-to-route-location" href="#" uk-icon="icon: info"></a>
                 <input class="uk-input uk-form-small"
                        name="routeLocation"
-                       data-route-location-id="@scheduleRouteLocation.RouteLocationId"
                        type="text"
-                       value="@(scheduleRouteLocation.LocationFullName ?? scheduleRouteLocation.RouteLocationFullName)"
+                       value="@(fullName)"
                        readonly>
             </div>
         </div>
@@ -59,8 +65,8 @@
             <input class="uk-input uk-form-small timepicker @(scheduleRouteLocation.Equals(first) ? "" : "to-validate")"
                    type="text"
                    name="arrivalTime"
-                   data-title="Прибытие в '@(scheduleRouteLocation.LocationName ?? scheduleRouteLocation.CityName ?? scheduleRouteLocation.LocationFullName)'"
-                   value="@scheduleRouteLocation.ArrivalTime?.ToString(@"hh\:mm")"
+                   data-title="Прибытие в '@(fullName)'"
+                   value="@scheduleRouteLocation.ScheduleLocationArrivalTime?.ToString(@"hh\:mm")"
                    placeholder=""
                    @(scheduleRouteLocation.Equals(first) ? "disabled" : "")>
             @if (!scheduleRouteLocation.Equals(first))
@@ -74,9 +80,9 @@
         <div class="uk-width-1-6@s uk-width-1-3 uk-flex uk-flex-inline">
             <input class="uk-input uk-form-small timepicker @(scheduleRouteLocation.Equals(last) ? "" : "to-validate")"
                    type="text"
-                   value="@scheduleRouteLocation.DepartureTime?.ToString(@"hh\:mm")"
+                   value="@scheduleRouteLocation.ScheduleLocationDepartureTime?.ToString(@"hh\:mm")"
                    placeholder=""
-                   data-title="Отправление из '@(scheduleRouteLocation.LocationName ?? scheduleRouteLocation.CityName ?? scheduleRouteLocation.LocationFullName)'"
+                   data-title="Отправление из '@(fullName)'"
                    name="departureTime"
                    @(scheduleRouteLocation.Equals(last) ? "disabled" : "")>
             @if (!scheduleRouteLocation.Equals(last))
@@ -85,14 +91,30 @@
             }
         </div>
         <div class="uk-width-1-6@s uk-visible@s">
-            <input class="uk-input uk-form-small" type="number" step="1" value="@totalDistance" placeholder="" disabled>
+            <input class="uk-input uk-form-small"
+                   data-distance="@scheduleRouteLocation.ScheduleLocationDistance"
+                   name="distance"
+                   type="number"
+                   step="1" value="@totalDistance"
+                   disabled>
         </div>
     </div>
     <hr />
 }
 <div class="uk-margin uk-width-1-1">
-    <button class="uk-button uk-button-secondary uk-button-small uk-margin-small-bottom uk-float-left" id="auto-schedule-btn">Автоматически</button>
-    <button class="uk-button uk-button-primary uk-button-small uk-margin-small-bottom uk-float-right" id="save-schedule-btn">Сохранить</button>
+
+    @if (!Model.HasConfirmedTrips)
+    {
+        if (Model.HideAutoSelect)
+        {
+            <button class="uk-button uk-button-secondary uk-button-small uk-margin-small-bottom uk-float-left" id="sync-schedule-btn">Синхронизировать</button>
+        }
+        else
+        {
+            <button class="uk-button uk-button-secondary uk-button-small uk-margin-small-bottom uk-float-left uk-margin-small-left" id="auto-schedule-btn">Автоматически</button>
+        }
+        <button class="uk-button uk-button-primary uk-button-small uk-margin-small-bottom uk-float-right" id="save-schedule-btn">Сохранить</button>
+    }
 </div>
 
 <script>
@@ -215,8 +237,8 @@
                             let minutes = getMinutes(departureTime);
                             if (minutes) {
                                 $('input[name="arrivalTime"]:not(:first):enabled,input[name="departureTime"]:not(:first):not(:last):enabled').each(function (i, e) {
-                                    let routeLocationId = $(e).parents('.location-table:first').data('route-location-id');
-                                    let routeLocation = App.geo.route.getRouteLocationById(routeLocationId);
+                                    let currentLocationId = $(e).parents('.location-table:first').data('current-location-id');
+                                    let routeLocation = App.geo.route.getRouteLocationByLocationId(currentLocationId);
                                     let summary = routeLocation.tomTomLeg.summary;
                                     if ($(e).is('[name="departureTime"]')) {
                                         minutes += stopDuration;
@@ -229,7 +251,7 @@
                                     setTimeout(function () {
                                         $(e).fadeOut().fadeIn();
                                         p.pick();
-                                    }, 175 * i);
+                                    }, 10 * i);
                                 });
                             }
                         }
@@ -247,8 +269,8 @@
 
         $('.go-to-route-location').click(function () {
             let _this = $(this);
-            let id = _this.parents('.location-table').first().data('route-location-id');
-            App.geo.route.setViewToRouteLocation(id);
+            let id = _this.parents('.location-table').first().data('current-location-id');
+            App.geo.setView(id);
         });
 
         $('#save-schedule-btn').click(function () {
@@ -269,14 +291,29 @@
                 var location = {
                     scheduleId: schedule.id
                 };
-                location.routeLocationId = $(e).find('input[name="routeLocation"]').data('route-location-id');
-                location.arrivalTime = $(e).find('input[name="arrivalTime"]').val();
-                location.departureTime = $(e).find('input[name="departureTime"]').val();
+                location.schedulePreviousLocationId = $(e).data('previous-location-id');
+                location.scheduleCurrentLocationId = $(e).data('current-location-id');
+                location.scheduleLocationArrivalTime = $(e).find('input[name="arrivalTime"]').val();
+                location.scheduleLocationDepartureTime = $(e).find('input[name="departureTime"]').val();
+                location.scheduleLocationDistance = $(e).find('input[name="distance"]').data('distance');
                 locations.push(location);
             });
 
             let data = { schedule: schedule, locations: locations };
             App.postDataOnServer('@Url.Action("MergeSchedule", "Schedule")', data);
+        });
+
+        $('#sync-schedule-btn').click(function () {
+            let routeId = $('select[name="routeId"] option:selected').val();
+            let scheduleId = $('#save-schedule-grid input[name="id"]').val();
+            let data = {};
+            data.routeId = routeId;
+            data.scheduleId = scheduleId;
+            App.loadContent(
+                '#schedule-route-locations',
+                '@Url.Action("_ScheduleRouteLocations", "Schedule")',
+                data
+            );
         });
     });
 </script>

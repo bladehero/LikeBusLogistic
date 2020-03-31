@@ -20,7 +20,7 @@ namespace LikeBusLogistic.BLL.Services
             var result = new BaseResult<ScheduleVM>();
             try
             {
-                var schedule = UnitOfWork.StoredProcedureDao.GetSchedule(scheduleId.Value, RoleName == Variables.RoleName.Administrator).FirstOrDefault();
+                var schedule = UnitOfWork.StoredProcedureDao.GetSchedule(scheduleId.Value, withDeleted: RoleName == Variables.RoleName.Administrator).FirstOrDefault();
                 result.Data = Mapper.Map<ScheduleVM>(schedule);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
@@ -83,29 +83,29 @@ namespace LikeBusLogistic.BLL.Services
                 }
                 schedule.ModifiedBy = AccountId;
                 UnitOfWork.ScheduleDao.Merge(schedule);
-                var scheduleRouteLocations = Mapper.Map<IEnumerable<ScheduleRouteLocation>>(scheduleRouteLocationVMs);
+                var scheduleRouteLocations = Mapper.Map<IEnumerable<ScheduleLocation>>(scheduleRouteLocationVMs);
                 if (scheduleRouteLocationVMs?.Count() == 0 && isNew)
                 {
                     var routeLocations = _routeManagementService.GetRouteLocations(scheduleVM.RouteId).Data;
-                    var list = new List<ScheduleRouteLocation>(routeLocations.Count());
+                    var list = new List<ScheduleLocation>(routeLocations.Count());
                     foreach (var routeLocation in routeLocations)
                     {
-                        list.Add(new ScheduleRouteLocation
+                        list.Add(new ScheduleLocation
                         {
                             CreatedBy = AccountId,
                             ModifiedBy = AccountId,
-                            RouteLocationId = routeLocation.RouteLocationId
+                            PreviousLocationId = routeLocation.PreviousLocationId,
+                            CurrentLocationId = routeLocation.CurrentLocationId
                         });
                     }
                     scheduleRouteLocations = list;
                 }
                 foreach (var routeLocation in scheduleRouteLocations)
                 {
-                    routeLocation.ScheduleId = schedule.Id;
                     routeLocation.ModifiedBy = AccountId;
                     routeLocation.CreatedBy = AccountId;
                 }
-                UnitOfWork.ScheduleRouteLocationDao.MergeScheduleRouteLocations(scheduleRouteLocations);
+                UnitOfWork.ScheduleLocationDao.MergeScheduleRouteLocations(schedule.Id, scheduleRouteLocations);
 
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
@@ -135,6 +135,42 @@ namespace LikeBusLogistic.BLL.Services
             try
             {
                 result.Success = UnitOfWork.ScheduleDao.DeleteOrRestore(scheduleId);
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+
+        public BaseResult<IEnumerable<ScheduleVM>> UpdateNeedsSyncStatusByRouteId(int routeId)
+        {
+            var result = new BaseResult<IEnumerable<ScheduleVM>>();
+            try
+            {
+                var schedules = UnitOfWork.ScheduleDao.UpdateNeedsSyncByRouteId(routeId);
+                result.Data = Mapper.Map<IEnumerable<ScheduleVM>>(schedules);
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+
+        public BaseResult<bool> HasConfirmedTripsByRouteId(int? routeId)
+        {
+            var result = new BaseResult<bool>();
+            try
+            {
+                var hasConfirmedTrips = UnitOfWork.StoredProcedureDao.HasConfirmedTripsByRouteId(routeId);
+                result.Data = hasConfirmedTrips;
+                result.Success = true;
                 result.Message = GeneralSuccessMessage;
             }
             catch (Exception ex)

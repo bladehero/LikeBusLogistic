@@ -102,11 +102,12 @@ namespace LikeBusLogistic.DAL.Dao
 
             return Connection.Query<GetRouteLocation_Result>("dbo.GetRouteLocation", parameters, commandType: CommandType.StoredProcedure);
         }
-        public IEnumerable<GetSchedule_Result> GetSchedule(int? scheduleId = null, bool withDeleted = false)
+        public IEnumerable<GetSchedule_Result> GetSchedule(int? scheduleId = null, int? routeId = null, bool withDeleted = false)
         {
             var parameters = new
             {
                 @scheduleId = scheduleId,
+                @routeId = routeId,
                 @withDeleted = withDeleted
             };
 
@@ -141,6 +142,14 @@ namespace LikeBusLogistic.DAL.Dao
             };
 
             return Connection.Query<GetDistance_Result>("dbo.GetDistance", parameters, commandType: CommandType.StoredProcedure);
+        }
+        public bool HasConfirmedTripsByRouteId(int? routeId)
+        {
+            return Connection.ExecuteScalar<bool>($"select dbo.HasConfirmedTripsByRouteId({routeId?.ToString() ?? "null"})");
+        }
+        public bool IsScheduleMatchRoute(int scheduleId)
+        {
+            return Connection.ExecuteScalar<bool>($"select dbo.IsScheduleMatchRoute({scheduleId})");
         }
     }
 }
