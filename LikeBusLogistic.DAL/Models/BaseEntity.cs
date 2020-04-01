@@ -5,12 +5,12 @@ namespace LikeBusLogistic.DAL.Models
 {
     public abstract class BaseEntity
     {
-        [Ignore]
+        [Ignore(true, true)]
         public int Id { get; set; }
-        [Ignore]
+        [Ignore(false, true)]
         public DateTime DateCreated { get; set; } = DateTime.Now;
         public DateTime DateModified { get; set; } = DateTime.Now;
-        [Ignore]
+        [Ignore(true, true)]
         public bool IsDeleted { get; set; }
     }
 }

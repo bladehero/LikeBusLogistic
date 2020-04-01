@@ -136,7 +136,8 @@ namespace LikeBusLogistic.BLL.Services
                                                           driverInfoVM.BusId,
                                                           driverInfoVM.FirstName,
                                                           driverInfoVM.LastName,
-                                                          driverInfoVM.MiddleName);
+                                                          driverInfoVM.MiddleName,
+                                                          AccountId);
                 result.Success = true;
                 result.Message = GeneralSuccessMessage;
             }

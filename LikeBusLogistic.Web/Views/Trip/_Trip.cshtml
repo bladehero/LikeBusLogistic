@@ -14,7 +14,7 @@
         return result;
     };
 }
-<div class="uk-clearfix">
+@*<div class="uk-clearfix">
     <div class="uk-float-right">
         <button class="uk-button uk-button-small uk-button-danger uk-hidden" id="clean-route-button">Сбросить маршрут</button>
         @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
@@ -22,7 +22,7 @@
             <button class="uk-button uk-button-small uk-button-primary" id="add-trip-button">Добавить</button>
         }
     </div>
-</div>
+</div>*@
 <table class="uk-table uk-table-small uk-table-hover trips-table @Model.Tab.ToString().ToLower()">
     <thead>
         <tr>
@@ -118,10 +118,6 @@
             App.geo.route.setStartView();
             $('#clean-route-button').removeClass('uk-hidden');
         });
-        $('#clean-route-button').click(function () {
-            App.geo.route.clear();
-            $('#clean-route-button').addClass('uk-hidden');
-        });
         $('.edit-trip-icon').click(function () {
             var id = $(this).parents('tr').data('trip-id');
             App.footer.getContent('@Url.Action("_MergeTrip", "Trip")', { tripId: id });
@@ -132,9 +128,6 @@
                 App.message.showSuccessWithOk('Успешно', result.message || 'Рейс успешно удален!');
                 App.footer.getContent('@Url.Action("_FullInformation", "Trip", new { tab = Model.Tab })');
             });
-        });
-        $('#add-trip-button').click(function () {
-            App.footer.getContent('@Url.Action("_MergeTrip", "Trip")');
         });
     });
 

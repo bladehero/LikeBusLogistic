@@ -39,7 +39,7 @@ namespace LikeBusLogistic.DAL.Dao
 
             return Connection.Query<GetDriverInfo_Result>("dbo.GetDriverInfo", parameters, commandType: CommandType.StoredProcedure);
         }
-        public void MergeDriver(int? driverId, int busId, string firstName, string lastName, string middleName)
+        public void MergeDriver(int? driverId, int busId, string firstName, string lastName, string middleName, int? accountId)
         {
             var parameters = new
             {
@@ -48,6 +48,7 @@ namespace LikeBusLogistic.DAL.Dao
                 @firstName = firstName,
                 @lastName = lastName,
                 @middleName = middleName,
+                @accountId = accountId
             };
 
             Connection.Query<GetDriverInfo_Result>("dbo.MergeDriver", parameters, commandType: CommandType.StoredProcedure);

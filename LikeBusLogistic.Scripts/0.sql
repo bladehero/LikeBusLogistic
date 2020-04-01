@@ -373,7 +373,7 @@ if not exists (select 1
     IsDeleted bit not null default(0)
 
     constraint FK_dbo_Trip_ScheduleId_dbo_Schedule_Id foreign key (ScheduleId) references Schedule(Id),
-    constraint CK_dbo_Trip_Status check(Status in ('P','S','D','F')) -- P(pending), S(started), D(delayed), F(finished)
+    constraint CK_dbo_Trip_Status check(Status in ('P','S','D','F','C')) -- P(pending), S(started), D(delayed), F(finished), C(cancelled)
   );
 go
 

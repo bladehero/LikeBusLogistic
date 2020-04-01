@@ -125,6 +125,29 @@ namespace LikeBusLogistic.Web.Controllers
             return Json(result);
         }
 
+        [HttpPost]
+        public IActionResult DeleteOrRestoreTrip(int tripId)
+        {
+            var result = new Result();
+            try
+            {
+                var deleteOrRestoreTripResult =
+                    ServiceFactory.TripManagement.DeleteOrRestoreTrip(tripId);
+                var trip = ServiceFactory.TripManagement.GetTrip(tripId).Data;
+                if (trip.IsDeleted)
+                {
+                    var changeStatusTripResult = ServiceFactory.TripManagement.ChangeStatusTrip(tripId, TripStatus.C);
+                }
+                result.Success = deleteOrRestoreTripResult.Success;
+                result.Message = deleteOrRestoreTripResult.Message;
+            }
+            catch (Exception)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
+
         private TripStatus? GetTripStatus(TripTab tab)
         {
             TripStatus? status;
@@ -141,6 +164,9 @@ namespace LikeBusLogistic.Web.Controllers
                     break;
                 case TripTab.FinishedTrips:
                     status = TripStatus.F;
+                    break;
+                case TripTab.CancelledTrips:
+                    status = TripStatus.C;
                     break;
                 case TripTab.AllTrips:
                 default:

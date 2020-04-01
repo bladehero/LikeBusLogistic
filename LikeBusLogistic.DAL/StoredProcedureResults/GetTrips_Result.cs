@@ -20,5 +20,6 @@ namespace LikeBusLogistic.DAL.StoredProcedureResults
         public int VehiclePassengerCapacity { get; set; }
         public string VehicleProducer { get; set; }
         public double TotalDistance { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

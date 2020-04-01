@@ -165,5 +165,21 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
+
+        public BaseResult ChangeStatusTrip(int tripId, TripStatus status)
+        {
+            var result = new BaseResult();
+            try
+            {
+                result.Success = UnitOfWork.TripDao.ChangeTripStatus(tripId, status.ToString()[0]);
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
     }
 }

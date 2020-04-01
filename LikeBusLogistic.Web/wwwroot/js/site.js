@@ -8,7 +8,7 @@
             if (timeout) {
                 clearTimeout(timeout);
             }
-            timeout = setTimeout(App.unblockUI, 500);
+            timeout = setTimeout(App.unblockUI, 1000);
             if (xhr.status === 401) {
                 Swal.fire({
                     title: 'Выход',

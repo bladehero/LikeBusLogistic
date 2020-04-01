@@ -210,7 +210,8 @@ alter procedure dbo.MergeDriver
     @busId as int,
     @firstName as nvarchar(100),
     @lastName as nvarchar(100),
-    @middleName as nvarchar(100)
+    @middleName as nvarchar(100),
+    @accountId as int
 )  
 as  
 begin  
@@ -225,13 +226,18 @@ begin
              , @firstName as FirstName
              , @lastName as LastName
              , @middleName as MiddleName
+             , @accountId as CreatedBy
+             , @accountId as ModifiedBy
       ) as src
       on trg.Id = src.Id
         when not matched then
-          insert (FirstName, LastName, MiddleName)
-          values (src.FirstName, src.LastName, src.MiddleName)
+          insert (FirstName, LastName, MiddleName, CreatedBy, ModifiedBy)
+          values (src.FirstName, src.LastName, src.MiddleName, src.CreatedBy, src.ModifiedBy)
         when matched then
-          update set FirstName = src.FirstName, LastName = src.LastName, MiddleName = src.MiddleName
+          update set FirstName = src.FirstName
+                   , LastName = src.LastName
+                   , MiddleName = src.MiddleName
+                   , ModifiedBy = src.ModifiedBy
         ;
       
       set @driverId = isnull(@driverId, ident_current('dbo.Driver'));
@@ -241,13 +247,18 @@ begin
       (
         select @driverId as DriverId
              , @busId as BusId
+             , @accountId as CreatedBy
+             , @accountId as ModifiedBy
       ) as src
       on trg.DriverId = src.DriverId
         when not matched then
-          insert (DriverId, BusId)
-          values (src.DriverId, src.BusId)
+          insert (DriverId, BusId, CreatedBy, ModifiedBy)
+          values (src.DriverId, src.BusId, src.CreatedBy, src.ModifiedBy)
         when matched then
-          update set DriverId = src.DriverId, BusId = src.BusId, IsDeleted = 0
+          update set DriverId = src.DriverId
+                   , BusId = src.BusId
+                   , ModifiedBy = src.ModifiedBy
+                   , IsDeleted = 0
         ;
 
     commit
@@ -654,7 +665,9 @@ begin
               select 1 
                 from Trip t
                 where 1=1
+                  and t.IsDeleted = 0
                   and t.ScheduleId = s.Id
+                  and t.Status not in ('C')
                   and (t.Status in('S', 'D')
                        or getdate() > dateadd(hour, -12, (cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime)))
                       )
@@ -906,7 +919,7 @@ if object_id(N'dbo.GetTrips') is null
 go
 
 -- ============================================================================
--- Example    : exec dbo.GetTrips
+-- Example    : exec dbo.GetTrips @withDeleted = 1
 -- Author     : Nikita Dermenzhi
 -- Date       : 13/03/2020
 -- Description: —
@@ -937,8 +950,9 @@ begin
        , b.VehicleModel             as VehicleModel
        , b.VehiclePassengerCapacity as VehiclePassengerCapacity
        , b.VehicleProducer          as VehicleProducer
-
        , td.TotalDistance           as TotalDistance
+       , t.IsDeleted
+
     from Trip t
     join Schedule s on t.ScheduleId = s.Id
     join Route r on r.Id = s.RouteId
@@ -1064,7 +1078,7 @@ if (object_ID('dbo.HasConfirmedTripsByRouteId') is not null)
 go
 
 -- ============================================================================
--- Example    : select dbo.HasConfirmedTripsByRouteId(2)
+-- Example    : select dbo.HasConfirmedTripsByRouteId(1)
 -- Author     : Nikita Dermenzhi
 -- Date       : 25/07/2019
 -- Description: —
@@ -1093,6 +1107,8 @@ begin
             and sl.IsDeleted = 0
       ) as dt
       where 1=1
+        and t.Status not in ('C')
+        and t.IsDeleted = 0
         and @routeId = r.Id
         and (
               t.Status in('S', 'D')

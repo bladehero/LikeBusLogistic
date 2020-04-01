@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace LikeBusLogistic.Web.Models.Trips
+namespace LikeBusLogistic.VM.ViewModels
 {
     public enum TripStatus
     {
@@ -12,5 +12,7 @@ namespace LikeBusLogistic.Web.Models.Trips
         D,
         [Description("<span class=\"uk-label uk-label-success\">Завершенный</span>")]
         F,
+        [Description("<span class=\"uk-label uk-label-cancelled\">Отмененный</span>")]
+        C,
     }
 }

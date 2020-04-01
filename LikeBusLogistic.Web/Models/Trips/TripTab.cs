@@ -6,6 +6,7 @@
         StartedTrips,
         DelayedTrips,
         FinishedTrips,
+        CancelledTrips,
         AllTrips,
     }
 }

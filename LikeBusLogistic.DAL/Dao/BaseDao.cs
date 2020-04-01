@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 
 namespace LikeBusLogistic.DAL.Dao
 {
@@ -84,14 +85,11 @@ namespace LikeBusLogistic.DAL.Dao
         protected IEnumerable<T> Query(string sql) => Connection.Query<T>(sql);
         protected T QueryFirstOrDefault(string sql) => Connection.QueryFirstOrDefault<T>(sql);
 
-        private IEnumerable<System.Reflection.PropertyInfo> _getProperties(T item, DatabaseActions action)
+        private IEnumerable<PropertyInfo> _getProperties(T item, DatabaseActions action)
         {
-            var _props = item.GetType()
-                                 .GetProperties(System.Reflection.BindingFlags.Public
-                                              | System.Reflection.BindingFlags.Instance
-                                              | System.Reflection.BindingFlags.DeclaredOnly);
+            var _props = item.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
-            var properties = new Stack<System.Reflection.PropertyInfo>(_props.Length);
+            var properties = new Stack<PropertyInfo>(_props.Length);
             foreach (var property in _props)
             {
                 var attributes = property.GetCustomAttributes(true);

@@ -289,7 +289,7 @@ namespace LikeBusLogistic.Web.Controllers
 
                 result.Data = routeLocationResult.Data;
                 result.Message = routeLocationResult.Message;
-                result.Success = true;
+                result.Success = serviceResult.Success && routeLocationResult.Success;
             }
             catch (Exception ex)
             {

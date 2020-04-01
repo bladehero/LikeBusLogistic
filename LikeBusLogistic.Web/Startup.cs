@@ -12,6 +12,7 @@ using System;
 using Microsoft.AspNetCore.Identity;
 using LikeBusLogistic.BLL.Variables;
 using System.Security.Claims;
+using LikeBusLogistic.Web.Services;
 
 namespace LikeBusLogistic.Web
 {
@@ -27,6 +28,8 @@ namespace LikeBusLogistic.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHostedService<TimedHostedService>();
+
             services.Configure<IISServerOptions>(options =>
             {
                 options.AutomaticAuthentication = true;
@@ -52,7 +55,7 @@ namespace LikeBusLogistic.Web
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
             app.UseDeveloperExceptionPage();
-
+            app.UseSerilogRequestLogging();
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseAuthentication();
