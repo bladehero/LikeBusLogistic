@@ -15,7 +15,7 @@ namespace LikeBusLogistic.Web
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
-                .WriteTo.File("log.txt")
+                .WriteTo.File("log.txt", restrictedToMinimumLevel: LogEventLevel.Error | LogEventLevel.Fatal | LogEventLevel.Warning | LogEventLevel.Information)
                 .CreateLogger();
 
             try
