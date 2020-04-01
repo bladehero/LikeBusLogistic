@@ -74,7 +74,7 @@
 
                     let hours = 0;
                     App.geo.route.routeLocations.forEach(function (el){
-                        let prop = 'routeLocation.tomTomLeg.summary.travelTimeInSeconds';
+                        let prop = 'tomTomLeg.summary.travelTimeInSeconds';
                         let seconds = App.getPropertyOrDefault(el, prop, 0) / 3600;
                         hours += seconds;
                     });

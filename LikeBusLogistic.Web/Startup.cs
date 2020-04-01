@@ -29,6 +29,8 @@ namespace LikeBusLogistic.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            services.AddSingleton(x=> new AnonymousServiceFactory(connectionString));
             services.AddHostedService<TimedHostedService>();
 
             services.Configure<IISServerOptions>(options =>
@@ -45,7 +47,6 @@ namespace LikeBusLogistic.Web
             services.AddJwtAuthenticationWithProtectedCookie(tokenOptions, authUrlOptions: authUrlOptions);
             services.AddAuthorization();
 
-            var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
             services.AddScoped(x => new ServiceFactory(connectionString));
 

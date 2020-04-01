@@ -181,5 +181,61 @@ namespace LikeBusLogistic.BLL.Services
             }
             return result;
         }
+
+        public BaseResult<int> CountOfTripsHaveToBeStarted()
+        {
+            var result = new BaseResult<int>();
+            try
+            {
+                result.Data = UnitOfWork.StoredProcedureDao.CountOfTripsHaveToBeStarted();
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = 0;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+
+        public BaseResult<IEnumerable<TripVM>> StartPendingTrips()
+        {
+            var result = new BaseResult<IEnumerable<TripVM>>();
+            try
+            {
+                var trips = UnitOfWork.StoredProcedureDao.StartPendingTrips();
+                result.Data = Mapper.Map<IEnumerable<TripVM>>(trips);
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+
+        public BaseResult<IEnumerable<TripVM>> DelayStartedTrips()
+        {
+            var result = new BaseResult<IEnumerable<TripVM>>();
+            try
+            {
+                var trips = UnitOfWork.StoredProcedureDao.DelayStartedTrips();
+                result.Data = Mapper.Map<IEnumerable<TripVM>>(trips);
+                result.Success = true;
+                result.Message = GeneralSuccessMessage;
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Success = false;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
     }
 }

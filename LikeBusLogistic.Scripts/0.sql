@@ -499,3 +499,12 @@ if not exists (select 1
     constraint FK_dbo_LookupValues_LookupId_dbo_Lookups_Id foreign key (LookupID) references Lookups(Id)
   );
 go
+
+if type_id('[dbo].[IntList]') is not null
+  drop type dbo.IntList;
+go
+
+create type dbo.IntList as table
+(
+  Value int not null
+);

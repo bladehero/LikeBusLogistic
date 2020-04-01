@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using LikeBusLogistic.BLL;
+using LikeBusLogistic.BLL.Services;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,13 +10,14 @@ namespace LikeBusLogistic.Web.Services
 {
     public class TimedHostedService : IHostedService, IDisposable
     {
-        private int executionCount = 0;
         private readonly ILogger<TimedHostedService> _logger;
+        private readonly AnonymousServiceFactory _serviceFactory;
         private Timer _timer;
 
-        public TimedHostedService(ILogger<TimedHostedService> logger)
+        public TimedHostedService(ILogger<TimedHostedService> logger, AnonymousServiceFactory serviceFactory)
         {
             _logger = logger;
+            _serviceFactory = serviceFactory;
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
@@ -24,17 +25,38 @@ namespace LikeBusLogistic.Web.Services
             _logger.LogInformation("Timed Hosted Service running.");
 
             _timer = new Timer(DoWork, null, TimeSpan.Zero,
-                TimeSpan.FromSeconds(5));
+                TimeSpan.FromSeconds(30));
 
             return Task.CompletedTask;
         }
 
         private void DoWork(object state)
         {
-            var count = Interlocked.Increment(ref executionCount);
+            #region Starting Trips Process
 
-            _logger.LogInformation(
-                "Timed Hosted Service is working. Count: {Count}", count);
+            try
+            {
+                var trips = _serviceFactory.TripManagement.StartPendingTrips();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+
+            #endregion
+
+            #region MyRegion
+
+            try
+            {
+                var trips = _serviceFactory.TripManagement.DelayStartedTrips();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+
+            #endregion
         }
 
         public Task StopAsync(CancellationToken stoppingToken)

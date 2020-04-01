@@ -700,7 +700,7 @@ if object_id(N'dbo.GetScheduleInfo') is null
 go
 
 -- ============================================================================  
--- Example    : exec dbo.GetScheduleInfo 8
+-- Example    : exec dbo.GetScheduleInfo 1
 -- Author     : Nikita Dermenzhi  
 -- Date       : 01/03/2020  
 -- Description: —  
@@ -720,6 +720,7 @@ begin
                  , ScheduleCurrentLocationId
                  , ScheduleLocationArrivalTime
                  , ScheduleLocationDepartureTime
+                 , ScheduleLocationDuration
                  , ScheduleLocationDistance
                  , Level)
   as
@@ -732,6 +733,7 @@ begin
          , parentsl.ArrivalTime        as ScheduleLocationArrivalTime
          , parentsl.DepartureTime      as ScheduleLocationDepartureTime
          , parentsl.Distance           as ScheduleLocationDistance
+         , 0                           as ScheduleLocationDuration
          , 0                           as Level
       from Schedule parents
       join ScheduleLocation parentsl 
@@ -752,6 +754,15 @@ begin
          , childsl.ArrivalTime        as ScheduleLocationArrivalTime
          , childsl.DepartureTime      as ScheduleLocationDepartureTime
          , childsl.Distance           as ScheduleLocationDistance
+         , iif(datediff(minute, parentlist.ScheduleLocationDepartureTime, childsl.ArrivalTime) < 0
+             , 1440 + datediff(minute, parentlist.ScheduleLocationDepartureTime, childsl.ArrivalTime)
+             , datediff(minute, parentlist.ScheduleLocationDepartureTime, childsl.ArrivalTime))
+           +
+           isnull(
+             iif(datediff(minute, childsl.ArrivalTime, childsl.DepartureTime) < 0
+               , 1440 + datediff(minute, childsl.ArrivalTime, childsl.DepartureTime)
+               , datediff(minute, childsl.ArrivalTime, childsl.DepartureTime))
+           , 0) as ScheduleLocationDuration
          , parentlist.Level + 1       as Level
       from Schedule childs
       join ScheduleLocation childsl 
@@ -771,6 +782,7 @@ begin
        , l.ScheduleLocationArrivalTime                      as ScheduleLocationArrivalTime
        , l.ScheduleLocationDepartureTime                    as ScheduleLocationDepartureTime
        , l.ScheduleLocationDistance                         as ScheduleLocationDistance
+       , l.ScheduleLocationDistance                         as ScheduleLocationDuration
 
        -- Current Location
        , c.FullName                                         as ScheduleLocationCurrentFullName
@@ -826,7 +838,7 @@ if (object_ID('dbo.GetScheduleRouteLocation') is not null)
 go
 
 -- ============================================================================
--- Example    : select * from dbo.GetScheduleRouteLocation(8)
+-- Example    : select * from dbo.GetScheduleRouteLocation(1)
 -- Author     : Nikita Dermenzhi
 -- Date       : 25/07/2019
 -- Description: —
@@ -846,6 +858,7 @@ as
                      , ScheduleLocationArrivalTime
                      , ScheduleLocationDepartureTime
                      , ScheduleLocationDistance
+                     , ScheduleLocationDuration
                      , Level
                     )
     as
@@ -858,6 +871,7 @@ as
            , parentsl.ArrivalTime        as ScheduleLocationArrivalTime
            , parentsl.DepartureTime      as ScheduleLocationDepartureTime
            , parentsl.Distance           as ScheduleLocationDistance
+           , 0                           as ScheduleLocationDuration
            , 0                           as Level
         from Schedule parents
         join ScheduleLocation parentsl 
@@ -878,6 +892,15 @@ as
            , childsl.ArrivalTime        as ScheduleLocationArrivalTime
            , childsl.DepartureTime      as ScheduleLocationDepartureTime
            , childsl.Distance           as ScheduleLocationDistance
+           , iif(datediff(minute, parentlist.ScheduleLocationDepartureTime, childsl.ArrivalTime) < 0
+               , 1440 + datediff(minute, parentlist.ScheduleLocationDepartureTime, childsl.ArrivalTime)
+               , datediff(minute, parentlist.ScheduleLocationDepartureTime, childsl.ArrivalTime))
+             +
+             isnull(
+               iif(datediff(minute, childsl.ArrivalTime, childsl.DepartureTime) < 0
+                 , 1440 + datediff(minute, childsl.ArrivalTime, childsl.DepartureTime)
+                 , datediff(minute, childsl.ArrivalTime, childsl.DepartureTime))
+             , 0) as ScheduleLocationDuration
            , parentlist.Level + 1       as Level
         from Schedule childs
         join ScheduleLocation childsl 
@@ -896,6 +919,7 @@ as
          , l.ScheduleLocationArrivalTime                      as ScheduleLocationArrivalTime
          , l.ScheduleLocationDepartureTime                    as ScheduleLocationDepartureTime
          , l.ScheduleLocationDistance                         as ScheduleLocationDistance
+         , l.ScheduleLocationDuration                         as ScheduleLocationDuration
          , l.Level                                            as Level
       from LinkedList l 
       -- Current location
@@ -950,7 +974,8 @@ begin
        , b.VehicleModel             as VehicleModel
        , b.VehiclePassengerCapacity as VehiclePassengerCapacity
        , b.VehicleProducer          as VehicleProducer
-       , td.TotalDistance           as TotalDistance
+       , total.TotalDistance        as TotalDistance
+       , total.TotalDuration        as TotalDuration
        , t.IsDeleted
 
     from Trip t
@@ -986,8 +1011,9 @@ begin
     cross apply
     (
       select sum(srl.ScheduleLocationDistance) as TotalDistance
+           , sum(srl.ScheduleLocationDuration) as TotalDuration
         from dbo.GetScheduleRouteLocation(s.Id) srl
-    ) as td
+    ) as total
     where 1=1
       and t.Id = isnull(@tripId, t.Id)
       and t.Status = isnull(@status, t.Status)
@@ -1148,4 +1174,312 @@ begin
   ) return 0;
   return 1;
 end
+go
+
+
+if (object_ID('dbo.HasConfirmedTripsByRouteId') is not null)
+   drop function dbo.HasConfirmedTripsByRouteId
+go
+
+-- ============================================================================
+-- Example    : select dbo.HasConfirmedTripsByRouteId(1)
+-- Author     : Nikita Dermenzhi
+-- Date       : 25/07/2019
+-- Description: —
+-- ============================================================================
+
+create function dbo.HasConfirmedTripsByRouteId(@routeId int)
+returns bit
+as 
+begin 
+
+  if exists
+  (
+    select 1
+      from Route r
+      join Schedule s 
+        on r.Id = s.RouteId
+      join Trip t
+        on s.Id = t.ScheduleId
+      outer apply
+      (
+        select top 1 sl.DepartureTime
+          from ScheduleLocation sl
+          where 1=1
+            and sl.ScheduleId = s.Id
+            and sl.PreviousLocationId is null
+            and sl.IsDeleted = 0
+      ) as dt
+      where 1=1
+        and t.Status not in ('C')
+        and t.IsDeleted = 0
+        and @routeId = r.Id
+        and (
+              t.Status in('S', 'D')
+              or getdate() > dateadd(hour, -12, (cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime)))
+            )
+  ) return 1;
+  return 0;
+
+end
+go
+
+if (object_ID('dbo.CountOfTripsHaveToBeStarted') is not null)
+   drop function dbo.CountOfTripsHaveToBeStarted
+go
+
+-- ============================================================================
+-- Example    : select dbo.CountOfTripsHaveToBeStarted()
+-- Author     : Nikita Dermenzhi
+-- Date       : 25/07/2019
+-- Description: —
+-- ============================================================================
+
+create function dbo.CountOfTripsHaveToBeStarted()
+returns int
+as 
+begin 
+
+  declare @count int;
+
+  select @count = count(t.Id)
+    from Trip t
+    outer apply
+    (
+      select top 1 sl.DepartureTime
+        from ScheduleLocation sl
+        where 1=1
+          and sl.ScheduleId = t.ScheduleId
+          and sl.PreviousLocationId is null
+          and sl.IsDeleted = 0
+    ) as dt
+    where 1=1
+      and t.IsDeleted = 0
+      and t.Status in ('P')
+      and getdate() > isnull(cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime), '1970-01-01')
+
+    return @count;
+
+end
+go
+
+if object_id(N'dbo.StartPendingTrips') is null
+  exec('create procedure dbo.StartPendingTrips as set nocount on;');
+go
+
+-- ============================================================================
+-- Example    : exec dbo.StartPendingTrips
+-- Author     : Nikita Dermenzhi
+-- Date       : 25/07/2019
+-- Description: —
+-- ============================================================================
+
+alter procedure dbo.StartPendingTrips
+as  
+begin  
+  
+  declare @tripIds as IntList;
+
+  insert into @tripIds(Value)
+  select t.Id as Value
+      from Trip t
+      outer apply
+      (
+        select top 1 sl.DepartureTime
+          from ScheduleLocation sl
+          where 1=1
+            and sl.ScheduleId = t.ScheduleId
+            and sl.PreviousLocationId is null
+            and sl.IsDeleted = 0
+      ) as dt
+      where 1=1
+        and t.IsDeleted = 0
+        and t.Status in ('P')
+        and getdate() > isnull(cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime), '1970-01-01')
+
+
+  merge Trip trg
+  using
+  (
+    select Value as Id
+      from @tripIds
+  ) as src
+  on src.Id = trg.Id
+    when matched then
+      update set Status = 'S';
+
+  select t.Id                       as Id
+       , cast(t.Departure as datetime) + 
+         cast(dt.DepartureTime as datetime) as Departure
+       , t.Status                   as Status
+       , t.Color                    as Color
+       , s.Id                       as ScheduleId
+       , s.Name                     as ScheduleName
+       , r.Id                       as RouteId
+       , r.Name                     as RouteName
+       , b.BusId                    as BusId
+       , b.BusCrewCapacity          as BusCrewCapacity
+       , b.BusNumber                as BusNumber
+       , b.VehicleId                as VehicleId
+       , b.VehicleModel             as VehicleModel
+       , b.VehiclePassengerCapacity as VehiclePassengerCapacity
+       , b.VehicleProducer          as VehicleProducer
+       , td.TotalDistance           as TotalDistance
+       , t.IsDeleted
+
+    from Trip t
+    join @tripIds ti on t.Id = ti.Value 
+    join Schedule s on t.ScheduleId = s.Id
+    join Route r on r.Id = s.RouteId
+    cross apply
+    (
+      select top 1 tb.Id               as TripBusId
+                 , b.Id                as BusId
+                 , b.CrewCapacity      as BusCrewCapacity
+                 , b.Number            as BusNumber
+                 , v.Id                as VehicleId
+                 , v.Model             as VehicleModel
+                 , v.PassengerCapacity as VehiclePassengerCapacity
+                 , v.Producer          as VehicleProducer
+        from TripBus tb
+        join Bus b on tb.BusId = b.Id
+        join Vehicle v on b.VehicleId = v.Id
+        where 1=1
+          and tb.TripId = t.Id
+          and tb.IsDeleted = 0
+        order by tb.DateModified, tb.DateCreated desc
+    ) as b
+    outer apply
+    (
+      select top 1 sl.DepartureTime
+        from ScheduleLocation sl
+        where 1=1
+          and sl.ScheduleId = s.Id
+          and sl.PreviousLocationId is null
+          and sl.IsDeleted = 0
+    ) as dt
+    cross apply
+    (
+      select sum(srl.ScheduleLocationDistance) as TotalDistance
+        from dbo.GetScheduleRouteLocation(s.Id) srl
+    ) as td
+    where 1=1
+      and t.IsDeleted = 0
+      and s.IsDeleted = 0
+      and r.IsDeleted = 0
+
+end;
+go
+
+if object_id(N'dbo.DelayStartedTrips') is null
+  exec('create procedure dbo.DelayStartedTrips as set nocount on;');
+go
+
+-- ============================================================================
+-- Example    : exec dbo.DelayStartedTrips
+-- Author     : Nikita Dermenzhi
+-- Date       : 25/07/2019
+-- Description: —
+-- ============================================================================
+
+alter procedure dbo.DelayStartedTrips
+as  
+begin  
+  
+  declare @tripIds as IntList;
+
+  -- Get all started what are going to be finished
+  insert into @tripIds(Value)
+  select t.Id as Value
+      from Trip t
+      outer apply
+      (
+        select sum(srl.ScheduleLocationDuration) as Duration
+          from dbo.GetScheduleRouteLocation(t.ScheduleId) srl
+      ) as d
+      outer apply
+      (
+        select top 1 sl.DepartureTime
+          from ScheduleLocation sl
+          where 1=1
+            and sl.ScheduleId = t.ScheduleId
+            and sl.PreviousLocationId is null
+            and sl.IsDeleted = 0
+      ) as dt
+      where 1=1
+        and t.IsDeleted = 0
+        and t.Status in ('S')
+        and getdate() > dateadd(minute, d.Duration, cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime))
+
+  merge Trip trg
+  using
+  (
+    select Value as Id
+      from @tripIds
+  ) as src
+  on src.Id = trg.Id
+    when matched then
+      update set Status = 'D';
+
+  select t.Id                       as Id
+       , cast(t.Departure as datetime) + 
+         cast(dt.DepartureTime as datetime) as Departure
+       , t.Status                   as Status
+       , t.Color                    as Color
+       , s.Id                       as ScheduleId
+       , s.Name                     as ScheduleName
+       , r.Id                       as RouteId
+       , r.Name                     as RouteName
+       , b.BusId                    as BusId
+       , b.BusCrewCapacity          as BusCrewCapacity
+       , b.BusNumber                as BusNumber
+       , b.VehicleId                as VehicleId
+       , b.VehicleModel             as VehicleModel
+       , b.VehiclePassengerCapacity as VehiclePassengerCapacity
+       , b.VehicleProducer          as VehicleProducer
+       , td.TotalDistance           as TotalDistance
+       , t.IsDeleted
+
+    from Trip t
+    join @tripIds ti on t.Id = ti.Value 
+    join Schedule s on t.ScheduleId = s.Id
+    join Route r on r.Id = s.RouteId
+    cross apply
+    (
+      select top 1 tb.Id               as TripBusId
+                 , b.Id                as BusId
+                 , b.CrewCapacity      as BusCrewCapacity
+                 , b.Number            as BusNumber
+                 , v.Id                as VehicleId
+                 , v.Model             as VehicleModel
+                 , v.PassengerCapacity as VehiclePassengerCapacity
+                 , v.Producer          as VehicleProducer
+        from TripBus tb
+        join Bus b on tb.BusId = b.Id
+        join Vehicle v on b.VehicleId = v.Id
+        where 1=1
+          and tb.TripId = t.Id
+          and tb.IsDeleted = 0
+        order by tb.DateModified, tb.DateCreated desc
+    ) as b
+    outer apply
+    (
+      select top 1 sl.DepartureTime
+        from ScheduleLocation sl
+        where 1=1
+          and sl.ScheduleId = s.Id
+          and sl.PreviousLocationId is null
+          and sl.IsDeleted = 0
+    ) as dt
+    cross apply
+    (
+      select sum(srl.ScheduleLocationDistance) as TotalDistance
+        from dbo.GetScheduleRouteLocation(s.Id) srl
+    ) as td
+    where 1=1
+      and t.IsDeleted = 0
+      and s.IsDeleted = 0
+      and r.IsDeleted = 0
+
+end;
 go

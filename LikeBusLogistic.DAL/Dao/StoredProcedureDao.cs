@@ -152,5 +152,25 @@ namespace LikeBusLogistic.DAL.Dao
         {
             return Connection.ExecuteScalar<bool>($"select dbo.IsScheduleMatchRoute({scheduleId})");
         }
+        public int CountOfTripsHaveToBeStarted()
+        {
+            return Connection.ExecuteScalar<int>($"select dbo.CountOfTripsHaveToBeStarted()");
+        }
+        public IEnumerable<GetTrips_Result> StartPendingTrips()
+        {
+            var parameters = new
+            {
+            };
+
+            return Connection.Query<GetTrips_Result>("dbo.StartPendingTrips", parameters, commandType: CommandType.StoredProcedure);
+        }
+        public IEnumerable<GetTrips_Result> DelayStartedTrips()
+        {
+            var parameters = new
+            {
+            };
+
+            return Connection.Query<GetTrips_Result>("dbo.DelayStartedTrips", parameters, commandType: CommandType.StoredProcedure);
+        }
     }
 }

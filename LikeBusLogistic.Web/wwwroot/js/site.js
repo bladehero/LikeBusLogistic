@@ -27,6 +27,9 @@ var App = {
         append: 0,
         prepend: 1
     },
+    isFullscreen: function() {
+
+    },
     isiOS: function () {
         return (/iPad|iPhone|iPod/.test(navigator.platform) ||
             (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
@@ -97,7 +100,7 @@ var App = {
             tableLength.addClass('uk-select uk-form-width-medium uk-form-small uk-float-left');
             var divSearch = wrapper.find('div.dataTables_filter');
             divSearch.addClass('uk-width-1-2');
-            let search =  divSearch.find('input[type="search"]');
+            let search = divSearch.find('input[type="search"]');
             search.addClass('uk-input uk-form-width-medium uk-form-small uk-float-right');
             let info = wrapper.find('div.dataTables_info');
             info.addClass('uk-width-1-2 uk-float-left uk-visible@m uk-text-lighter uk-text-muted');
@@ -484,7 +487,7 @@ var App = {
         breadcrumb: $('#footer-breacrumb'),
         element: $('footer'),
         content: $('#footer-content'),
-        animateTimer: 800,
+        animateTimer: 700,
         slideButton: $('#slide-up').click(function () {
             if (App.footer.mode < 0) {
                 App.footer.element.stop().animate({
@@ -826,8 +829,10 @@ $(document).ready(function () {
 
     var lastWindowWidth;
     $(window).on('resize', function () {
-        windowWidth = $(window).width();
-        if (lastWindowWidth && lastWindowWidth <= 960 && $(window).width() > 960) {
+        let windowWidth = $(window).width();
+        let windowHeight = $(window).height();
+        if (windowHeight < App.footer.element.height() + $('#dragging-slider').height() + $('#slide-up').height()
+            || (lastWindowWidth && lastWindowWidth <= 960 && $(window).width() > 960)) {
             App.footer.show();
         }
         lastWindowWidth = windowWidth;
@@ -840,6 +845,16 @@ $(document).ready(function () {
             }, 150);
         }
     });
+    $(window).resize(function () {
+        if (App.isMobile()) {
+            $('#dragging-slider').show();
+            $('#slide-up').hide();
+        } else {
+            $('#dragging-slider').hide();
+            $('#slide-up').show();
+        }
+    });
+    $(window).resize();
 
     $(window).on("orientationchange", function (event) {
         setTimeout(function () {
@@ -850,7 +865,7 @@ $(document).ready(function () {
 
     $('#dragging-slider').on('touchmove', function (e) {
         let sliderHeight = $('#dragging-slider').height();
-        let maxHeight = $(window).height();
+        let maxHeight = $(window).height() - 20;
         if (maxHeight - e.touches[0].clientY < maxHeight - sliderHeight)
             App.footer.element.height(maxHeight - e.touches[0].clientY);
     });
@@ -883,7 +898,7 @@ $(document).ready(function () {
         let height = Math.round(App.footer.element.height());
         if (height >= App.footer.getMaxHeight()) {
             App.footer.show();
-        } else if (height >= Math.round(App.footer.getMediumHeight() - $('#dragging-slider').height())) {
+        } else if (height >= Math.round(App.footer.getMediumHeight() - $('#dragging-slider').height() * 2)) {
             App.footer.maximize();
         } else {
             App.footer.show();
@@ -905,6 +920,7 @@ $(document).ready(function () {
         fullscreenMode = true;
     }
 
+
     function closeFullscreen() {
         if (document.exitFullscreen) {
             document.exitFullscreen();
@@ -918,24 +934,24 @@ $(document).ready(function () {
         fullscreenMode = false;
     }
 
+    $(document).on('fullscreenchange', function () {
+        let _this = $('#fullscreen-mode');
+        if (document.webkitIsFullScreen) {
+            _this.html('<span class="uk-margin-small-right" uk-icon="icon: shrink"></span> Обычный экран');
+        } else {
+            _this.html('<span class="uk-margin-small-right" uk-icon="icon: expand"></span> Полный экран');
+        }
+    });
+
     $('#fullscreen-mode').click(function () {
-        let _this = $(this);
         if (fullscreenMode) {
             closeFullscreen();
-            _this.html('<span class="uk-margin-small-right" uk-icon="icon: expand"></span> Полный экран');
         } else {
             openFullscreen();
-            _this.html('<span class="uk-margin-small-right" uk-icon="icon: shrink"></span> Обычный экран');
         }
     });
     $('div.leaflet-bottom.leaflet-right').remove();
 
-    if ($(window).width() > 959) {
-        if (App.isMobile()) {
-            $('#dragging-slider').removeClass('uk-hidden@m').show();
-            $('#slide-up').hide();
-        }
-    }
     if (App.isiOS()) {
         $('#fullscreen-mode-item,#fullscreen-mode-item+li').remove();
     }
