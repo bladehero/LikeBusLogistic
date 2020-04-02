@@ -114,7 +114,6 @@ namespace LikeBusLogistic.Web.Controllers
                 var hasConfirmedTrips = ServiceFactory.ScheduleManagement.HasConfirmedTripsByRouteId(schedule.RouteId).Data;
                 model.HideAutoSelect = schedule.NeedsSync && !routeId.HasValue;
                 model.HasConfirmedTrips = hasConfirmedTrips;
-                model.NeedsSync = schedule.NeedsSync;
             }
 
             if (routeId.HasValue)

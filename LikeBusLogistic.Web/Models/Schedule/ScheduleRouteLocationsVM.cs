@@ -8,7 +8,6 @@ namespace LikeBusLogistic.Web.Models.Schedule
         public IEnumerable<ScheduleRouteLocationVM> ScheduleRouteLocations { get; set; }
         public bool HideAutoSelect { get; set; }
         public bool HasConfirmedTrips { get; set; }
-        public bool NeedsSync { get; set; }
 
         public ScheduleRouteLocationsVM()
         {
