@@ -56,7 +56,7 @@ namespace JwtAuthenticationHelper.Extensions
             })
             .AddCookie(options =>
             {
-                options.Cookie.Expiration = TimeSpan.FromMinutes(tokenOptions.TokenExpiryInMinutes);
+                options.Cookie.Expiration = TimeSpan.FromDays(1);
 
                 options.TicketDataFormat = new JwtAuthTicketFormat(
                     tokenOptions.ToTokenValidationParams(),

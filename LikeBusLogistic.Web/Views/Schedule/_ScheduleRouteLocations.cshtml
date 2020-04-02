@@ -105,11 +105,11 @@
 
     @if (!Model.HasConfirmedTrips)
     {
-        if (Model.HideAutoSelect)
+        if (Model.NeedsSync)
         {
             <button class="uk-button uk-button-secondary uk-button-small uk-margin-small-bottom uk-float-left" id="sync-schedule-btn">Синхронизировать</button>
         }
-        else
+        if(!Model.HideAutoSelect)
         {
             <button class="uk-button uk-button-secondary uk-button-small uk-margin-small-bottom uk-float-left uk-margin-small-left" id="auto-schedule-btn">Автоматически</button>
         }

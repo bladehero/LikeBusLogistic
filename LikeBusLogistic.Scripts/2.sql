@@ -1162,6 +1162,15 @@ create function dbo.IsScheduleMatchRoute(@scheduleId int)
 returns bit
 as 
 begin 
+
+  if not exists
+  (
+    select 1 
+      from ScheduleLocation s
+      where s.ScheduleId=@scheduleId
+        and s.IsDeleted = 0
+  ) return 0;
+
   if exists
   (
     select 1 
@@ -1173,7 +1182,9 @@ begin
         and isnull(r.IsDeleted, 0) = 0
         and (s.Id is null or r.Id is null)
   ) return 0;
+
   return 1;
+
 end
 go
 
