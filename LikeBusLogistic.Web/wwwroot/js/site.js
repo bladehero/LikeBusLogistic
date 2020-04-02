@@ -917,7 +917,6 @@ $(document).ready(function () {
         } else if (body.msRequestFullscreen) { /* IE/Edge */
             body.msRequestFullscreen();
         }
-        fullscreenMode = true;
     }
 
 
@@ -931,12 +930,12 @@ $(document).ready(function () {
         } else if (document.msExitFullscreen) { /* IE/Edge */
             document.msExitFullscreen();
         }
-        fullscreenMode = false;
     }
 
     $(document).on('fullscreenchange', function () {
         let _this = $('#fullscreen-mode');
-        if (document.webkitIsFullScreen) {
+        fullscreenMode = document.webkitIsFullScreen;
+        if (fullscreenMode) {
             _this.html('<span class="uk-margin-small-right" uk-icon="icon: shrink"></span> Обычный экран');
         } else {
             _this.html('<span class="uk-margin-small-right" uk-icon="icon: expand"></span> Полный экран');

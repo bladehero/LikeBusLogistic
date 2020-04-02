@@ -508,3 +508,4 @@ create type dbo.IntList as table
 (
   Value int not null
 );
+go
