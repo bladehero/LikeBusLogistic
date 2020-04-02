@@ -674,6 +674,7 @@ begin
            ) then 1
              else 0 
          end as HasConfirmedTrips
+       , dt.DepartureTime as DepartureTime
        , s.IsDeleted as IsDeleted  
     from Schedule s  
     join [Route] r on s.RouteId = r.Id

@@ -44,7 +44,7 @@ namespace LikeBusLogistic.Web.Controllers
         {
             var trip = ServiceFactory.TripManagement.GetTrip(tripId).Data;
             var selectedSchedule = ServiceFactory.ScheduleManagement.GetSchedule(trip?.ScheduleId).Data;
-            var selectedBus = ServiceFactory.TripManagement.GetLastBusForTrip(trip?.BusId).Data;
+            var selectedBus = ServiceFactory.TripManagement.GetLastBusForTrip(tripId).Data;
 
             var schedules = ServiceFactory.ScheduleManagement.GetSchedules(false).Data;
             var buses = ServiceFactory.BusManagement.GetBuses(false).Data;

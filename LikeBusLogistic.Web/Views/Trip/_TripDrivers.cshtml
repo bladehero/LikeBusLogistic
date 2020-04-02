@@ -69,8 +69,8 @@
 
 <script>
     $(document).ready(function () {
-        let driverIds = [];
-        let driverNames = [];
+        let driverIds = new Set();
+        let driverNames = new Set();
         let driversAmount = @Model.DriversAmount;
         let driverIdsControl = $('input[name="driverIds"]');
         let buttons = $('button[name="driverIdsButton"]');
@@ -91,7 +91,7 @@
                 name += n;
                 name += ', ';
             }
-            if (driverNames && driverNames.length) {
+            if (driverNames && driverNames.size) {
                 name = name.trim().replace(/,\s*$/, "");
             } else {
                 name = 'Выберите водителей...';
@@ -103,25 +103,11 @@
             let id = _this.data('driver-id');
             let name = _this.data('driver-name');
             if (_this.is(':checked')) {
-                driverIds.push(id);
-                driverNames.push(name);
+                driverIds.add(id);
+                driverNames.add(name);
             } else {
-                let template = [];
-
-                driverIds.forEach(function (value) {
-                    if (id != value) {
-                        template.push(value);
-                    }
-                });
-                driverIds = template;
-
-                template = [];
-                driverNames.forEach(function (value) {
-                    if (name != value) {
-                        template.push(value);
-                    }
-                });
-                driverNames = template;
+                driverIds.delete(id);
+                driverNames.delete(name);
             }
             driverIdsControl.data('driverIds', driverIds);
             changeNameDrivers();

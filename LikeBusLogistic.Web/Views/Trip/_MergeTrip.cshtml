@@ -2,59 +2,71 @@
 @{
     bool isEditable = Model.IsEditable;
 }
-<div class="uk-grid-small" uk-grid id="save-trip-grid">
-    <input type="hidden" name="id" value="@Model?.Id" />
-    <input type="hidden" name="status" value="@Model?.Status" />
+    <div class="uk-grid-small" uk-grid id="save-trip-grid">
+        <input type="hidden" name="id" value="@Model?.Id" />
+        <input type="hidden" name="status" value="@Model?.Status" />
 
-    <div class="uk-margin uk-margin-remove-top uk-width-auto">
-        <label class="uk-form-label">Цвет</label>
-        <div class="uk-form-controls custom-picker">
-            <input type="hidden" name="color" value="@Model.Color"/>
-            <div id="color-picker" class=""></div>
+        <div class="uk-margin uk-margin-remove-top uk-width-auto">
+            <label class="uk-form-label">Цвет</label>
+            <div class="uk-form-controls custom-picker">
+                <input type="hidden" name="color" value="@Model.Color" />
+                <div id="color-picker" class=""></div>
+            </div>
         </div>
-    </div>
 
-    <div class="uk-margin uk-margin-remove-top uk-width-1-4@m uk-width-expand">
-        <label class="uk-form-label" for="form-stacked-text">Отправление</label>
-        <div class="uk-form-controls">
-            <input class="uk-input"
-                   name="departure"
-                   type="text"
-                   placeholder="Отправление..."
-                   value="@Model?.Departure"
-                   @(isEditable ? "" : "disabled")>
+        <div class="uk-margin uk-margin-remove-top uk-width-auto@m uk-width-expand">
+            <label class="uk-form-label" for="form-stacked-text">Дата</label>
+            <div class="uk-form-controls">
+                <input class="uk-input"
+                       name="departure"
+                       type="text"
+                       placeholder="Дата..."
+                       value="@Model?.Departure"
+                       @(isEditable ? "" : "disabled")>
+            </div>
         </div>
-    </div>
 
-    <div class="uk-margin uk-margin-remove-top uk-width-1-4@m uk-width-1-1">
-        <label class="uk-form-label">Маршрут</label>
-        <div class="uk-form-controls">
-            @Model.Schedules.SelectListWithEmptyOption(
-             x => x.Id,
-             x => $"{x.Name} ({x.RouteName})",
-             "Выберите расписание...",
-             Model?.SelectedSchedule?.Id,
-             isEditable ? (object)new { @class = "uk-select", name = "scheduleId" } 
-             : (object)new { @class = "uk-select", name = "scheduleId", disabled = "disabled" },
-             x => new { data_route_id = x.RouteId })
+        <div class="uk-margin uk-margin-remove-top uk-width-auto@m uk-width-expand">
+            <label class="uk-form-label" for="form-stacked-text">Время</label>
+            <div class="uk-form-controls">
+                <input class="uk-input"
+                       name="departureTime"
+                       type="text"
+                       placeholder="Время..."
+                       value="@Model?.SelectedSchedule?.DepartureTime.ToString(@"hh\:mm")"
+                       disabled>
+            </div>
         </div>
-    </div>
 
-    <div class="uk-margin uk-margin-remove-top uk-width-expand@m uk-width-1-1">
-        <label class="uk-form-label">Автобус</label>
-        <div class="uk-form-controls">
-            @Model.Buses.SelectListWithEmptyOption(
-             x => x.BusId,
-             x => $"{x.Fullname} ({x.Number})",
-             "Выберите автобус...",
-             Model?.SelectedBus?.BusId,
-             isEditable ? (object)new { @class = "uk-select", name = "busId", id = "bus-select" } 
-             : (object)new { @class = "uk-select", name = "busId", id = "bus-select", disabled = "disabled" })
+        <div class="uk-margin uk-margin-remove-top uk-width-1-4@m uk-width-1-1">
+            <label class="uk-form-label">Маршрут</label>
+            <div class="uk-form-controls">
+                @Model.Schedules.SelectListWithEmptyOption(
+                 x => x.Id,
+                 x => $"{x.Name} ({x.RouteName})",
+                 "Выберите расписание...",
+                 Model?.SelectedSchedule?.Id,
+                 isEditable ? (object)new { @class = "uk-select", name = "scheduleId" }
+                 : (object)new { @class = "uk-select", name = "scheduleId", disabled = "disabled" },
+                 x => new { data_route_id = x.RouteId, data_departure_time = x.DepartureTime.ToString(@"hh\:mm") })
+            </div>
         </div>
-    </div>
 
-    <div class="uk-margin uk-margin-remove-top uk-width-1-1" id="trip-drivers"> </div>
-</div>
+        <div class="uk-margin uk-margin-remove-top uk-width-expand@m uk-width-1-1">
+            <label class="uk-form-label">Автобус</label>
+            <div class="uk-form-controls">
+                @Model.Buses.SelectListWithEmptyOption(
+                 x => x.BusId,
+                 x => $"{x.Fullname} ({x.Number})",
+                 "Выберите автобус...",
+                 Model?.SelectedBus?.BusId,
+                 isEditable ? (object)new { @class = "uk-select", name = "busId", id = "bus-select" }
+                 : (object)new { @class = "uk-select", name = "busId", id = "bus-select", disabled = "disabled" })
+            </div>
+        </div>
+
+        <div class="uk-margin uk-margin-remove-top uk-width-1-1" id="trip-drivers"> </div>
+    </div>
 
 <script>
     App.footer.setBreadcrumbs([
@@ -63,7 +75,6 @@
     ]);
     App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
     App.geo.route.clear();
-
     $(document).ready(function () {
         let parentGrid = $('#save-trip-grid');
         let tripId = parentGrid.find('input[name="id"]').val();
@@ -77,6 +88,29 @@
                 App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', routeId, color);
                 App.geo.route.setStartView();
             }
+            let departureTime = selected.data('departure-time');
+            $('input[name="departureTime"]').val(departureTime);
+
+
+            const today = new Date();
+            const tomorrow = new Date();
+            tomorrow.setDate(new Date().getDate() + 1);
+            let isTodayValid = true;
+            if (departureTime) {
+                let times = departureTime.split(':');
+                let currentDate = new Date();
+                currentDate.setHours(times[0]);
+                currentDate.setMinutes(times[0]);
+                isTodayValid = new Date(today) < new Date(currentDate);
+            }
+            $('input[name="departure"]').datetimepicker({
+                        mask: true,
+                        timepicker: false,
+                        format: 'Y/m/d',
+                        value: isTodayValid ? today : tomorrow,
+                        minDate: isTodayValid ? today : tomorrow,
+                        lang:'ru'
+            });
         });
         $('select[name="scheduleId"]').change();
 
@@ -89,15 +123,6 @@
                 App.loadContent('div#trip-drivers', '@Url.Action("_TripDrivers", "Trip")', { busId: busId });
             });
         }
-
-        $('input[name="departure"]').datetimepicker({
-            mask: true,
-            timepicker: false,
-            format: 'Y/m/d',
-            value:new Date(),
-            minDate: new Date(),
-            lang:'ru'
-        });
         let tripColor = colorInput.val();
         const pickr = Pickr.create({
             el: '#color-picker',
