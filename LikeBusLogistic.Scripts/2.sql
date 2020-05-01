@@ -47,6 +47,7 @@
 use LikeBusLogisticDatabase;
 go
 
+
 if (object_ID('dbo.MD5HashPassword') is not null)
    drop function dbo.MD5HashPassword
 go
@@ -669,7 +670,7 @@ begin
                   and t.ScheduleId = s.Id
                   and t.Status not in ('C')
                   and (t.Status in('S', 'D')
-                       or getdate() > dateadd(hour, -12, (cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime)))
+                       or dbo.getUAdate() > dateadd(hour, -12, (cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime)))
                       )
            ) then 1
              else 0 
@@ -1139,7 +1140,7 @@ begin
         and @routeId = r.Id
         and (
               t.Status in('S', 'D')
-              or getdate() > dateadd(hour, -12, (cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime)))
+              or dbo.getUAdate() > dateadd(hour, -12, (cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime)))
             )
   ) return 1;
   return 0;
@@ -1228,7 +1229,7 @@ begin
         and @routeId = r.Id
         and (
               t.Status in('S', 'D')
-              or getdate() > dateadd(hour, -12, (cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime)))
+              or dbo.getUAdate() > dateadd(hour, -12, (cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime)))
             )
   ) return 1;
   return 0;
@@ -1268,7 +1269,7 @@ begin
     where 1=1
       and t.IsDeleted = 0
       and t.Status in ('P')
-      and getdate() > isnull(cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime), '1970-01-01')
+      and dbo.getUAdate() > isnull(cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime), '1970-01-01')
 
     return @count;
 
@@ -1307,7 +1308,7 @@ begin
       where 1=1
         and t.IsDeleted = 0
         and t.Status in ('P')
-        and getdate() > isnull(cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime), '1970-01-01')
+        and dbo.getUAdate() > isnull(cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime), '1970-01-01')
 
 
   merge Trip trg
@@ -1421,7 +1422,7 @@ begin
       where 1=1
         and t.IsDeleted = 0
         and t.Status in ('S')
-        and getdate() > dateadd(minute, d.Duration, cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime))
+        and dbo.getUAdate() > dateadd(minute, d.Duration, cast(t.Departure as datetime) + cast(dt.DepartureTime as datetime))
 
   merge Trip trg
   using

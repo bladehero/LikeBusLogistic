@@ -5,6 +5,28 @@ go
 use LikeBusLogisticDatabase; 
 go
 
+
+if (object_ID('dbo.getUAdate') is not null)
+   drop function dbo.getUAdate
+go
+
+-- ============================================================================
+-- Example    : select dbo.getUAdate()
+-- Author     : Nikita Dermenzhi
+-- Date       : 25/07/2019
+-- Description: —
+-- ============================================================================
+
+create function dbo.getUAdate()
+returns datetime
+as 
+begin 
+
+  return todatetimeoffset(sysdatetimeoffset(), 180);
+
+end
+go
+
 if not exists (select 1 
                from sys.tables t 
                where t.name='Role' 
@@ -13,8 +35,8 @@ if not exists (select 1
   (
     Id int not null primary key identity,
     Name nvarchar(20) not null unique,
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
 
     constraint UQ_dbo_Role_Name unique (Name)
@@ -33,8 +55,8 @@ if not exists (select 1
     MiddleName nvarchar(100) null,
     Email varchar(100) null,
     Phone char(13) null,
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
   );
 go
@@ -50,8 +72,8 @@ if not exists (select 1
     UserId int not null,
 	  Login varchar(100) not null,
 	  Password char(32) not null,
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
 
     constraint FK_dbo_Account_RoleId_dbo_Role_Id foreign key (RoleId) references Role(Id),
@@ -73,8 +95,8 @@ if not exists (select 1
     MiddleName nvarchar(100) null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
   );
 go
@@ -90,8 +112,8 @@ if not exists (select 1
     Contact varchar(100) not null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
 
     constraint FK_dbo_DriverContact_DriverId_dbo_Driver_Id foreign key (DriverId) references Driver(Id),
@@ -110,8 +132,8 @@ if not exists (select 1
     ShortName char(2) not null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
   );
 go
@@ -127,8 +149,8 @@ if not exists (select 1
     CountryId int not null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
 
     constraint FK_dbo_District_CountryId_dbo_Country_Id foreign key (CountryId) references Country(Id)
@@ -146,8 +168,8 @@ if not exists (select 1
     DistrictId int null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
 
     constraint FK_dbo_City_DistrictId_dbo_District_Id foreign key (DistrictId) references District(Id)
@@ -170,8 +192,8 @@ if not exists (select 1
     IsParking bit not null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
 
     constraint FK_dbo_Location_CountryId_dbo_Country_Id foreign key (CountryId) references Country(Id),
@@ -193,8 +215,8 @@ if not exists (select 1
     Description nvarchar(1000) null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
   );
 go
@@ -211,8 +233,8 @@ if not exists (select 1
     CrewCapacity int not null constraint DF_dbo_Bus_CrewCapacity default 2,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
 
     constraint FK_dbo_Bus_VehicleId_dbo_Vehicle_Id foreign key (VehicleId) references Vehicle(Id),
@@ -232,8 +254,8 @@ if not exists (select 1
     DriverId int not null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
 
     constraint FK_dbo_BusDriver_BusId_dbo_Bus_Id foreign key (BusId) references Bus(Id),
@@ -253,8 +275,8 @@ if not exists (select 1
     Contact nvarchar(500) null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
 
     constraint FK_dbo_RepairSpecialist_LocationId_dbo_Location_Id foreign key (LocationId) references [Location](Id)
@@ -274,8 +296,8 @@ if not exists (select 1
     EstimatedDurationInHours float null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
 
     constraint FK_dbo_Route_DepartureId_dbo_Locaiton_Id foreign key (DepartureId) references [Location](Id),
@@ -297,8 +319,8 @@ if not exists (select 1
     Distance float not null default(0),
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
 
     constraint FK_dbo_RouteLocation_CurrentLocationId_dbo_Locaiton_Id foreign key (CurrentLocationId) references [Location](Id),
@@ -318,8 +340,8 @@ if not exists (select 1
     RouteId int not null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
 
     constraint FK_dbo_Schedule_RouteId_dbo_Route_Id foreign key (RouteId) references [Route](Id)
@@ -341,8 +363,8 @@ if not exists (select 1
     DepartureTime time null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
 
     constraint FK_dbo_ScheduleRouteLocation_ScheduleId_dbo_Schedule_Id 
@@ -368,8 +390,8 @@ if not exists (select 1
     Color char(7) null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
 
     constraint FK_dbo_Trip_ScheduleId_dbo_Schedule_Id foreign key (ScheduleId) references Schedule(Id),
@@ -389,8 +411,8 @@ if not exists (select 1
     LocationId int not null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
     
     constraint FK_dbo_TripBus_BusId_dbo_Bus_Id foreign key (BusId) references Bus(Id),
@@ -410,8 +432,8 @@ if not exists (select 1
     DriverId int not null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
     
     constraint FK_dbo_TripBusDriver_DriverId_dbo_Driver_Id foreign key (DriverId) references Driver(Id),
@@ -432,8 +454,8 @@ if not exists (select 1
     Longitude float null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
     
     constraint FK_dbo_BusLocation_BusId_dbo_Bus_Id foreign key (BusId) references Bus(Id),
@@ -453,8 +475,8 @@ if not exists (select 1
     TomTomInfo nvarchar(max) null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
     
     constraint FK_dbo_Distance_Location1_dbo_Location_Id foreign key (Location1) references Location(Id),
@@ -472,8 +494,8 @@ if not exists (select 1
     Description	varchar not null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
   );
 go
@@ -492,8 +514,8 @@ if not exists (select 1
     SortOrder	int null,
     CreatedBy int null foreign key references Account(Id),
     ModifiedBy int null foreign key references Account(Id),
-    DateCreated datetime not null default(getdate()),
-    DateModified datetime not null default(getdate()),
+    DateCreated datetime not null default(dbo.getUAdate()),
+    DateModified datetime not null default(dbo.getUAdate()),
     IsDeleted bit not null default(0)
     
     constraint FK_dbo_LookupValues_LookupId_dbo_Lookups_Id foreign key (LookupID) references Lookups(Id)
