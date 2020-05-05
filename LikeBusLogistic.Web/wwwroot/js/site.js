@@ -246,7 +246,7 @@ var App = {
             }
         },
         setLocations: function (obj) {
-            let cluster = L.markerClusterGroup();
+            let cluster = L.markerClusterGroup({ chunkedLoading: true });
             if (obj) {
                 if (!!obj.length) {
                     for (var i = 0; i < obj.length; i++) {
