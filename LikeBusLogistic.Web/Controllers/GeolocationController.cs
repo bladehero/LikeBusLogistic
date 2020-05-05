@@ -1,4 +1,5 @@
 ﻿using LikeBusLogistic.BLL;
+using LikeBusLogistic.BLL.Services.TomTom.Models;
 using LikeBusLogistic.VM.ViewModels;
 using LikeBusLogistic.Web.Models;
 using LikeBusLogistic.Web.Models.Geolocations;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LikeBusLogistic.Web.Controllers
 {
@@ -56,6 +58,57 @@ namespace LikeBusLogistic.Web.Controllers
             return PartialView(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> TryGetLocationByPoint(double latitude, double longitude)
+        {
+            var result = new Result<VM.ViewModels.LocationVM>();
+            try
+            {
+                var point = new LocationPoint { Latitude = latitude, Longitude = longitude };
+                var geocode = await ServiceFactory.TomTom.ReverseGeocode(point);
+                if (geocode.Success)
+                {
+                    var address = geocode.Data?.Addresses?.FirstOrDefault()?.Address;
+
+                    if (address != null)
+                    {
+                        var city = ServiceFactory.GeolocationManagement.GetCities().Data
+                            .FirstOrDefault(x => x.Name == address.LocalName
+                                            || x.Name == address.Municipality
+                                            || x.Name == address.MunicipalitySubdivision
+                                            || x.Name == address.CountrySecondarySubdivision);
+
+                        var district = ServiceFactory.GeolocationManagement.GetDistricts().Data
+                                .FirstOrDefault(x => x.Id == city?.DistrictId 
+                                                || x.Name == address.CountrySubdivision);
+
+                        var country = ServiceFactory.GeolocationManagement.GetCountries().Data
+                                .FirstOrDefault(x => x.Id == city?.CountryId
+                                                || x.Id == district?.CountryId
+                                                || x.Name == address.Country
+                                                || x.ShortName == address.CountryCode);
+
+                        result.Data = new VM.ViewModels.LocationVM
+                        {
+                            CityId = city?.Id,
+                            CityName = city?.Name,
+                            DistrictId = city?.DistrictId ?? district?.Id,
+                            DistrictName = city?.DistrictName ?? district?.Name,
+                            CountryId = city?.CountryId ?? district?.CountryId ?? country?.Id,
+                            CountryName = city?.CountryName ?? district?.CountryName ?? country?.Name,
+                            Name = address.Street
+                        };
+                    }
+                }
+                result.Success = geocode.Success;
+                result.Message = geocode.Message;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+            }
+            return Json(result);
+        }
 
         [HttpGet]
         public IActionResult _Locations()

@@ -1,6 +1,8 @@
 ﻿using LikeBusLogistic.BLL.Helpers;
 using LikeBusLogistic.BLL.Results;
 using LikeBusLogistic.BLL.Services.TomTom.Models;
+using LikeBusLogistic.BLL.Services.TomTom.Models.ReverseGeocoding;
+using LikeBusLogistic.BLL.Services.TomTom.Models.Routing;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,9 +18,12 @@ namespace LikeBusLogistic.BLL.Services.TomTom
         private const string ApiKey = "F1GGRXkIAs6J0ToYZhgxoSafiTEjjKN0";
         private const string Url = "https://api.tomtom.com";
         private const string RouteEndPoint = "routing";
-        private const string Version = "1";
+        private const string SearchEndPoint = "search";
+        private const string Version_1 = "1";
+        private const string Version_2 = "2";
         private const string ResultType = "json";
         private const string TravelMode = "bus";
+        private const string Language = "ru-RU";
 
         private readonly CustomHttpClient _httpClient = new CustomHttpClient();
 
@@ -33,13 +38,50 @@ namespace LikeBusLogistic.BLL.Services.TomTom
                 var action = MethodBase.GetCurrentMethod().GetRealMethodFromAsyncMethod().GetCustomAttribute<DescriptionAttribute>(true).Description;
                 var routeLocations = HttpUtility.UrlEncode($"{point1}:{point2}");
                 var endPoint = CustomHttpClient.UrlCombine(RouteEndPoint,
-                                                           Version,
+                                                           Version_1,
                                                            action,
                                                            routeLocations,
                                                            ResultType);
                 var dictionary = new Dictionary<string, object>() { { "key", ApiKey }, { "travelMode", TravelMode } };
 
                 var response = await _httpClient.HttpSendAsync<CalculateRouteResult>(Url,
+                                                                                     endPoint,
+                                                                                     method: HttpMethod.Get,
+                                                                                     queryParameters: dictionary);
+                result.OriginalString = response.OriginalDataString;
+                if (result.Success = response.Success)
+                {
+                    result.Data = response.Data;
+                    result.Message = GeneralSuccessMessage;
+                }
+                else
+                {
+                    result.Message = GeneralErrorMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Data = null;
+                result.Message = GeneralErrorMessage;
+            }
+            return result;
+        }
+
+        [Description("reverseGeocode")]
+        public async Task<BaseResult<ReverseGeocodeResult>> ReverseGeocode(LocationPoint point)
+        {
+            var result = new BaseResult<ReverseGeocodeResult>();
+            try
+            {
+                var action = MethodBase.GetCurrentMethod().GetRealMethodFromAsyncMethod().GetCustomAttribute<DescriptionAttribute>(true).Description;
+                var location = HttpUtility.UrlEncode($"{point}.{ResultType}");
+                var endPoint = CustomHttpClient.UrlCombine(SearchEndPoint,
+                                                           Version_2,
+                                                           action,
+                                                           location);
+                var dictionary = new Dictionary<string, object>() { { "key", ApiKey }, { "language", Language } };
+
+                var response = await _httpClient.HttpSendAsync<ReverseGeocodeResult>(Url,
                                                                                      endPoint,
                                                                                      method: HttpMethod.Get,
                                                                                      queryParameters: dictionary);

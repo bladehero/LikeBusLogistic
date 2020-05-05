@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace LikeBusLogistic.BLL.Services.TomTom.Models
+namespace LikeBusLogistic.BLL.Services.TomTom.Models.Routing
 {
 
     public partial class CalculateRouteResult

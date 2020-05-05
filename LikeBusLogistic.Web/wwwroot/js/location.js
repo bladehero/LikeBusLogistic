@@ -1,4 +1,6 @@
 ﻿$(document).ready(function () {
+    const locationGrid = $('#location-grid');
+
     if (!$('input[name="id"]').val()) {
         App.map.on('mousemove', setLatLng);
         App.map.on('click', clickLocation);
@@ -12,6 +14,29 @@
         $('input[name="latitude"]').val(obj.latlng.lat);
     }
     function clickLocation(obj) {
+        App.postDataOnServer(
+            '/Geolocation/TryGetLocationByPoint',
+            { latitude: obj.latlng.lat, longitude: obj.latlng.lng },
+            function (result) {
+                if (result.success) {
+                    locationGrid.find('input[name="name"]').val(result.data.name);
+                    locationGrid.find('select[name="countryId"]').val(result.data.countryId).change();
+                    if (result.data.districtId) {
+                        setTimeout(() => {
+                            locationGrid.find('select[name="districtId"]').val(result.data.districtId).change();
+                        }, 1200);
+                    }
+                    if (result.data.cityId) {
+                        setTimeout(() => {
+                            locationGrid.find('select[name="cityId"]').val(result.data.cityId);
+                        }, 2400);
+                    }
+                }
+            },
+            null,
+            'GET'
+        );
+
         App.map.off('mousemove');
         App.map.off('click');
         if ($('#toggle-animation').attr('hidden')) {
