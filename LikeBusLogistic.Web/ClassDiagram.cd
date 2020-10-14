@@ -1,0 +1,397 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="LikeBusLogistic.Web.Models.Account.LoginVM" Collapsed="true">
+    <Position X="1.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAQAAAAAAA=</HashCode>
+      <FileName>Models\Account\LoginVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Buses.BusesVM" Collapsed="true">
+    <Position X="1.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Models\Buses\BusesVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Buses.FullInformationVM" Collapsed="true">
+    <Position X="8.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAggAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Models\Buses\FullInformationVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Buses.MergeBusVM" Collapsed="true">
+    <Position X="3.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Buses\MergeBusVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Buses.MergeVehicleVM" Collapsed="true">
+    <Position X="8.5" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Buses\MergeVehicleVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Buses.VehiclesVM" Collapsed="true">
+    <Position X="3.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Buses\VehiclesVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Drivers.ContactsVM" Collapsed="true">
+    <Position X="3.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Drivers\ContactsVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Drivers.FullInformationVM" Collapsed="true">
+    <Position X="12" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Drivers\FullInformationVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Drivers.InformationVM" Collapsed="true">
+    <Position X="8.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Drivers\InformationVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Drivers.MergeContactVM" Collapsed="true">
+    <Position X="6.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Drivers\MergeContactVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Drivers.MergeDriverVM" Collapsed="true">
+    <Position X="12" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Models\Drivers\MergeDriverVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Geolocations.FullInformationVM" Collapsed="true">
+    <Position X="5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAQAAAAAgAAAAAAIAAQAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Geolocations\FullInformationVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Geolocations.LocationVM" Collapsed="true">
+    <Position X="12" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAQAAAAAAAACAAAIAAQAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Geolocations\LocationVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Geolocations.MergeCityVM" Collapsed="true">
+    <Position X="5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Geolocations\MergeCityVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Geolocations.MergeCountryVM" Collapsed="true">
+    <Position X="8.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Geolocations\MergeCountryVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Geolocations.MergeDistrictVM" Collapsed="true">
+    <Position X="10.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Geolocations\MergeDistrictVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Geolocations.RepairSpecialistsForLocationVM" Collapsed="true">
+    <Position X="12" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Geolocations\RepairSpecialistsForLocationVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Home.LocationPopupVM" Collapsed="true">
+    <Position X="10.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAEIAABAAIAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Home\LocationPopupVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Routes.CreateRouteVM" Collapsed="true">
+    <Position X="5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAEAQAAAAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>Models\Routes\CreateRouteVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Routes.FullInformationVM" Collapsed="true">
+    <Position X="3.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Routes\FullInformationVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Routes.MergeRouteLocationVM" Collapsed="true">
+    <Position X="1.5" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABIAAAAQAAAIAAAAAAAAQAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Routes\MergeRouteLocationVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Routes.MergeRouteVM" Collapsed="true">
+    <Position X="3.25" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAACAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Routes\MergeRouteVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Routes.RoutesVM" Collapsed="true">
+    <Position X="1.5" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Routes\RoutesVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Schedule.FullInformationVM" Collapsed="true">
+    <Position X="1.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Schedule\FullInformationVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Schedule.MergeScheduleVM" Collapsed="true">
+    <Position X="5" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Schedule\MergeScheduleVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Schedule.ScheduleInfoVM" Collapsed="true">
+    <Position X="3.25" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAgAQAAEAAAAAAAAEAAAAEAAAACAAAAAAA=</HashCode>
+      <FileName>Models\Schedule\ScheduleInfoVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Schedule.ScheduleRouteLocationsVM" Collapsed="true">
+    <Position X="5" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAACAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Schedule\ScheduleRouteLocationsVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Schedule.ScheduleVM" Collapsed="true">
+    <Position X="6.75" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Schedule\ScheduleVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Trips.FullInformationVM" Collapsed="true">
+    <Position X="10.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Trips\FullInformationVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Trips.MergeTripVM" Collapsed="true">
+    <Position X="6.75" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BABCAAAEAAAAABBAAAgAIAAABEAAAAAAAAAAgIAACgA=</HashCode>
+      <FileName>Models\Trips\MergeTripVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Trips.TripDriversVM" Collapsed="true">
+    <Position X="12" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAABAAAAAAIAAAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Models\Trips\TripDriversVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Trips.TripsVM" Collapsed="true">
+    <Position X="1.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Trips\TripsVM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Result" Collapsed="true">
+    <Position X="1.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Models\Result.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Models.Result&lt;T&gt;" Collapsed="true">
+    <Position X="1.5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Result.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Controllers.AccountController" Collapsed="true">
+    <Position X="1.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAIAAAAAAAAAAAAAAABAIAAAAAAAAAAAEQAAAAAAA=</HashCode>
+      <FileName>Controllers\AccountController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Controllers.BaseController" Collapsed="true">
+    <Position X="11.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAQAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\BaseController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Controllers.BusController" Collapsed="true">
+    <Position X="8.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAgAAAIAkAAAAAEAAAAAAAAAQAAAASAAAAAAAAA=</HashCode>
+      <FileName>Controllers\BusController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Controllers.DriverController" Collapsed="true">
+    <Position X="3.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAiAAAAABQAAgAAAAEAAAgAAAgAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Controllers\DriverController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Controllers.GeolocationController" Collapsed="true">
+    <Position X="6" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAIgGghIABCgAAgAgABICQAAAAhAACAAAAAEAAAAAg=</HashCode>
+      <FileName>Controllers\GeolocationController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Controllers.HomeController" Collapsed="true">
+    <Position X="8.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\HomeController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Controllers.LogisticController" Collapsed="true">
+    <Position X="10.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\LogisticController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Controllers.RouteController" Collapsed="true">
+    <Position X="3.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>oAAAAAAgAAFIgQAAAAAEAAAAAAAAChAAAABBAAAACAA=</HashCode>
+      <FileName>Controllers\RouteController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Controllers.ScheduleController" Collapsed="true">
+    <Position X="3.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAkAgABAAAAAAAAAAAAAAAAAABCAAEAAA=</HashCode>
+      <FileName>Controllers\ScheduleController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Controllers.TripController" Collapsed="true">
+    <Position X="6" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAEAAIBAACAIAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\TripController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Controllers.UserController" Collapsed="true">
+    <Position X="10.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\UserController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Extensions.CustomExtensions" Collapsed="true">
+    <Position X="6.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAIQAAAAAAAAAgAAIAQABAQgAAAAAAAAAAAAAAEABAA=</HashCode>
+      <FileName>Extensions\CustomExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Services.TimedHostedService" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="10.25" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAACQgAAAAAAgAAAAAIAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Services\TimedHostedService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Variables.GlobalVariables" Collapsed="true">
+    <Position X="6.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Variables\GlobalVariables.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Program" Collapsed="true">
+    <Position X="10.25" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LikeBusLogistic.Web.Startup" Collapsed="true">
+    <Position X="8.5" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAgAAACAAAAAA=</HashCode>
+      <FileName>Startup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="LikeBusLogistic.Web.Models.Buses.BusTab" Collapsed="true">
+    <Position X="1.5" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Buses\BusTab.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="LikeBusLogistic.Web.Models.Drivers.DriverTab" Collapsed="true">
+    <Position X="3.25" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Models\Drivers\DriverTab.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="LikeBusLogistic.Web.Models.Geolocations.GeolocationTab" Collapsed="true">
+    <Position X="5" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAQAAAAAAAAAAAAIAAQAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Geolocations\GeolocationTab.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="LikeBusLogistic.Web.Models.Routes.MergeRouteLocationMode" Collapsed="true">
+    <Position X="6.75" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Routes\MergeRouteLocationMode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="LikeBusLogistic.Web.Models.Schedule.ScheduleTab" Collapsed="true">
+    <Position X="8.5" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Schedule\ScheduleTab.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="LikeBusLogistic.Web.Models.Trips.TripTab" Collapsed="true">
+    <Position X="10.25" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAQAAAAQBAAAABAAAAAABAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Trips\TripTab.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
