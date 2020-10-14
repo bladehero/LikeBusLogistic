@@ -1,3 +1,7 @@
+use LikeBusLogisticDatabase; 
+go
+
+
 -- sp_configure 'show advanced options', 1
 -- EXEC master.dbo.sp_configure 'xp_cmdshell', 1
 -- RECONFIGURE WITH OVERRIDE
