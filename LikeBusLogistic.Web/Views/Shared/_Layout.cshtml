@@ -6,14 +6,23 @@
     <title>LikeBusLogistic</title>
     <link href="~/css/loader.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.uikit.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
+    @*<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />*@
     <link rel="stylesheet" href="~/lib/leaflet-cluster/MarkerCluster.css" />
     <link rel="stylesheet" href="~/lib/leaflet-cluster/MarkerCluster.Default.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" rel="stylesheet" />
     <link href="~/lib/uikit/css/uikit.css" rel="stylesheet" />
-    <link href="~/lib/picker/picker.min.css" rel="stylesheet" />
+    <link href="~/lib/picker/picker.css" rel="stylesheet" />
     <link rel="stylesheet" href="@("https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/nano.min.css")" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+          integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+          crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""></script>
+
+    <script src='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.js'></script>
+    <link href='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.css' rel='stylesheet' />
 </head>
 <body>
     <button id="menu-button" class="uk-button uk-button-link uk-background-secondary uk-padding-small uk-padding-remove-horizontal" type="button" uk-toggle="target: #offcanvas-slide" style="border-radius: 5px 0px 0px 5px;">
@@ -133,7 +142,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="~/js/jquery.touch.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+    @*<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>*@
     <script src="https://unpkg.com/leaflet-ant-path" type="text/javascript"></script>
     <script src="~/lib/leaflet-cluster/leaflet.markercluster.js" type="text/javascript"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
@@ -141,7 +150,7 @@
     <script src="~/lib/uikit/js/uikit.js"></script>
     <script src="~/lib/uikit/js/uikit-icons.js"></script>
     <script src="@("https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.es5.min.js")"></script>
-    <script src="~/lib/picker/picker.min.js"></script>
+    <script src="~/lib/picker/picker.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/location-popup.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
