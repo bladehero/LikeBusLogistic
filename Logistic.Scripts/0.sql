@@ -12,9 +12,6 @@ go
 
 -- ============================================================================
 -- Example    : select dbo.getUAdate()
--- Author     : Nikita Dermenzhi
--- Date       : 25/07/2019
--- Description: �
 -- ============================================================================
 
 create function dbo.getUAdate()

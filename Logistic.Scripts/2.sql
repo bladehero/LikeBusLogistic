@@ -1,49 +1,3 @@
--- Stored Procedure's example:
--- if object_id(N'dbo.StoreProcedureName') is null
---   exec('create procedure dbo.StoreProcedureName as set nocount on;');
--- go
--- 
--- -- ============================================================================
--- -- Example    : exec dbo.StoreProcedureName
--- -- Author     : Nikita Dermenzhi
--- -- Date       : 25/07/2019
--- -- Description: �
--- -- ============================================================================
--- 
--- alter procedure dbo.StoreProcedureName
--- (  
---     @Param1 as int = null  
---   , @Param2 as varchar(100) = null  
--- )  
--- as  
--- begin  
---   
--- 
--- 
--- end;
--- go
---
--- Function's example:
--- if (object_ID('dbo.FunctionName') is not null)
---    drop function dbo.FunctionName
--- go
--- 
--- -- ============================================================================
--- -- Example    : select dbo.FunctionName('qwe')
--- -- Author     : Nikita Dermenzhi
--- -- Date       : 25/07/2019
--- -- Description: �
--- -- ============================================================================
--- 
--- create function dbo.FunctionName(@Param1 nvarchar(100))
--- returns char(32)
--- as 
--- begin 
--- 
--- end
--- go
-
-
 use LogisticDatabase;
 go
 
@@ -54,9 +8,6 @@ go
 
 -- ============================================================================
 -- Example    : select dbo.MD5HashPassword('qwe')
--- Author     : Nikita Dermenzhi
--- Date       : 25/07/2019
--- Description: �
 -- ============================================================================
 
 create function dbo.MD5HashPassword(@password nvarchar(100))
@@ -73,9 +24,6 @@ go
 
 -- ============================================================================
 -- Example    : exec dbo.GetUserAccountById 'a', 'a'
--- Author     : Nikita Dermenzhi
--- Date       : 25/07/2019
--- Description: �
 -- ============================================================================
 
 alter procedure dbo.GetUserAccountById
@@ -112,9 +60,6 @@ go
 
 -- ============================================================================
 -- Example    : exec dbo.GetUserAccountByCredentials 'a', 'a'
--- Author     : Nikita Dermenzhi
--- Date       : 25/07/2019
--- Description: �
 -- ============================================================================
 
 alter procedure dbo.GetUserAccountByCredentials
@@ -153,9 +98,6 @@ go
 
 -- ============================================================================
 -- Example    : exec dbo.GetDriverInfo 1
--- Author     : Nikita Dermenzhi
--- Date       : 20/11/2019
--- Description: �
 -- ============================================================================
 
 alter procedure dbo.GetDriverInfo
@@ -177,7 +119,6 @@ begin
     outer apply
     (
       select top 1 bs.BusId
-                 --, b.Number as BusInfo
                  , concat(b.Number, ' (', v.Producer, ' ', v.Model, ')') as BusInfo
         from BusDriver bs
         join Bus b on bs.BusId = b.Id
@@ -200,9 +141,6 @@ go
 
 -- ============================================================================
 -- Example    : exec dbo.MergeDriver @driverId=3,@busId=1,@firstName='�������',@lastName='����������',@middleName='����������'
--- Author     : Nikita Dermenzhi
--- Date       : 20/11/2019
--- Description: �
 -- ============================================================================
 
 alter procedure dbo.MergeDriver
@@ -277,9 +215,6 @@ go
 
 -- ============================================================================
 -- Example    : exec dbo.GetDistrict
--- Author     : Nikita Dermenzhi
--- Date       : 25/07/2019
--- Description: �
 -- ============================================================================
 
 alter procedure dbo.GetDistrict
@@ -311,9 +246,6 @@ go
 
 -- ============================================================================
 -- Example    : exec dbo.GetCity
--- Author     : Nikita Dermenzhi
--- Date       : 25/07/2019
--- Description: �
 -- ============================================================================
 
 alter procedure dbo.GetCity
@@ -349,9 +281,6 @@ go
 
 -- ============================================================================
 -- Example    : select * from dbo.GetLocationInfo(1)
--- Author     : Nikita Dermenzhi
--- Date       : 25/07/2019
--- Description: �
 -- ============================================================================
 
 create function dbo.GetLocationInfo(@locationId int = null)
@@ -417,9 +346,6 @@ go
 
 -- ============================================================================
 -- Example    : exec dbo.GetLocation
--- Author     : Nikita Dermenzhi
--- Date       : 25/07/2019
--- Description: �
 -- ============================================================================
 
 alter procedure dbo.GetLocation
@@ -470,9 +396,6 @@ go
 
 -- ============================================================================
 -- Example    : exec dbo.GetRoute 1
--- Author     : Nikita Dermenzhi
--- Date       : 25/07/2019
--- Description: �
 -- ============================================================================
 
 alter procedure dbo.GetRoute
@@ -515,9 +438,6 @@ go
 
 -- ============================================================================
 -- Example    : exec dbo.GetRouteLocation 2, 5
--- Author     : Nikita Dermenzhi
--- Date       : 13/12/2019
--- Description: �
 -- ============================================================================
 
 alter procedure dbo.GetRouteLocation
@@ -641,9 +561,6 @@ go
    
 -- ============================================================================  
 -- Example    : exec dbo.GetSchedule  
--- Author     : Nikita Dermenzhi  
--- Date       : 01/03/2020  
--- Description: �  
 -- ============================================================================  
   
 alter procedure dbo.GetSchedule  
@@ -703,9 +620,6 @@ go
 
 -- ============================================================================  
 -- Example    : exec dbo.GetScheduleInfo 1
--- Author     : Nikita Dermenzhi  
--- Date       : 01/03/2020  
--- Description: �  
 -- ============================================================================  
 
 alter procedure dbo.GetScheduleInfo
@@ -841,9 +755,6 @@ go
 
 -- ============================================================================
 -- Example    : select * from dbo.GetScheduleRouteLocation(1)
--- Author     : Nikita Dermenzhi
--- Date       : 25/07/2019
--- Description: �
 -- ============================================================================
 
 create function dbo.GetScheduleRouteLocation(@scheduleId int)
@@ -946,9 +857,6 @@ go
 
 -- ============================================================================
 -- Example    : exec dbo.GetTrips @withDeleted = 1
--- Author     : Nikita Dermenzhi
--- Date       : 13/03/2020
--- Description: �
 -- ============================================================================
 
 alter procedure dbo.GetTrips
@@ -1039,9 +947,6 @@ go
 
 -- ============================================================================
 -- Example    : exec dbo.GetDistance 1, 2
--- Author     : Nikita Dermenzhi
--- Date       : 25/07/2019
--- Description: �
 -- ============================================================================
 
 alter procedure dbo.GetDistance
@@ -1107,9 +1012,6 @@ go
 
 -- ============================================================================
 -- Example    : select dbo.HasConfirmedTripsByRouteId(1)
--- Author     : Nikita Dermenzhi
--- Date       : 25/07/2019
--- Description: �
 -- ============================================================================
 
 create function dbo.HasConfirmedTripsByRouteId(@routeId int)
@@ -1154,9 +1056,6 @@ go
 
 -- ============================================================================
 -- Example    : select dbo.IsScheduleMatchRoute(14)
--- Author     : Nikita Dermenzhi
--- Date       : 25/07/2019
--- Description: �
 -- ============================================================================
 
 create function dbo.IsScheduleMatchRoute(@scheduleId int)
@@ -1196,9 +1095,6 @@ go
 
 -- ============================================================================
 -- Example    : select dbo.HasConfirmedTripsByRouteId(1)
--- Author     : Nikita Dermenzhi
--- Date       : 25/07/2019
--- Description: �
 -- ============================================================================
 
 create function dbo.HasConfirmedTripsByRouteId(@routeId int)
@@ -1243,9 +1139,6 @@ go
 
 -- ============================================================================
 -- Example    : select dbo.CountOfTripsHaveToBeStarted()
--- Author     : Nikita Dermenzhi
--- Date       : 25/07/2019
--- Description: �
 -- ============================================================================
 
 create function dbo.CountOfTripsHaveToBeStarted()
@@ -1282,9 +1175,6 @@ go
 
 -- ============================================================================
 -- Example    : exec dbo.StartPendingTrips
--- Author     : Nikita Dermenzhi
--- Date       : 25/07/2019
--- Description: �
 -- ============================================================================
 
 alter procedure dbo.StartPendingTrips
@@ -1390,9 +1280,6 @@ go
 
 -- ============================================================================
 -- Example    : exec dbo.DelayStartedTrips
--- Author     : Nikita Dermenzhi
--- Date       : 25/07/2019
--- Description: �
 -- ============================================================================
 
 alter procedure dbo.DelayStartedTrips

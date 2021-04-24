@@ -14,7 +14,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logistic.Scripts", "Logisti
 		Logistic.Scripts\2.sql = Logistic.Scripts\2.sql
 		Logistic.Scripts\3.1.sql = Logistic.Scripts\3.1.sql
 		Logistic.Scripts\3.sql = Logistic.Scripts\3.sql
-		Logistic.Scripts\4.sql = Logistic.Scripts\4.sql
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logistic.VM", "Logistic.VM\Logistic.VM.csproj", "{EEC1196A-2A7F-4296-BD10-8C158AF18181}"
