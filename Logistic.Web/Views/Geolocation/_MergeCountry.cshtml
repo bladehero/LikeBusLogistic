@@ -1,0 +1,34 @@
+﻿@model MergeCountryVM
+
+<div class="uk-grid-small" uk-grid id="save-country-grid">
+    <input type="hidden" name="id" value="@Model.Country?.Id" />
+    <div class="uk-margin uk-margin-remove-top uk-width-1-1">
+        <label class="uk-form-label" for="form-stacked-text">Country</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="name" type="text" placeholder="Country..." value="@Model.Country?.Name">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-1">
+        <label class="uk-form-label" for="form-stacked-text">Code</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="shortName" type="text" maxlength="2" placeholder="Code..." value="@Model.Country?.ShortName">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-margin-remove-top uk-width-1-1">
+        <button class="uk-button uk-button-primary uk-float-right" id="save-country-btn">Save</button>
+    </div>
+</div>
+
+<script>
+    App.footer.setBreadcrumbs([
+        { name: 'Logistics', url: '@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Countries })' },
+        { name: '@(Model.Country == null ? "Add" : "Change") country', url: '@Url.Action("_MergeCountry", "Geolocation")' }
+    ]);
+
+    $('#save-country-btn').click(function () {
+        var data = App.serializeInputsToObject('#save-country-grid input');
+        App.postDataOnServer('@Url.Action("MergeCountry", "Geolocation")', data);
+    });
+</script>

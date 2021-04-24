@@ -1,0 +1,46 @@
+﻿@model MergeVehicleVM
+
+<div class="uk-grid-small" uk-grid id="save-vehicle-grid">
+    <input type="hidden" name="id" value="@Model.Vehicle?.Id" />
+    <div class="uk-margin uk-width-1-1 uk-margin-remove-top">
+        <label class="uk-form-label" for="form-stacked-text">Producer</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="producer" type="text" placeholder="Producer..." value="@Model.Vehicle?.Producer">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-3-4@m uk-width-1-1@s">
+        <label class="uk-form-label" for="form-stacked-text">Model</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="model" type="text" placeholder="Model..." value="@Model.Vehicle?.Model">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-4@m uk-width-1-1">
+        <label class="uk-form-label" for="form-stacked-text">Crew capacity</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="passengercapacity" type="number" placeholder="Crew capacity..."  value="@Model.Vehicle?.PassengerCapacity">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-1">
+        <label class="uk-form-label" for="form-stacked-text">Description</label>
+        <textarea class="uk-textarea" name="description" rows="3" placeholder="Description...">@Model.Vehicle?.Description</textarea>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-margin-remove-top uk-width-1-1">
+        <button class="uk-button uk-button-primary uk-float-right" id="save-vehicle-btn">Save</button>
+    </div>
+</div>
+
+<script>
+    App.footer.setBreadcrumbs([
+        { name: 'Models', url: '@Url.Action("_FullInformation", "Bus", new { tab = BusTab.Vehicle })' },
+        { name: '@(Model.Vehicle == null ? "Add" : "Change")', url: '@Url.Action("_MergeVehicle", "Bus")' }
+    ]);
+
+    $('#save-vehicle-btn').click(function () {
+        var data = App.serializeInputsToObject('#save-vehicle-grid input,textarea');
+        App.postDataOnServer('@Url.Action("MergeVehicle", "Bus")', data);
+    });
+</script>

@@ -1,0 +1,139 @@
+﻿@model Logistic.Web.Models.Schedule.ScheduleVM
+@{
+    RoleName roleName = (RoleName)ViewBag.RoleName;
+}
+<div class="uk-clearfix">
+    <div class="uk-float-right">
+        <button class="uk-button uk-button-small uk-button-danger uk-hidden" id="clean-route-button">Reset route</button>
+        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+        {
+            <button class="uk-button uk-button-small uk-button-primary" id="add-schedule-button">Add</button>
+        }
+    </div>
+</div>
+<table class="uk-table uk-table-small uk-table-hover" id="schedule-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Route</th>
+            <th class="uk-visible@s datatable-no-sort tool-cell-3"></th>
+            <th class="uk-hidden@s uk-table-shrink datatable-no-sort tool-cell-1"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var schedule in Model.Schedules)
+        {
+            <tr data-schedule-id="@schedule.Id" data-route-id="@schedule.RouteId"
+                class="@(schedule.IsDeleted ? "uk-background-muted" : "")">
+                <td class="uk-text-middle">
+                    <a class="schedule-info-link uk-link-text uk-text-warning" href="#modal-full" uk-toggle>
+                        @schedule.Name
+                    </a>
+                    @if (schedule.NeedsSync)
+                    {
+                        <span class="uk-text-danger" 
+                              uk-tooltip="<div class='uk-text-center'>The route has been changed, <b> synchronization </b> required!</div>" 
+                              uk-icon="warning"></span>
+                    }
+                    @if (schedule.HasConfirmedTrips)
+                    {
+                        <span class="uk-text-primary"
+                              uk-tooltip="<div class='uk-text-center'>We are preparing according to the current schedule, or there is a flight, <b> changes are temporarily blocked </b>.</div>" 
+                              uk-icon="bolt"></span>
+                    }
+                </td>
+                <td>@schedule.RouteName</td>
+                <td class="uk-visible@s">
+                    <div class="uk-float-right">
+                        @if (!schedule.IsDeleted)
+                        {
+                            @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-schedule-icon")
+                        }
+                        @if (!schedule.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator))
+                        {
+                            @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-schedule-icon")
+                        }
+                        @if (roleName == RoleName.Administrator)
+                        {
+                            @CustomExtensions.HtmlDeleteOrRestoreIcon(schedule.IsDeleted, "delete-schedule-icon")
+                        }
+                    </div>
+                </td>
+                <td class="uk-hidden@s">
+                    <div class="uk-inline">
+                        <span uk-icon="more-vertical"></span>
+                        <div uk-dropdown="pos: left-center">
+                            @if (!schedule.IsDeleted)
+                            {
+                                @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-schedule-icon")
+                            }
+                            @if (!schedule.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator))
+                            {
+                                @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-schedule-icon")
+                            }
+                            @if (roleName == RoleName.Administrator)
+                            {
+                                @CustomExtensions.HtmlDeleteOrRestoreIcon(schedule.IsDeleted, "delete-schedule-icon")
+                            }
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div id="modal-full" class="uk-modal-full" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
+        <div class="uk-grid-collapse uk-child-width-expand uk-flex-middle" uk-grid uk-height-viewport>
+            <div class="uk-padding-small" id="schedule-modal-content">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    App.footer.setBreadcrumbs(null);
+    App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
+    App.geo.route.clear();
+
+    $(document).ready(function () {
+        App.customDataTable('#schedule-table');
+        $('.edit-schedule-icon').click(function () {
+            var id = $(this).parents('tr').data('schedule-id');
+            App.footer.getContent('@Url.Action("_MergeSchedule", "Schedule")', { scheduleId: id });
+        });
+        $('.delete-schedule-icon').click(function () {
+            var id = $(this).parents('tr').data('schedule-id');
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreSchedule", "Schedule")', { scheduleId: id }, function (result) {
+                App.message.showSuccessWithOk('Successfully', result.message || 'Schedule deleted successfully!');
+                App.footer.getContent('@Url.Action("_FullInformation", "Schedule", new { tab = ScheduleTab.Schedule })');
+            });
+        });
+        $('#add-schedule-button').click(function () {
+            App.footer.getContent('@Url.Action("_MergeSchedule", "Schedule")');
+        });
+        $('.show-schedule-icon').click(function () {
+            let _this = $(this);
+            let id = _this.parents('tr').first().data('route-id');
+            App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', id);
+            App.geo.route.setStartView();
+            $('#clean-route-button').removeClass('uk-hidden');
+        });
+
+        $('.schedule-info-link').click(function () {
+            var scheduleId = $(this).parents('tr').data('schedule-id');
+            App.loadContent(
+                '#schedule-modal-content',
+                '@Url.Action("_ScheduleInfo", "Schedule")',
+                { scheduleId: scheduleId, isModal: true }
+            );
+        });
+
+        $('#clean-route-button').click(function () {
+            App.geo.route.clear();
+            $('#clean-route-button').addClass('uk-hidden');
+        });
+    });
+</script>

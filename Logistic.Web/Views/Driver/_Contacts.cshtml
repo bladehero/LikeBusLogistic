@@ -1,0 +1,90 @@
+﻿@model ContactsVM
+@{
+    RoleName roleName = (RoleName)ViewBag.RoleName;
+    bool isEditable = roleName == RoleName.Administrator || roleName == RoleName.Moderator;
+}
+<div class="uk-clearfix">
+    <div class="uk-float-right">
+        @if (isEditable)
+        {
+            <button class="uk-button uk-button-small uk-button-primary" id="add-contact-button">Add</button>
+        }
+    </div>
+</div>
+<table class="uk-table uk-table-small uk-table-hover" id="contact-table">
+    <thead>
+        <tr>
+            <th class="uk-hidden@m">Driver</th>
+            <th class="uk-visible@m">Driver</th>
+            <th>Contact</th>
+            @if (isEditable)
+            {
+                <th class="uk-visible@s datatable-no-sort tool-cell-2"></th>
+                <th class="uk-hidden@s datatable-no-sort tool-cell-1"></th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var contact in Model.Contacts)
+        {
+            var show = !contact.IsDeleted && (isEditable);
+            <tr data-contact-id="@contact.Id"
+                class="@(contact.IsDeleted ? "uk-background-muted" : "")">
+                <td class="uk-hidden@m">@contact.FullNameWithInitials</td>
+                <td class="uk-visible@m">@contact.DriverInfo</td>
+                <td>@contact.Contact</td>
+                @if (isEditable)
+                {
+                    <td class="uk-visible@s">
+                        <div class="uk-float-right">
+                            @if (show)
+                            {
+                                @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-contact-icon")
+                            }
+                            @if (roleName == RoleName.Administrator)
+                            {
+                                @CustomExtensions.HtmlDeleteOrRestoreIcon(contact.IsDeleted, "delete-contact-icon")
+                            }
+                        </div>
+                    </td>
+                    <td class="uk-hidden@s">
+                        <div class="uk-inline">
+                            <span uk-icon="more-vertical"></span>
+                            <div uk-dropdown="pos: left-center">
+                                @if (show)
+                                {
+                                    @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-contact-icon")
+                                }
+                                @if (roleName == RoleName.Administrator)
+                                {
+                                    @CustomExtensions.HtmlDeleteOrRestoreIcon(contact.IsDeleted, "delete-contact-icon")
+                                }
+                            </div>
+                        </div>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    App.footer.setBreadcrumbs(null);
+    $(document).ready(function () {
+        App.customDataTable('#contact-table');
+        $('.edit-contact-icon').click(function () {
+            var id = $(this).parents('tr').data('contact-id');
+            App.footer.getContent('@Url.Action("_MergeContact", "Driver")', { contactId: id });
+        });
+        $('.delete-contact-icon').click(function () {
+            var id = $(this).parents('tr').data('contact-id');
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreContact", "Driver")', { contactId: id }, function (result) {
+                App.message.showSuccessWithOk('Success', result.message || 'Contact deleted!');
+                App.footer.getContent('@Url.Action("_FullInformation", "Driver", new { tab = DriverTab.Contact })');
+            });
+        });
+        $('#add-contact-button').click(function () {
+            App.footer.getContent('@Url.Action("_MergeContact", "Driver")');
+        });
+    });
+</script>

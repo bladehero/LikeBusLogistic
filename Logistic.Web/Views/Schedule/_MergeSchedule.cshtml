@@ -1,0 +1,75 @@
+﻿@model MergeScheduleVM
+
+    <div class="uk-grid-small" uk-grid id="save-schedule-grid">
+        <input type="hidden" name="id" value="@Model?.Schedule?.Id" />
+
+        <div class="uk-margin uk-margin-remove-top uk-width-1-2@m uk-width-1-1@s">
+            <label class="uk-form-label">Route</label>
+            <div class="uk-form-controls">
+                @Model.Routes.SelectListWithEmptyOption(
+                 x => x.Id,
+                 x => $"{x.Name} ({x.DepartureLocationName} - {x.ArrivalLocationName})",
+                 "Select a route...",
+                 Model?.Schedule?.RouteId,
+                 (Model?.Schedule?.RouteId == null
+                 ? (object)new { @class = "uk-select to-validate", name = "routeId" }
+                 : (object)new { @class = "uk-select", name = "routeId", disabled = "disabled" }),
+                 x => new { data_suggested_name = x.Name })
+            </div>
+        </div>
+
+        <div class="uk-margin uk-margin-remove-top uk-width-1-2@m uk-width-1-1@s">
+            <label class="uk-form-label" for="form-stacked-text">Name</label>
+            <div class="uk-form-controls">
+                <input class="uk-input to-validate" name="name" type="text" placeholder="Name..." value="@Model?.Schedule?.Name">
+            </div>
+        </div>
+
+        <div class="uk-margin uk-width-expand"
+             id="schedule-route-locations">
+
+        </div>
+    </div>
+
+<script>
+    App.footer.setBreadcrumbs([
+        { name: 'Routes', url: '@Url.Action("_FullInformation", "Schedule", new { tab = ScheduleTab.Schedule })' },
+        { name: '@(Model.Schedule == null ? "Add" : "Change")', url: '@Url.Action("_MergeSchedule", "Schedule")' }
+    ]);
+    App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
+    App.geo.route.clear();
+
+    $('select[name="routeId"]').change(getSchedule);
+    getSchedule();
+    
+    function getSchedule() {
+        let selectList = $('select[name="routeId"]');
+        let selected = $(selectList).find('option:selected').first();
+
+        let data = {};
+        let scheduleId = $('#save-schedule-grid input[name="id"]').val();
+        let routeId = selected.val();
+        if (scheduleId) {
+            data.scheduleId = scheduleId;
+        } else {
+            data.routeId = routeId;
+        }
+
+        App.loadContent(
+            '#schedule-route-locations',
+            '@Url.Action("_ScheduleRouteLocations", "Schedule")',
+            data
+        );
+
+        @if (Model?.Schedule?.Id == null)
+        {
+            @:var abbreviation = (selected.data('suggested-name') || '').replace(/[a-z]/g, '').replace(/[^A-Z]/g, ""); let date = new Date(); let postfix = date.getHours() * 60 + date.getMinutes() % 1440;
+            @:var suggestedName = abbreviation ? new Date().toLocaleDateString().split('/').reverse().join('') + '-' + abbreviation + '-' + postfix : '';
+            @:$('input[name="name"]').val(suggestedName);
+        }
+        App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', routeId);
+        if (!isNaN(routeId)) {
+            App.geo.route.setStartView();
+        }
+    }
+</script>

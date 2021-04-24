@@ -1,0 +1,17 @@
+﻿@model Logistic.Web.Models.Buses.FullInformationVM
+
+<ul uk-tab>
+    <li class="@(Model.Tab == BusTab.Bus ? "uk-active" : "")" data-url="@Url.Action("_FullInformation", "Bus", new { tab = BusTab.Bus })"><a href="#">Vehicles</a></li>
+    <li class="@(Model.Tab == BusTab.Vehicle ? "uk-active" : "")" data-url="@Url.Action("_FullInformation", "Bus", new { tab = BusTab.Vehicle })"><a href="#">Models</a></li>
+</ul>
+<ul class="uk-switcher uk-margin">
+    <li data-content-url="@Url.Action("_Buses", "Bus")"></li>
+    <li data-content-url="@Url.Action("_Vehicles", "Bus")"></li>
+</ul>
+
+<script>
+    App.footer.setBreadcrumbs(null);
+    App.geo.clearLocations();
+    App.geo.route.clear();
+    App.tab.name = 'bus';
+</script>

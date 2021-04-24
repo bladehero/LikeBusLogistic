@@ -1,0 +1,64 @@
+﻿@model MergeBusVM
+
+<div class="uk-grid" uk-grid id="save-bus-grid">
+    <input type="hidden" name="busId" value="@Model.Bus?.BusId" />
+    <div class="uk-margin uk-width-1-1 uk-margin-remove-top">
+        <label class="uk-form-label">Model</label>
+        <div class="uk-form-controls">
+            @Model.Vehicles.SelectList(
+             x => x.Id,
+             x => $"{x.Producer} {x.Model}",
+             Model.Bus?.VehicleId,
+             new { @class = "uk-select", name = "vehicleId" },
+             x => new { data_vehicle_description = x.Description, data_vehicle_passenger_capacity = x.PassengerCapacity })
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-1">
+        <label class="uk-form-label">Description</label>
+        <textarea class="uk-textarea" name="vehicle-description" rows="3" placeholder="Description..." disabled></textarea>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-5@m uk-width-1-1@s">
+        <label class="uk-form-label">Capacity</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="vehicle-passenger-capacity" type="number" placeholder="Amount..." disabled>
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-2-5@m uk-width-1-1@s">
+        <label class="uk-form-label">Number</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="number" type="text" placeholder="Number sign..." value="@Model.Bus?.Number">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-2-5@m uk-width-1-1@s">
+        <label class="uk-form-label">Crew</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="crewCapacity" type="number" placeholder="Amount..." min="1" value="@(Model.Bus?.CrewCapacity > 0 ? Model.Bus.CrewCapacity : 2)">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-1">
+        <button class="uk-button uk-button-primary uk-float-right" id="save-bus-button">Save</button>
+    </div>
+</div>
+
+<script>
+    App.footer.setBreadcrumbs([
+        { name: 'Buses', url: '@Url.Action("_FullInformation","Bus")' },
+        { name: '@(Model.Bus == null ? "Add" : "Change")', url: '@Url.Action("_MergeBus","Bus")' }
+    ]);
+
+    $('select[name="vehicleId"]').on('change', function () {
+        var option = $(this).find('option:selected');
+        $('textarea[name="vehicle-description"]').text(option.data('vehicle-description'));
+        $('input[name="vehicle-passenger-capacity"]').val(option.data('vehicle-passenger-capacity'));
+    }).change();
+
+    $('#save-bus-button').click(function () {
+        var data = App.serializeInputsToObject('#save-bus-grid input,textarea,select', ['disabled']);
+        App.postDataOnServer('@Url.Action("MergeBus", "Bus")', data);
+    });
+</script>

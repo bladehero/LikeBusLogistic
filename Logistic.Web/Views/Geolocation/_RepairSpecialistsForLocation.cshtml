@@ -1,0 +1,222 @@
+﻿@model RepairSpecialistsForLocationVM
+
+@{
+    RoleName roleName = (RoleName)ViewBag.RoleName;
+    var hasRepair = Model.RepairSpecialists?.Count() > 0;
+    bool isEditable = roleName == RoleName.Administrator || roleName == RoleName.Moderator;
+}
+
+<div uk-grid>
+    <div class="uk-width-1-1 uk-margin-small-bottom uk-margin-remove-top">
+        <p class="uk-text-bold">@Model.Location.Name</p>
+    </div>
+    <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
+        @if (Model.Location.CityId.HasValue || Model.Location.CountryId.HasValue || Model.Location.DistrictId.HasValue)
+        {
+            <p class="uk-text-muted location-info">
+                @if (!string.IsNullOrWhiteSpace(Model.Location.CountryName))
+                {
+                    <span>@Model.Location.CountryName</span>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.Location.DistrictName))
+                {
+                    <span>@Model.Location.DistrictName</span>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.Location.CityName))
+                {
+                    <span>@Model.Location.CityName</span>
+                }
+            </p>
+        }
+    </div>
+    <div class="uk-width-1-1 uk-margin-small-bottom uk-margin-small-top">
+        @if (isEditable)
+        {
+            <button class="uk-button uk-button-small uk-button-primary uk-float-right"
+                    id="add-specialist-button"
+                    data-location-id="@Model.Location.Id">
+                Add
+            </button>
+        }
+    </div>
+    <div class="uk-width-1-1 uk-overflow-auto uk-margin-remove-top uk-margin-bottom">
+        <table class="uk-table uk-table-small uk-table-hover uk-margin-small-bottom uk-margin-small-top" id="specialists-table">
+            <thead>
+                <tr>
+                    <th>Full name</th>
+                    <th class="uk-text-break">Contacts</th>
+                    @if (isEditable)
+                    {
+                        <th class="uk-visible@s datatable-no-sort tool-cell-2"></th>
+                        <th class="uk-hidden@s datatable-no-sort tool-cell-1"></th>
+                    }
+                </tr>
+            </thead>
+            <tbody data-location-id="@Model.Location.Id">
+                @if (hasRepair)
+                {
+                    @foreach (var specialist in Model.RepairSpecialists)
+                    {
+                        var show = !specialist.IsDeleted && (isEditable);
+                        <tr data-specialist-id="@specialist.Id"
+                            class="@(specialist.IsDeleted ? "uk-background-muted" : "")">
+                            <td>@specialist.Name</td>
+                            <td>@specialist.Contact</td>
+                            @if (isEditable)
+                            {
+                                <td class="uk-visible@s">
+                                    <div class="uk-float-right">
+                                        @if (show)
+                                        {
+                                            @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-specialist-icon")
+                                        }
+                                        @if (roleName == RoleName.Administrator)
+                                        {
+                                            @CustomExtensions.HtmlDeleteOrRestoreIcon(specialist.IsDeleted, "delete-specialist-icon")
+                                        }
+                                    </div>
+                                </td>
+                                <td class="uk-hidden@s">
+                                    <div class="uk-inline">
+                                        <span uk-icon="more-vertical"></span>
+                                        <div uk-dropdown="pos: left-center">
+                                            @if (show)
+                                            {
+                                                @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-specialist-icon")
+                                            }
+                                            @if (roleName == RoleName.Administrator)
+                                            {
+                                                @CustomExtensions.HtmlDeleteOrRestoreIcon(specialist.IsDeleted, "delete-specialist-icon")
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        App.customDataTable('#specialists-table');
+    });
+    $('#add-specialist-button').click(function () {
+        let locationId = $(this).data('location-id');
+        Swal.mixin({
+            input: 'textarea',
+            confirmButtonText: 'Next',
+            showCancelButton: true,
+            cancelButtonText: "Cancel",
+            progressSteps: ['1', '2']
+        }).queue([
+            {
+                title: 'Full name',
+                text: 'Enter the name of the repair technician...'
+            },
+            {
+                title: 'Contact details',
+                text: 'Enter contact details ...'
+            }
+        ]).then((result) => {
+            if (result.value) {
+                let name = result.value[0];
+                let contact = result.value[1];
+                App.postDataOnServer(
+                    '@Url.Action("MergeRepairSpecialist", "Geolocation")',
+                    { locationId: locationId, name: name, contact: contact },
+                    function () {
+                        App.loadContent(
+                            '#specialists-modal div.uk-modal-body',
+                            '@Url.Action("_RepairSpecialistsForLocation", "Geolocation")',
+                            { locationId: locationId }
+                        );
+                        App.message.showSuccessWithOk('Added', 'Successfully executed!');
+                    }
+                );
+            }
+        });
+    });
+    $('.edit-specialist-icon').click(async function () {
+        let id = $(this).parents('tr').first().data('specialist-id');
+        let locationId = $(this).parents('tbody').first().data('location-id');
+        let name = '';
+        let contact = '';
+
+        App.postDataOnServer('@Url.Action("GetRepairSpecialist", "Geolocation")',
+                             { specialistId: id },
+                             (result) => { name = result.data.name; contact = result.data.contact; },
+                             null,
+                             'GET',
+                             false);
+
+        let formValues = await Swal.fire({
+            title: 'Repair contact renewal',
+            html: '<div class="uk-margin uk-text-left">'+
+                  '    <label class="uk-form-label" for="form-stacked-text">Name</label>'+
+                  '    <div class="uk-form-controls">'+
+                  '        <textarea style="height: 100px;" class="uk-input" id="specialist-name" type="text" placeholder="Enter name..." rows="3">' + name + '</textarea>'+
+                  '    </div>'+
+                  '</div>'+
+                  '<div class="uk-margin uk-text-left">'+
+                  '    <label class="uk-form-label" for="form-stacked-text">Contact</label>'+
+                  '    <div class="uk-form-controls">'+
+                  '        <textarea style="height: 100px;" class="uk-input" id="specialist-contacts" type="text" placeholder="Enter contact..." rows="3">' + contact + '</textarea>'+
+                  '    </div>'+
+                  '</div>',
+            focusConfirm: false,
+            showCancelButton: true,
+            cancelButtonText: "Cancel",
+            preConfirm: () => {
+                return [
+                    $('#specialist-name').val(),
+                    $('#specialist-contacts').val()
+                ]
+            }
+        });
+
+        if (formValues && !formValues.dismiss) {
+            let name = formValues.value[0];
+            let contact = formValues.value[1];
+            App.postDataOnServer(
+                '@Url.Action("MergeRepairSpecialist", "Geolocation")',
+                { id: id, locationId: locationId, name: name, contact: contact },
+                function () {
+                    App.loadContent(
+                        '#specialists-modal div.uk-modal-body',
+                        '@Url.Action("_RepairSpecialistsForLocation", "Geolocation")',
+                        { locationId: locationId }
+                    );
+                    App.message.showSuccessWithOk('Updated', 'Successfully executed!');
+                }
+            );
+        }
+    });
+    $('.delete-specialist-icon').click(function () {
+        let locationId = $(this).parents('tbody').data('location-id');
+        var id = $(this).parents('tr').data('specialist-id');
+        App.postDataOnServer(
+            '@Url.Action("DeleteOrRestoreSpecialist", "Geolocation")',
+            { id: id },
+            function (result) {
+                App.message.showSuccessWithOk('Success', result.message || 'The specialist has been successfully deleted!');
+                App.loadContent(
+                    '#specialists-modal>div.uk-modal-body',
+                    '@Url.Action("_RepairSpecialistsForLocation", "Geolocation")',
+                    { locationId: id },
+                    function () {
+                        App.loadContent(
+                            '#specialists-modal div.uk-modal-body',
+                            '@Url.Action("_RepairSpecialistsForLocation", "Geolocation")',
+                            { locationId: locationId }
+                        );
+                    }
+                );
+            }
+        );
+    });
+</script>

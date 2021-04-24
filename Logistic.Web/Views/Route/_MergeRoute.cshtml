@@ -1,0 +1,125 @@
+﻿@model MergeRouteVM
+
+<div class="uk-grid" uk-grid id="save-route-grid">
+    <input type="hidden" name="routeId" value="@Model.RouteId" />
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-2@l uk-width-1-1\@@m">
+        <label class="uk-form-label">Name</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="name" type="text" placeholder="Route name..." value="@Model.Name">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-2@l uk-width-1-1\@@m">
+        <label class="uk-form-label">Estimated duration</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="duration" type="number" step="0.5" placeholder="Duration..." value="@Model.Duration">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-margin-remove-top uk-width-1-1">
+        <button class="uk-button uk-button-primary uk-button-small uk-float-right uk-margin-small-left" id="save-route-btn">Save</button>
+        <button class="uk-button uk-button-secondary uk-button-small uk-float-right" id="reverse-route-btn">Reverse route</button>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        App.footer.setBreadcrumbs([
+            { name: 'Routes', url: '@Url.Action("_FullInformation","Route")' },
+            { name: 'Update route', url: '@Url.Action("_MergeRouteLocation","Route")' }
+        ]);
+
+        App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
+        App.geo.route.clear();
+        let routes = App.geo.route.getRouteLocations('@Url.Action("GetRouteLocations", "Route")', @Model.RouteId);
+        App.geo.route.setRouteLocations(routes, @Model.RouteId);
+        App.geo.route.setStartView();
+        for (let location of App.geo.locations) {
+            location.marker.off('click');
+        }
+
+        $('#reverse-route-btn').click(async function () {
+            App.message.showMessage('info', 'Warning', 'The current route sheets are being compared ...', 0, false);
+            App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', @Model.RouteId, null, true);
+            let locations = App.geo.route.getLocations();
+            App.postDataOnServer(
+                '@Url.Action("IsRouteMatch", "Route")',
+                { locations: locations },
+                async function (result) {
+                    let response;
+                    if (result.data) {
+                        await Swal.fire({
+                            title: 'Warning',
+                            text: 'A match is found, the route has exactly the same path. Are you sure you want to continue?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            cancelButtonText: 'Cancel',
+                        }).then(function (res) {
+                            response = !res.value;
+                        });
+                    }
+
+                    if (response) {
+                        return;
+                    }
+
+                    let first = locations[0];
+                    let last = locations[locations.length - 1];
+                    let hasDifferentCountries = first.countryName !== last.countryName;
+                    let routeName = (first.cityName || first.name || '?') +
+                                    (hasDifferentCountries ? ' (' + (first.countryName || '?') + ')' : '') +
+                                    ' - ' + (last.cityName || last.name || '?') +
+                        (hasDifferentCountries ? ' (' + (last.countryName || '?') + ')' : '');
+
+                    let hours = 0;
+                    App.geo.route.routeLocations.forEach(function (el){
+                        let prop = 'tomTomLeg.summary.travelTimeInSeconds';
+                        let seconds = App.getPropertyOrDefault(el, prop, 0) / 3600;
+                        hours += seconds;
+                    });
+                    hours = Math.round((hours + Number.EPSILON) * 10) / 10;
+
+                    let formValues = await Swal.fire({
+                        title: 'New route creation',
+                        html: '<div class="uk-margin uk-text-left">'+
+                              '    <label class="uk-form-label" for="form-stacked-text">Route name</label>'+
+                              '    <div class="uk-form-controls">'+
+                              '        <input class="uk-input" id="route-name" type="text"  value="' + routeName + '"  placeholder="Enter the name of the route ...">'+
+                              '    </div>'+
+                              '</div>'+
+                              '<div class="uk-margin uk-text-left">'+
+                              '    <label class="uk-form-label" for="form-stacked-text">Expected duration</label>'+
+                              '    <div class="uk-form-controls">'+
+                              '        <input class="uk-input" id="route-duration"  value="' + hours + '"  type="number" step="0.5" placeholder="Enter route duration ...">'+
+                              '    </div>'+
+                              '</div>',
+                        focusConfirm: false,
+                        showCancelButton: true,
+                        cancelButtonText: "Cancel",
+                        preConfirm: () => {
+                            return [
+                                $('#route-name').val(),
+                                $('#route-duration').val()
+                            ]
+                        }
+                    });
+
+                    if (formValues && !formValues.dismiss) {
+                        let name = formValues.value[0];
+                        let duration = formValues.value[1];
+                        App.postDataOnServer(
+                            '@Url.Action("CreateRoute", "Route")',
+                            { locations: locations, name: name, estimatedDurationInHours: duration }
+                        );
+                        App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
+                    }
+                }
+            );
+        });
+        $('#save-route-btn').click(function () {
+            var data = App.serializeInputsToObject('#save-route-grid input');
+            App.postDataOnServer('@Url.Action("MergeRoute", "Route")', data);
+        });
+    });
+</script>

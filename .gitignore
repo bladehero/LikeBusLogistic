@@ -222,3 +222,6 @@ __pycache__/
 Thumbs.db
 
 log.txt
+
+### Idea
+.idea/

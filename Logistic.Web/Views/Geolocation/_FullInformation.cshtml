@@ -1,0 +1,102 @@
+﻿@model Logistic.Web.Models.Geolocations.FullInformationVM
+
+<button id="toggler" href="#toggle-animation" class="uk-button uk-button-small uk-button-primary uk-margin-small-bottom" type="button" uk-toggle="target: #toggle-animation; animation: uk-animation-fade">
+    Show
+</button>
+<div uk-grid>
+    <div class="uk-width-1-4@l uk-width-1-1@m" id="toggle-animation" hidden>
+        <div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom uk-card-hover" id="current-location-card">
+            @{
+                await Html.RenderPartialAsync("_Location.cshtml", new Logistic.Web.Models.Geolocations.LocationVM { Countries = Model.Countries });
+            }
+        </div>
+    </div>
+    <div class="uk-width-expand@l uk-width-1-1@m uk-margin-remove-top">
+        <ul uk-tab class="uk-child-width-expand">
+            <li class="@(Model.Tab == GeolocationTab.Locations ? "uk-active" : "")"
+                data-url="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Locations })">
+                <a href="#">Locations</a>
+            </li>
+            <li class="@(Model.Tab == GeolocationTab.Cities ? "uk-active" : "")"
+                data-url="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Cities })">
+                <a href="#">Cities</a>
+            </li>
+            <li class="@(Model.Tab == GeolocationTab.Districts ? "uk-active" : "")"
+                data-url="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Districts })">
+                <a href="#">Districts</a>
+            </li>
+            <li class="@(Model.Tab == GeolocationTab.Countries ? "uk-active" : "")"
+                data-url="@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Countries })">
+                <a href="#">Countries</a>
+            </li>
+        </ul>
+        <ul class="uk-switcher uk-margin">
+            <li data-content-url="@Url.Action("_Locations", "Geolocation")"></li>
+            <li data-content-url="@Url.Action("_Cities", "Geolocation")"></li>
+            <li data-content-url="@Url.Action("_Districts", "Geolocation")"></li>
+            <li data-content-url="@Url.Action("_Countries", "Geolocation")"></li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    App.footer.setBreadcrumbs(null);
+    App.geo.route.clear();
+    App.tab.name = 'geolocation';
+    App.geo.resetLocations('@Url.Action("GetLocations", "Home")');
+    App.geo.onClickLocation(function (obj, location) {
+        let selector = "marker_" + location.marker._leaflet_id;
+        let popup = location.marker.getPopup();
+        if (location.marker.isPopupOpen()) {
+            return;
+        }
+        let width = window.innerWidth * 0.75;
+        width = width > 400 ? 400 : width;
+        if (!popup) {
+            location.marker.bindPopup('<div style="width: ' + width + 'px; min-height: 72px;" id="' + selector + '"></div>', { maxWidth: width }).openPopup();
+            popup = location.marker.getPopup();
+        }
+        selector = '#' + selector;
+        App.loadContent(selector,
+            '@Url.Action("_LocationPopup" , "Home")',
+            { id: location.data.id },
+            function (html) {
+                popup.setContent(html);
+            }
+        );
+    });
+    function editLocationFunction() {
+        if ($('#toggle-animation').is(':hidden')) {
+            UIkit.toggle('#toggler').toggle();
+        }
+        let id = $(this).parents('tr[data-location-id],div[data-location-id]').first().data('location-id');
+        let topPosition = 250;
+        if ($('#slide').scrollTop() > topPosition) {
+            $('#slide').animate({ scrollTop: topPosition }, 1000);
+        }
+        App.loadContent('#current-location-card', '@Url.Action("_Location", "Geolocation")', { id: id });
+        App.map.off('mousemove');
+        App.map.off('click');
+    }
+    function deleteLocationFunction() {
+        var id = $(this).parents('tr[data-location-id],div[data-location-id]').first().data('location-id');
+        Swal.fire({
+            title: 'Deletion',
+            text: 'Are you sure you want to delete?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.value) {
+                App.postDataOnServer('@Url.Action("DeleteOrRestoreLocation", "Geolocation")', { id: id }, function (result) {
+                    App.message.showSuccessWithOk('Success', result.message || 'Location successfully deleted!');
+                    App.footer.getContent('@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Locations })');
+                });
+            }
+        });
+    }
+
+    $(document).off('click', '.edit-location-icon').on('click', '.edit-location-icon', editLocationFunction);
+    $(document).off('click', '.delete-location-icon').on('click', '.delete-location-icon', deleteLocationFunction);
+</script>
