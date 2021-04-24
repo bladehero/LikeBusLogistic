@@ -1,0 +1,180 @@
+﻿@model Logistic.Web.Models.Home.LocationPopupVM
+
+@{
+    RoleName roleName = (RoleName)ViewBag.RoleName;
+}
+
+<div id="location-popup" data-location-id="@Model.Location.Id" data-route-location-id="@Model.RouteLocation?.CurrentLocationId">
+    <ul class="uk-margin-remove-bottom" uk-tab>
+        <li><a href="#">About location</a></li>
+        <li class="@(Model.IsRoute ? "uk-active" : "")"><a href="#">Logistics</a></li>
+    </ul>
+    <ul class="uk-switcher">
+        <li>
+            <div uk-grid>
+                <div class="uk-width-1-1 uk-margin-small-bottom uk-margin-remove-top">
+                    <p class="uk-text-bold">@Model.Location.Name</p>
+                </div>
+                <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                    Latitude: <span class="uk-text-bold">@Model.Location.Latitude</span>
+                </div>
+                <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                    Longitude: <span class="uk-text-bold">@Model.Location.Longitude</span>
+                </div>
+                <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
+                    @if (Model.Location.CityId.HasValue || Model.Location.CountryId.HasValue || Model.Location.DistrictId.HasValue)
+                    {
+                        <p class="uk-text-muted location-info">
+                            @if (!string.IsNullOrWhiteSpace(Model.Location.CountryName))
+                            {
+                                <span>@Model.Location.CountryName</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.Location.DistrictName))
+                            {
+                                <span>@Model.Location.DistrictName</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.Location.CityName))
+                            {
+                                <span>@Model.Location.CityName</span>
+                            }
+                        </p>
+                    }
+                    else
+                    {
+                        <p>Location data is missing...</p>
+                    }
+                </div>
+                <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
+                    <a id="specialists-link" href="#specialists-modal" uk-toggle>Repair data...</a>
+                </div>
+                <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-small-top uk-padding-small">
+                    <div class="uk-float-right" data-location-id="@Model.Location.Id">
+                        @if (roleName == RoleName.Administrator || roleName == RoleName.Moderator)
+                        {
+                            <button class="uk-button uk-button-danger uk-button-small delete-location-icon">Delete</button>
+                        }
+                        <button class="uk-button uk-button-primary uk-button-small edit-location-icon" id="popup-change-location">Change</button>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li>
+            @if (Model.Route?.Id != null)
+            {
+                if (Model.RouteLocation?.CurrentLocationId == null)
+                {
+                    <div class="uk-margin-remove-bottom uk-margin-remove-top" uk-grid>
+
+                        <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                            <p>Route:</p>
+                        </div>
+                        <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                            <p>Duration:</p>
+                        </div>
+
+                        <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                            <span class="uk-text-bold">@Model.Route.Name</span>
+                        </div>
+                        <div class="uk-width-1-2 uk-margin-remove-bottom uk-margin-remove-top">
+                            <span class="uk-text-bold">@Model.Route.EstimatedDurationInHours hours</span>
+                        </div>
+
+                        <div class="uk-button-group uk-width-1-1 uk-margin-small">
+                            <button class="uk-button uk-button-small uk-button-primary uk-width-1-2"
+                                    uk-tooltip="Add <b> BEFORE </b> locations. Click to continue expanding the route."
+                                    id="append-route-location-button">
+                                <span uk-icon="icon: arrow-left; ratio: 1.5;"></span>
+                            </button>
+                            <button class="uk-button uk-button-small uk-button-secondary uk-width-1-2"
+                                    uk-tooltip="Add <b> AFTER </b> location. Click to continue expanding the route."
+                                    id="prepend-route-location-button">
+                                <span uk-icon="icon: arrow-right; ratio: 1.5;"></span>
+                            </button>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="uk-margin-remove-bottom uk-margin-remove-top" uk-grid>
+                        <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
+                            <p>Route:</p>
+                        </div>
+
+                        <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
+                            <span class="uk-text-bold">@Model.RouteLocation.RouteName</span>
+                        </div>
+
+                        @if (Model.RouteLocation?.PreviousLocationId != null)
+                        {
+                            <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
+                                <p>Previous location:</p>
+                            </div>
+                            <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
+                                <span class="uk-text-bold">@Model.RouteLocation.PreviousFullName</span>
+                            </div>
+                        }
+
+                        <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
+                            <p>Current location:</p>
+                        </div>
+                        <div class="uk-width-1-1 uk-margin-remove-bottom uk-margin-remove-top">
+                            <span class="uk-text-bold">@Model.RouteLocation.CurrentFullName</span>
+                        </div>
+
+                        <div class="uk-button-group uk-width-1-1 uk-margin-small">
+                            @if (!Model.IsFirstInRoute)
+                            {
+                                <button class="uk-button uk-button-small uk-button-primary uk-width-expand"
+                                        uk-tooltip="Add location <b> BEFORE </b> it. Click to continue expanding the route."
+                                        id="append-route-location-button">
+                                    <span uk-icon="icon: arrow-left; ratio: 1.5;"></span>
+                                </button>
+                            }
+                            @if (!Model.IsLastInRoute)
+                            {
+                                <button class="uk-button uk-button-small uk-button-secondary uk-width-expand"
+                                        uk-tooltip="Add location <b>AFTER</b> it. Click to continue expanding the route."
+                                        id="prepend-route-location-button">
+                                    <span uk-icon="icon: arrow-right; ratio: 1.5;"></span>
+                                </button>
+                            }
+                            @if (!Model.IsFirstInRoute && (roleName == RoleName.Administrator || roleName == RoleName.Moderator))
+                            {
+                                <button class="uk-button uk-button-small uk-button-danger uk-width-expand"
+                                        uk-tooltip="<b>Delete</b> location from the route."
+                                        id="delete-route-location-button">
+                                    <span uk-icon="icon: ban;"></span>
+                                </button>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <button class="uk-button uk-button-small uk-button-primary uk-width-1-1 uk-margin-small-top uk-margin-remove-bottom"
+                        uk-tooltip="Start a new route from this location."
+                        id="create-route-button">
+                    Start
+                </button>
+            }
+        </li>
+    </ul>
+</div>
+
+<div id="specialists-modal" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-header">
+            <h4>Repair:</h4>
+        </div>
+        <div class="uk-modal-body">
+
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button class="uk-button uk-button-small uk-button-default uk-modal-close" type="button">Cancel</button>
+            <button class="uk-button uk-button-small uk-button-primary" type="button">Save</button>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,123 @@
+﻿@model TripDriversVM
+@{ 
+    var lastAttached = Model.Drivers.LastOrDefault(x => x.AttachedOnBus.GetValueOrDefault());
+    bool isEditable = Model.IsEditable;
+}
+<label class="uk-form-label">Drivers</label>
+<div class="uk-form-controls">
+    <input type="hidden" name="driverIds"/>
+    <button name="driverIdsButton" uk-toggle="target: #driver-modal" class="uk-button uk-hidden@m uk-button-default uk-text-capitalize uk-width-expand" type="button">Select drivers ...</button>
+    <button name="driverIdsButton" class="uk-button uk-visible@m uk-button-default uk-text-capitalize uk-width-expand" type="button">Select drivers ...</button>
+    <div style="max-height: 150px; overflow-y: scroll;" uk-dropdown="pos: bottom-justify; mode: click;">
+        <ul class="uk-nav uk-dropdown-nav">
+            @foreach (var driver in Model.Drivers)
+            {
+                var driverName = $"{driver.LastName} {driver.FirstName} {driver.MiddleName}";
+                <li class="uk-active uk-responsive-height">
+                    <label>
+                        <input data-driver-id="@driver.DriverId"
+                               data-driver-name="@driverName"
+                               class="uk-checkbox driver-checkbox @(driver.AttachedOnBus.GetValueOrDefault() ? "uk-nav-header" : "")"
+                               type="checkbox"
+                               data-group="driver-@driver.DriverId"
+                               @(isEditable ? "" : "disabled")
+                               @(Model.SelectedDrivers?.Any(x => x.DriverId == driver.DriverId) == true ? "checked" : "") />
+                        @($"{driverName} {(driver.AttachedOnBus.GetValueOrDefault() ? " ☆" : "")}")
+                    </label>
+                </li>
+                @if (driver.Equals(lastAttached))
+                {
+                    <li class="uk-nav-divider"></li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+
+<div class="uk-margin uk-width-1-1">
+    <button class="uk-button uk-button-primary uk-button-small uk-float-right" id="save-trip-btn">Save</button>
+</div>
+
+<div id="driver-modal" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <h4>Select Drivers</h4>
+        <ul class="uk-nav uk-dropdown-nav">
+            @foreach (var driver in Model.Drivers)
+            {
+                var driverName = $"{driver.LastName} {driver.FirstName} {driver.MiddleName}";
+                <li class="uk-active uk-responsive-height">
+                    <label>
+                        <input data-driver-id="@driver.DriverId"
+                               data-driver-name="@driverName"
+                               class="uk-checkbox driver-checkbox @(driver.AttachedOnBus.GetValueOrDefault() ? "uk-nav-header" : "")"
+                               type="checkbox"
+                               data-group="driver-@driver.DriverId"
+                               @(isEditable ? "" : "disabled")
+                               @(Model.SelectedDrivers?.Any(x => x.DriverId == driver.DriverId) == true ? "checked" : "") />
+                        @($"{driverName} {(driver.AttachedOnBus.GetValueOrDefault() ? " ☆" : "")}")
+                    </label>
+                </li>
+                @if (driver.Equals(lastAttached))
+                {
+                    <li class="uk-nav-divider"></li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        let driverIds = new Set();
+        let driverNames = new Set();
+        let driversAmount = @Model.DriversAmount;
+        let driverIdsControl = $('input[name="driverIds"]');
+        let buttons = $('button[name="driverIdsButton"]');
+        let checkboxes = $('input.driver-checkbox');
+
+        checkboxes.click(function() {
+          var actor = $(this);
+          var checked = actor.prop('checked');
+          var group = actor.data('group');
+          var checkboxes = $('input.driver-checkbox[data-group="' + group + '"]');
+          var otherCheckboxes = checkboxes.not(actor);
+          otherCheckboxes.prop('checked', checked);
+        });
+
+        function changeNameDrivers() {
+            let name = '';
+            for (let n of driverNames) {
+                name += n;
+                name += ', ';
+            }
+            if (driverNames && driverNames.size) {
+                name = name.trim().replace(/,\s*$/, "");
+            } else {
+                name = 'Select drivers ...';
+            }
+            buttons.text(name);
+        }
+        checkboxes.change(function () {
+            let _this = $(this);
+            let id = _this.data('driver-id');
+            let name = _this.data('driver-name');
+            if (_this.is(':checked')) {
+                driverIds.add(id);
+                driverNames.add(name);
+            } else {
+                driverIds.delete(id);
+                driverNames.delete(name);
+            }
+            driverIdsControl.data('driverIds', driverIds);
+            changeNameDrivers();
+        });
+        checkboxes.change();
+        $('#save-trip-btn').click(function () {
+                let trip = App.serializeInputsToObject('#save-trip-grid input,select');
+                let drivers = driverIdsControl.data('driverIds');
+                let data = { trip: trip, drivers: drivers };
+            App.postDataOnServer('@Url.Action("MergeTrip","Trip")', data);
+        });
+    });
+</script>

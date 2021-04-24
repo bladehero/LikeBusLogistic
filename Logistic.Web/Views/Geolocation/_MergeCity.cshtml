@@ -1,0 +1,38 @@
+﻿@model MergeCityVM
+
+<div class="uk-grid-small" uk-grid id="save-city-grid">
+    <input type="hidden" name="id" value="@Model.City?.Id" />
+    <div class="uk-margin uk-margin-remove-top uk-width-1-1">
+        <label class="uk-form-label" for="form-stacked-text">City</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="name" type="text" placeholder="City..." value="@Model.City?.Name">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-margin-remove-top uk-width-1-1">
+        <label class="uk-form-label" for="form-stacked-text">District</label>
+        <div class="uk-form-controls">
+            @Model.Districts.SelectList(
+             x => x.Id,
+             x => x.Name,
+             Model.City?.DistrictId,
+             new { @class = "uk-select", name = "districtId" })
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-margin-remove-top uk-margin-remove-top uk-width-1-1">
+        <button class="uk-button uk-button-primary uk-float-right" id="save-city-btn">Save</button>
+    </div>
+</div>
+
+<script>
+    App.footer.setBreadcrumbs([
+        { name: 'Logistics', url: '@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Cities })' },
+        { name: '@(Model.City == null ? "Add" : "Change") city', url: '@Url.Action("_MergeCity", "Geolocation")' }
+    ]);
+
+    $('#save-city-btn').click(function () {
+        var data = App.serializeInputsToObject('#save-city-grid input,select');
+        App.postDataOnServer('@Url.Action("MergeCity", "Geolocation")', data);
+    });
+</script>

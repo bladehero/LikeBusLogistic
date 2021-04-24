@@ -1,9 +1,7 @@
 ﻿using AutoDataLayerGenerator.Data;
 using System;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace AutoDataLayerGenerator
 {
@@ -11,29 +9,29 @@ namespace AutoDataLayerGenerator
     {
         static void Main(string[] args)
         {
-            var folder = "D:/Projects/LikeBusLogistic";
+            var folder = "D:/Projects/Logistic";
 
             var modelData = new ModelData(
                 Path.Combine(folder, "AutoDataLayerGenerator/Scripts/Models.sql"),
-                Path.Combine(folder, "LikeBusLogistic.DAL/Models"))
+                Path.Combine(folder, "Logistic.DAL/Models"))
             {
                 BaseClass = "BaseEntity",
                 IgnorableColumns = "('Id'),('DateCreated'),('DateModified'),('IsDeleted'),('CreatedBy'),('ModifiedBy')",
-                Namespace = "LikeBusLogistic.DAL.Models",
+                Namespace = "Logistic.DAL.Models",
                 Using = "using System;"
             };
 
             var daoData = new DaoData(
                 Path.Combine(folder, "AutoDataLayerGenerator/Scripts/DataAccessObjects.sql"),
-                Path.Combine(folder, "LikeBusLogistic.DAL/Dao"))
+                Path.Combine(folder, "Logistic.DAL/Dao"))
             {
                 BaseClass = "BaseDao",
-                Namespace = "LikeBusLogistic.DAL.Dao",
+                Namespace = "Logistic.DAL.Dao",
                 Using = "using System.Data;",
                 ModelsNamespace = modelData.Namespace
             };
 
-            var generator = new Generator("Data Source=localhost;Initial Catalog=LikeBusLogisticDatabase;Integrated Security=True;");
+            var generator = new Generator("Data Source=localhost;Initial Catalog=LogisticDatabase;Integrated Security=True;");
             var watch = new Stopwatch();
 
             Console.WriteLine(modelData);

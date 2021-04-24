@@ -1,0 +1,92 @@
+﻿@model IEnumerable<CityVM>
+@{
+    RoleName roleName = (RoleName)ViewBag.RoleName;
+    bool isEditable = roleName == RoleName.Administrator || roleName == RoleName.Moderator;
+}
+<div class="uk-clearfix">
+    <div class="uk-float-right">
+        @if (isEditable)
+        {
+            <button class="uk-button uk-button-small uk-button-primary" id="add-city-button">Add</button>
+        }
+    </div>
+</div>
+<table class="uk-table uk-table-small uk-table-hover" id="cities-table">
+    <thead>
+        <tr>
+            <th>City</th>
+            <th class="uk-visible@s">District</th>
+            <th>Country</th>
+            @if (isEditable)
+            {
+                <th class="uk-visible@s datatable-no-sort tool-cell-2"></th>
+                <th class="uk-hidden@s datatable-no-sort tool-cell-1"></th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var city in Model)
+        {
+            var show = !city.IsDeleted && (isEditable);
+            <tr data-city-id="@city.Id" data-district-id="@city.DistrictId" data-country-id="@city.CountryId"
+                class="@(city.IsDeleted ? "uk-background-muted" : "")">
+                <td>
+                    @city.Name
+                    <span class="uk-hidden@s uk-link" uk-icon="info" uk-tooltip="title: @city.DistrictName"></span>
+                </td>
+                <td class="uk-visible@s">@city.DistrictName</td>
+                <td>@city.CountryName</td>
+                @if (isEditable)
+                {
+                    <td class="uk-visible@s">
+                        <div class="uk-float-right">
+                            @if (show)
+                            {
+                                @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-city-icon")
+                            }
+                            @if (roleName == RoleName.Administrator)
+                            {
+                                @CustomExtensions.HtmlDeleteOrRestoreIcon(city.IsDeleted, "delete-city-icon")
+                            }
+                        </div>
+                    </td>
+                    <td class="uk-hidden@s">
+                        <div class="uk-inline">
+                            <span uk-icon="more-vertical"></span>
+                            <div uk-dropdown="pos: left-center">
+                                @if (show)
+                                {
+                                    @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-city-icon")
+                                }
+                                @if (roleName == RoleName.Administrator)
+                                {
+                                    @CustomExtensions.HtmlDeleteOrRestoreIcon(city.IsDeleted, "delete-city-icon")
+                                }
+                            </div>
+                        </div>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function () {
+        App.customDataTable('#cities-table');
+        $('.edit-city-icon').click(function () {
+            var id = $(this).parents('tr').data('city-id');
+            App.footer.getContent('@Url.Action("_MergeCity", "Geolocation")', { id: id });
+        });
+        $('.delete-city-icon').click(function () {
+            var id = $(this).parents('tr').data('city-id');
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreCity", "Geolocation")', { id: id }, function (result) {
+                App.message.showSuccessWithOk('Success', result.message || 'City deleted!');
+                App.footer.getContent('@Url.Action("_FullInformation", "Geolocation", new { tab = GeolocationTab.Cities })');
+            });
+        });
+        $('#add-city-button').click(function () {
+            App.footer.getContent('@Url.Action("_MergeCity", "Geolocation")');
+        });
+    });
+</script>

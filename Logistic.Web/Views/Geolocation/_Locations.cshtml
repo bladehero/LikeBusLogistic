@@ -1,0 +1,97 @@
+﻿@model IEnumerable<Logistic.VM.ViewModels.LocationVM>
+@{
+    RoleName roleName = (RoleName)ViewBag.RoleName;
+    bool isEditable = roleName == RoleName.Administrator || roleName == RoleName.Moderator;
+}
+<table class="uk-table uk-table-small uk-table-hover" id="locations-table">
+    <thead>
+        <tr>
+            <th>Location</th>
+            <th class="uk-visible@m">Longitude</th>
+            <th class="uk-visible@m">Latitude</th>
+            <th class="uk-visible@m">City</th>
+            <th class="uk-visible@m">District</th>
+            <th class="uk-visible@m">Country</th>
+            <th class="datatable-no-sort">Parking</th>
+            @if (isEditable)
+            {
+                <th class="uk-visible@s datatable-no-sort tool-cell-2"></th>
+                <th class="uk-hidden@s datatable-no-sort tool-cell-1"></th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var location in Model)
+        {
+            var show = !location.IsDeleted && (isEditable);
+            <tr data-location-id="@location.Id"
+                data-city-id="@location.CityId"
+                data-district-id="@location.DistrictId"
+                data-country-id="@location.CountryId"
+                class="@(location.IsDeleted ? "uk-background-muted" : "")">
+                <td>
+                    <p>
+                        <span class="go-to-location uk-text-bolder uk-text-secondary">@location.Name</span>
+                        <span class="uk-hidden@m uk-link" uk-icon="info" uk-tooltip="title: @location.FullName"></span>
+                    </p>
+                </td>
+                <td class="uk-text-truncate uk-visible@m">@location.Longitude</td>
+                <td class="uk-text-truncate uk-visible@m">@location.Latitude</td>
+                <td class="uk-visible@m">@location.CityName</td>
+                <td class="uk-visible@m">@location.DistrictName</td>
+                <td class="uk-visible@m">@location.CountryName</td>
+                <td class="uk-table-shrink">@(location.IsParking ? CustomExtensions.HtmlEnabledIcon : CustomExtensions.HtmlDisabledIcon)</td>
+                @if (isEditable)
+                {
+                    <td class="uk-visible@s">
+                        <div class="uk-float-right">
+                            @if (!location.IsDeleted && (isEditable))
+                            {
+                                @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-location-icon")
+                            }
+                            @if (roleName == RoleName.Administrator)
+                            {
+                                @CustomExtensions.HtmlDeleteOrRestoreIcon(location.IsDeleted, "delete-location-icon")
+                            }
+                        </div>
+                    </td>
+                    <td class="uk-hidden@s">
+                        <div class="uk-inline">
+                            <span uk-icon="more-vertical"></span>
+                            <div uk-dropdown="pos: left-center">
+                                @if (!location.IsDeleted && (isEditable))
+                                {
+                                    @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-location-icon")
+                                }
+                                @if (roleName == RoleName.Administrator)
+                                {
+                                    @CustomExtensions.HtmlDeleteOrRestoreIcon(location.IsDeleted, "delete-location-icon")
+                                }
+                            </div>
+                        </div>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function () {
+        App.customDataTable('#locations-table');
+        $('#locations-table').on('click', '.go-to-location', function () {
+            var id = $(this).parents('tr').data('location-id');
+            for (var i = 0; i < App.geo.locations.length; i++) {
+                if (App.geo.locations[i].data.id === id) {
+                    let location = App.geo.locations[i];
+                    if (!location.marker.isPopupOpen()) {
+                        location.marker.fire('click');
+                    }
+                    App.geo.setView(id);
+                    App.footer.show();
+                    break;
+                }
+            }
+        });
+    });
+</script>

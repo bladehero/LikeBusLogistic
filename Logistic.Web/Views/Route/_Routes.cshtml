@@ -1,0 +1,141 @@
+﻿@model Logistic.Web.Models.Routes.RoutesVM
+
+@{
+    RoleName roleName = (RoleName)ViewBag.RoleName;
+}
+<div class="uk-clearfix">
+    <div class="uk-float-right">
+        <button class="uk-button uk-button-small uk-button-default" id="reset-route-button">Reset</button>
+    </div>
+</div>
+<table class="uk-table uk-table-small uk-table-hover" id="routes-table">
+    <thead>
+        <tr>
+            <th>Route</th>
+            <th class="uk-visible@l">From</th>
+            <th class="uk-visible@l">To</th>
+            <th class="uk-table-shrink">
+                <span class="uk-visible@s">Duration</span>
+                <span class="uk-hidden@s"><span uk-icon="clock"></span></span>
+            </th>
+            <th class="uk-visible@s datatable-no-sort tool-cell-3"></th>
+            <th class="uk-hidden@s datatable-no-sort tool-cell-1"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var route in Model.Routes)
+        {
+            <tr data-route-id="@route.Id"
+                class="@(route.IsDeleted ? "uk-background-muted" : "")">
+                <td uk-tooltip="@route.DepartureLocationName - @route.ArrivalLocationName">@route.Name</td>
+                <td class="uk-text-truncate uk-visible@l" uk-tooltip="@route.DepartureLocationName">
+                    @route.DepartureLocationName
+                </td>
+                <td class="uk-text-truncate uk-visible@l" uk-tooltip="@route.ArrivalLocationName">
+                    @route.ArrivalLocationName
+                </td>
+                <td>@(route.EstimatedDurationInHours)hours</td>
+                <td class="uk-visible@s">
+                    <div class="uk-float-right">
+                        @if (!route.IsDeleted)
+                        {
+                            @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-route-icon")
+                        }
+                        @if (!route.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator))
+                        {
+                            @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-route-icon")
+                        }
+                        @if (roleName == RoleName.Administrator)
+                        {
+                            @CustomExtensions.HtmlDeleteOrRestoreIcon(route.IsDeleted, "delete-route-icon")
+                        }
+                    </div>
+                </td>
+                <td class="uk-hidden@s">
+                    <div class="uk-inline">
+                        <span uk-icon="more-vertical"></span>
+                        <div uk-dropdown="pos: left-center">
+                            @if (!route.IsDeleted)
+                            {
+                                @CustomExtensions.HtmlRouteIcon("uk-margin-small-right show-route-icon")
+                            }
+                            @if (!route.IsDeleted && (roleName == RoleName.Administrator || roleName == RoleName.Moderator))
+                            {
+                                @CustomExtensions.HtmlEditIcon("uk-margin-small-right edit-route-icon")
+                            }
+                            @if (roleName == RoleName.Administrator)
+                            {
+                                @CustomExtensions.HtmlDeleteOrRestoreIcon(route.IsDeleted, "delete-route-icon")
+                            }
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function () {
+        App.customDataTable('#routes-table');
+        $('.edit-route-icon').click(function () {
+            var id = $(this).parents('tr').data('route-id');
+            App.footer.getContent('@Url.Action("_MergeRoute", "Route")', { id: id });
+        });
+        $('.delete-route-icon').click(function () {
+            var id = $(this).parents('tr').data('route-id');
+            App.postDataOnServer('@Url.Action("DeleteOrRestoreRoute", "Route")', { id: id }, function (result) {
+                App.message.showSuccessWithOk('Success', result.message || 'Route deleted successfully!');
+                App.footer.getContent('@Url.Action("_FullInformation", "Route")');
+            });
+        });
+        $('#reset-route-button').click(function () {
+            routeValidation(() => {
+                Swal.fire({
+                    title: 'Reset',
+                    text: 'Are you sure you want to reset the current route route?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'OK',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.value) {
+                        App.footer.getContent('@Url.Action("_FullInformation", "Route")');
+                    }
+                });
+            });
+        });
+        $('.show-route-icon').click(function () {
+            let _this = $(this);
+            let id = _this.parents('tr').first().data('route-id');
+            App.geo.route.resetRouteLocations('@Url.Action("GetRouteLocations", "Route")', id);
+            App.geo.route.setStartView();
+            if (App.geo.route.routeLocations.length != 0) {
+                App.geo.route.path.on('click', function () {
+                });
+            }
+            else {
+                Swal.fire({
+                    title: 'Empty route',
+                    text: 'The route does not yet contain locations, click on any location to start',
+                    icon: 'info',
+                    timer: 2500
+                });
+            }
+        });
+        function routeValidation(handler) {
+            if (App.geo.route.path) {
+                handler();
+            }
+            else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'You have not chosen a route!',
+                    icon: 'error',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        }
+    });
+</script>

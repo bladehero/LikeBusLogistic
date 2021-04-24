@@ -1,0 +1,40 @@
+﻿@model MergeContactVM
+
+
+<div class="uk-grid-small" uk-grid id="save-contact-grid">
+    <input type="hidden" name="id" value="@Model.Contact?.Id" />
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-1">
+        <label class="uk-form-label">Assigned to bus</label>
+        <div class="uk-form-controls">
+            @Model.Drivers.SelectList(
+             x => x.DriverId,
+             x => $"{x.LastName} {x.FirstName} {x.MiddleName}",
+             Model.Contact?.DriverId,
+             new { @class = "uk-select", name = "driverId" })
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-width-1-1">
+        <label class="uk-form-label">Contact</label>
+        <div class="uk-form-controls">
+            <input class="uk-input" name="contact" type="text" placeholder="Contact data..." value="@Model.Contact?.Contact">
+        </div>
+    </div>
+
+    <div class="uk-margin uk-margin-remove-top uk-margin-remove-top uk-margin-remove-top uk-width-1-1">
+        <button class="uk-button uk-button-primary uk-float-right" id="save-contact-btn">Save</button>
+    </div>
+</div>
+
+<script>
+    App.footer.setBreadcrumbs([
+        { name: 'Contacts', url: '@Url.Action("_FullInformation", "Driver", new { tab = DriverTab.Contact })' },
+        { name: '@(Model.Contact == null ? "Add" : "Change")', url: '@Url.Action("_Information", "Driver")' }
+    ]);
+
+    $('#save-contact-btn').click(function () {
+        var data = App.serializeInputsToObject('#save-contact-grid input,select');
+        App.postDataOnServer('@Url.Action("MergeContact", "Driver")', data);
+    });
+</script>
